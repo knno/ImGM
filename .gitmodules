@@ -1,0 +1,6 @@
+[submodule "modules/imgui"]
+	path = modules/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "modules/extensions/imgui-node-editor"]
+	path = modules/extensions/imgui-node-editor
+	url = https://github.com/ngscopeclient/imgui-node-editor

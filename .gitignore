@@ -1,0 +1,33 @@
+#region ImGM Project
+
+_local*/
+
+dist/package/
+dist/bundle/
+
+temp/
+tmp/
+imgm.config.js
+
+#endregion ImGM Project
+
+#region Internal
+
+.terminal.bashrc
+node_modules/
+
+*.so
+*.dll
+*.dylib
+*.obj
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+#endregion Internal
+
+# ^^^Do not add patterns here^^^
+# EOF

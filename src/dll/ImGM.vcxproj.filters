@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Config">
+      <UniqueIdentifier>{5B583FAC-47FA-6982-30B5-7DD61CF6F0D2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{C0FF640D-2C14-8DBE-F595-301E616989EF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NodeEditor">
+      <UniqueIdentifier>{924C8D43-7E04-CF90-E70B-A8ECD3E26981}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NodeEditor\Wrappers">
+      <UniqueIdentifier>{15FB5EE2-815C-3CF0-0ACA-82A2762A73AF}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\node-editor\wrappers\wtf.h">
+      <Filter>NodeEditor\Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\node-editor\wtf.h">
+      <Filter>NodeEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\wrappers\wtf.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\gm.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="imext\node-editor\wrappers\wtf.cpp">
+      <Filter>NodeEditor\Wrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\node-editor\wtf.cpp">
+      <Filter>NodeEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\wtf.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

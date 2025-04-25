@@ -1,0 +1,52 @@
+{
+	"name": "imgm",
+	"version": "0.0.1",
+	"scripts": {
+		"prepare": "husky",
+		"modules:copy": "node src/tools/scripts/modules-copy.js",
+		"wrappers:gen": "node src/tools/scripts/wrappers-gen/index.js",
+		"release": "standard-version",
+		"commit": "commit"
+	},
+	"type": "module",
+	"author": {
+		"name": "knno",
+		"url": "https://github.com/knno"
+	},
+	"homepage": "https://github.com/knno/ImGM#readme",
+	"dependencies": {
+		"glob": "^11.0.0"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^19.8.0",
+		"@commitlint/config-conventional": "^19.8.0",
+		"@commitlint/prompt-cli": "^19.8.0",
+		"adm-zip": "^0.5.16",
+		"eslint": "^9.22.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^15.5.0",
+		"prettier": "^3.5.3",
+		"standard-version": "^9.5.0",
+		"winston": "^3.17.0"
+	},
+	"lint-staged": {
+		"*.js": [
+			"eslint --fix",
+			"prettier --write"
+		]
+	},
+	"prettier": {
+		"trailingComma": "es5",
+		"useTabs": true,
+		"tabWidth": 4,
+		"semi": false,
+		"singleQuote": false
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/knno/ImGM.git"
+	},
+	"bugs": {
+		"url": "https://github.com/knno/ImGM/issues"
+	}
+}
