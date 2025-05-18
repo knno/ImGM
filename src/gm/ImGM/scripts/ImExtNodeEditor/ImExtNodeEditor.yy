@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ImExtNodeEditor",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ImExtNodeEditor",
+  "parent":{
+    "name":"ImExt",
+    "path":"folders/ImGM/Extensions/ImExt.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

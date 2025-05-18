@@ -56,7 +56,7 @@ async function main() {
 			{
 				resultSuccess: (message, resolve, reject) => {
 					// const tokens = JSON.parse(message.result)
-					apis.push(message.result.tokens)
+					apis.push(message.result)
 					Term.setProgress(Term.progress + 1)
 					Term.render()
 					resolve()
@@ -108,6 +108,9 @@ async function main() {
 				functions: apis.flatMap((api) => api.functions || []),
 				artifacts: apis.flatMap((api) => api.artifacts || []),
 			}
+
+			// TODO: Here we should update the .gml files directly to the gm/scripts/..... for namespaces (e.g. ImGui, and ImExtExtensionName)
+			// from the enums and functions parsed above. with jsdocs (from config as a reference)
 
 			Logger.info(`${"─".repeat(10)} Total Stats ${"─".repeat(10)}`)
 			Logger.info(

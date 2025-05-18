@@ -41,9 +41,11 @@ const main = async () => {
 			].join(", "),
 			{ name: NAME }
 		)
-		result.enums = api.enums
-		result.functions = api.functions
-		result.artifacts = api.artifacts
+		result.enums = api.enums.filter((e) => {
+			return { name: e.name.to() }
+		})
+		// result.functions = api.functions;
+		// result.artifacts = api.artifacts;
 
 		// Send result back to main thread
 		Logger.warn("Finished", { name: NAME })

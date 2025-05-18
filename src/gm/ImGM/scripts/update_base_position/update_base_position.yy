@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"update_base_position",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"update_base_position",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Example/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

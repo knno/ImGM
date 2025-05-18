@@ -354,7 +354,7 @@ class ProcessProgram {
 								terminal.updateTask(name, "error")
 								terminal.render()
 								if (cbResultError) {
-									cbResultError(message, resolve, reject)
+									// cbResultError(message, resolve, reject)
 								} else {
 									ProcessProgram.Logger.error(
 										`${message.message ?? "Unsuccessful"}: ${message.error ? (message.error.message ?? message.error) : message.result}`,
@@ -367,12 +367,11 @@ class ProcessProgram {
 										message.result instanceof Error
 									) {
 										reject(message.result)
-									} else {
-										resolve(message.result)
 									}
 								}
 							}
 						}
+						resolve(message.result)
 						ProcessProgram._workers.splice(worker.index, 1)
 						worker.index = -1
 						break
