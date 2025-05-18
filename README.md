@@ -2,7 +2,7 @@
 
 An ImGui wrapper for modern GameMaker.
 
-<!-- ![screenshot](...) -->
+[<!-- Screenshot -->](https://github.com/knno/ImGM/blob/dev/.github/Screenshot%202025-03-14%20043958.png)
 ![issues](https://badgen.net/github/open-issues/knno/ImGM)
 ![coverage](https://badgen.net/https/raw.githubusercontent.com/knno/ImGM/main/extra/badges/coverage.json?icon=awesome)
 
