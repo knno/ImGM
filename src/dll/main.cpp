@@ -6,7 +6,6 @@
 #include <imgui_gm.h>
 
 static bool g_ImGuiInitialized = false;
-bool g_UpdateFont = true;
 
 char g_InputBuf[INPUT_SIZE];
 RValue g_Copy;

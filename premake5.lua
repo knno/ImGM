@@ -27,7 +27,7 @@ function processImext(baseDir)
 			ext .. "/wrappers/*.*",
 			ext .. "/wrappers/**/*.*",
 		}
-		_vpaths[pascalCaseExtName] = {
+		_vpaths[pascalCaseExtName .. "/*"] = {
 			ext .. "/*.h",
 			ext .. "/*.cpp",
 			ext .. "/*.inl",
@@ -59,6 +59,8 @@ project(projectName)
         dllDir .. "internal/gm.h",
         dllDir .. "*.h",
         dllDir .. "*.cpp",
+        dllDir .. "imgui/*.h",
+        dllDir .. "imgui/*.cpp",
         dllDir .. "imgui/**/*.h",
         dllDir .. "imgui/**/*.cpp",
         dllDir .. "imgui/**/*.inl",
@@ -82,7 +84,7 @@ project(projectName)
 			dllDir .. "config.h",
 			dllDir .. "internal/gm.h",
 		},
-		["ImGui"] = {
+		["ImGui/*"] = {
 			dllDir .. "imgui/**.h",
 			dllDir .. "imgui/**.cpp",
 		},
@@ -102,12 +104,12 @@ project(projectName)
 	filter "configurations:Debug"
 		defines { "DEBUG" }
 		symbols "On"
-		postbuildcommands { "set NO_COLOR=1 && npm run wrappers:gen" }
+		-- postbuildcommands { "set NO_COLOR=1 && npm run wrappers:gen" }
 
 	filter "configurations:Release"
 		defines { "NDEBUG" }
 		optimize "On"
-		postbuildcommands { "set NO_COLOR=1 && npm run wrappers:gen" }
+		-- postbuildcommands { "set NO_COLOR=1 && npm run wrappers:gen" }
 
 	-- Windows
 	filter { "action:vs*" }

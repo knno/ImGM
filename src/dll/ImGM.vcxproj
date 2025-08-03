@@ -69,9 +69,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>..\gm\ImGM\extensions\ImGM\ImGM.lib</ImportLibrary>
     </Link>
-    <PostBuildEvent>
-      <Command>set NO_COLOR=1 &amp;&amp; npm run wrappers:gen</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -93,12 +90,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>..\gm\ImGM\extensions\ImGM\ImGM.lib</ImportLibrary>
     </Link>
-    <PostBuildEvent>
-      <Command>set NO_COLOR=1 &amp;&amp; npm run wrappers:gen</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
+    <ClInclude Include="imgui\imgui_impl_gm.h" />
     <ClInclude Include="imgui\internal\backends\imgui_impl_dx11.h" />
     <ClInclude Include="imgui\internal\backends\imgui_impl_win32.h" />
     <ClInclude Include="imgui\internal\imconfig.h" />
@@ -114,6 +109,7 @@
     <ClInclude Include="internal\gm.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="imgui\imgui_impl_gm.cpp" />
     <ClCompile Include="imgui\internal\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="imgui\internal\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\internal\imgui.cpp" />
