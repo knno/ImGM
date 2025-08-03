@@ -7,39 +7,153 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{C0FF640D-2C14-8DBE-F595-301E616989EF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NodeEditor">
-      <UniqueIdentifier>{924C8D43-7E04-CF90-E70B-A8ECD3E26981}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="NodeEditor\Wrappers">
-      <UniqueIdentifier>{15FB5EE2-815C-3CF0-0ACA-82A2762A73AF}</UniqueIdentifier>
+    <Filter Include="ImGui\Internal">
+      <UniqueIdentifier>{ECBD7FD7-D88B-73DD-C11F-E403AD8C4F42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
       <Filter>Config</Filter>
     </ClInclude>
-    <ClInclude Include="imext\node-editor\wrappers\wtf.h">
-      <Filter>NodeEditor\Wrappers</Filter>
+    <ClInclude Include="imgui\internal\backends\imgui_impl_dx11.h">
+      <Filter>ImGui\Internal</Filter>
     </ClInclude>
-    <ClInclude Include="imext\node-editor\wtf.h">
-      <Filter>NodeEditor</Filter>
+    <ClInclude Include="imgui\internal\backends\imgui_impl_win32.h">
+      <Filter>ImGui\Internal</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\wrappers\wtf.h">
+    <ClInclude Include="imgui\internal\imconfig.h">
+      <Filter>ImGui\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\internal\imgui.h">
+      <Filter>ImGui\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\internal\imgui_internal.h">
+      <Filter>ImGui\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\internal\imstb_rectpack.h">
+      <Filter>ImGui\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\internal\imstb_textedit.h">
+      <Filter>ImGui\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\internal\imstb_truetype.h">
+      <Filter>ImGui\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\wrappers\imgui_gm_selectionstorage.h">
       <Filter>ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="imgui\wrappers\imgui_gm_windowclass.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\wrappers\imgui_memory_editor.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_gm.h" />
     <ClInclude Include="internal\gm.h">
       <Filter>Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="imext\node-editor\wrappers\wtf.cpp">
-      <Filter>NodeEditor\Wrappers</Filter>
+    <ClCompile Include="imgui\internal\backends\imgui_impl_dx11.cpp">
+      <Filter>ImGui\Internal</Filter>
     </ClCompile>
-    <ClCompile Include="imext\node-editor\wtf.cpp">
-      <Filter>NodeEditor</Filter>
+    <ClCompile Include="imgui\internal\backends\imgui_impl_win32.cpp">
+      <Filter>ImGui\Internal</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\wrappers\wtf.cpp">
+    <ClCompile Include="imgui\internal\imgui.cpp">
+      <Filter>ImGui\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\internal\imgui_demo.cpp">
+      <Filter>ImGui\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\internal\imgui_draw.cpp">
+      <Filter>ImGui\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\internal\imgui_tables.cpp">
+      <Filter>ImGui\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\internal\imgui_widgets.cpp">
+      <Filter>ImGui\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_api_gm.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_color_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_combo_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_docking_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_drag_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_drawlist_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_ext_memeditor_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_fonts_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_input_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_input_widgets_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_layout_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_listbox_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_menu_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_payload_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_plots_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_popup_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_selectable_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_slider_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_style_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_table_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_tabs_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_text_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_tooltips_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_tree_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_widgets_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_window_gm.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_gm.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>

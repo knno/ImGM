@@ -49,6 +49,7 @@ project(projectName)
 
     includedirs {
         dllDir,
+        dllDir .. "internal",
         dllDir .. "imgui",
         dllDir .. "imgui/internal",
     }
@@ -61,6 +62,9 @@ project(projectName)
         dllDir .. "imgui/**/*.h",
         dllDir .. "imgui/**/*.cpp",
         dllDir .. "imgui/**/*.inl",
+        dllDir .. "imgui/internal/im*.h",
+        dllDir .. "imgui/internal/im*.cpp",
+        dllDir .. "imgui/**/*.inl",
         dllDir .. "imext/**/*.h",
         dllDir .. "imext/**/*.cpp",
         dllDir .. "imext/**/*.inl",
@@ -69,8 +73,6 @@ project(projectName)
     excludes {
         dllDir .. ".old.*",
         dllDir .. "**/.old.*",
-        dllDir .. "imgui/internal/*.*",
-        dllDir .. "imgui/internal/**/*.*",
         dllDir .. "imext/**/internal/*.*",
         dllDir .. "imext/**/internal/**/*.*",
     }
@@ -95,6 +97,7 @@ project(projectName)
 	}
 	processImext(dllDir .. "imext")
 	vpaths(_vpaths)
+	objdir("../../tmp/$(ShortProjectName)/$(Platform)/$(Configuration)/")
 
 	filter "configurations:Debug"
 		defines { "DEBUG" }

@@ -16,6 +16,9 @@ let Config = {
 	logging: {
 		ignore: ["DM01", "DP03", "DP02"],
 	},
+	dll: {
+		modifierDirective: "GM",
+	}
 }
 
 Config = assignObjectRecursive(defaultConfig, Config)

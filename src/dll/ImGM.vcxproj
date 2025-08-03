@@ -42,14 +42,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\gm\ImGM\extensions\ImGM\</OutDir>
-    <IntDir>obj\Debug\</IntDir>
+    <IntDir>..\..\..\..\tmp\$(ShortProjectName)\$(Platform)\$(Configuration)\Debug\</IntDir>
     <TargetName>ImGM</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\gm\ImGM\extensions\ImGM\</OutDir>
-    <IntDir>obj\Release\</IntDir>
+    <IntDir>..\..\..\..\tmp\$(ShortProjectName)\$(Platform)\$(Configuration)\Release\</IntDir>
     <TargetName>ImGM</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
@@ -58,7 +58,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;DEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;imgui;imgui\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp14</LanguageStandard>
@@ -78,7 +78,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;NDEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;imgui;imgui\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -99,19 +99,56 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
-    <ClInclude Include="imext\node-editor\wrappers\wtf.h" />
-    <ClInclude Include="imext\node-editor\wtf.h" />
-    <ClInclude Include="imgui\wrappers\wtf.h" />
+    <ClInclude Include="imgui\internal\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="imgui\internal\backends\imgui_impl_win32.h" />
+    <ClInclude Include="imgui\internal\imconfig.h" />
+    <ClInclude Include="imgui\internal\imgui.h" />
+    <ClInclude Include="imgui\internal\imgui_internal.h" />
+    <ClInclude Include="imgui\internal\imstb_rectpack.h" />
+    <ClInclude Include="imgui\internal\imstb_textedit.h" />
+    <ClInclude Include="imgui\internal\imstb_truetype.h" />
+    <ClInclude Include="imgui\wrappers\imgui_gm_selectionstorage.h" />
+    <ClInclude Include="imgui\wrappers\imgui_gm_windowclass.h" />
+    <ClInclude Include="imgui\wrappers\imgui_memory_editor.h" />
+    <ClInclude Include="imgui_gm.h" />
     <ClInclude Include="internal\gm.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="imext\node-editor\wrappers\wtf.cpp">
-      <ObjectFileName>$(IntDir)\wtf1.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="imext\node-editor\wtf.cpp">
-      <ObjectFileName>$(IntDir)\wtf2.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="imgui\wrappers\wtf.cpp" />
+    <ClCompile Include="imgui\internal\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="imgui\internal\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui\internal\imgui.cpp" />
+    <ClCompile Include="imgui\internal\imgui_demo.cpp" />
+    <ClCompile Include="imgui\internal\imgui_draw.cpp" />
+    <ClCompile Include="imgui\internal\imgui_tables.cpp" />
+    <ClCompile Include="imgui\internal\imgui_widgets.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_api_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_color_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_combo_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_docking_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_drag_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_drawlist_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_ext_memeditor_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_fonts_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_input_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_input_widgets_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_layout_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_listbox_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_menu_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_payload_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_plots_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_popup_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_selectable_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_slider_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_style_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_table_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_tabs_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_text_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_tooltips_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_tree_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_widgets_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_window_gm.cpp" />
+    <ClCompile Include="imgui_gm.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
