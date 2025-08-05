@@ -1,9 +1,10 @@
-import { parentPort, workerData } from "worker_threads"
 import fs from "fs"
+import { parentPort, workerData } from "worker_threads"
 import { getOrCreateModule } from "../../lib/modules.js"
 import cpp from "../../lib/parsers/langs/cpp.js"
 import { getApi } from "../../lib/parsers/wrappers.js"
 
+import path from "path"
 import { Program } from "../../lib/program.js"
 
 Program.setup(true)
@@ -30,25 +31,18 @@ const main = async () => {
 		const result = {}
 
 		result.time = (Date.now() - totalStartTime) / 1000
+		result.moduleHandle = module.handle
 		result.file = filePath
 		result.tokens = JSON.stringify(api.tokens)
-		Logger.warn(
-			[
-				api.tokens.length,
-				api.enums.length,
-				api.functions.length,
-				api.artifacts.length,
-			].join(", "),
-			{ name: NAME }
-		)
 		result.enums = api.enums.filter((e) => {
 			return { name: e.name.to() }
 		})
-		// result.functions = api.functions;
-		// result.artifacts = api.artifacts;
+		result.functions = JSON.stringify(api.functions)
+		result.artifacts =
+			api.artifacts.length > 0 ? JSON.stringify(api.artifacts) : undefined
 
 		// Send result back to main thread
-		Logger.warn("Finished", { name: NAME })
+		Logger.warn(`Finished: "${path.basename(filePath)}"`, { name: NAME })
 		parentPort.postMessage({
 			type: "result",
 			success: true,

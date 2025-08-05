@@ -6,6 +6,7 @@
  * @author knno <github.com/knno>
  */
 
+import util from "util"
 import Config from "../../config.js"
 import { ImGMAbort } from "../class/error.js"
 import { Program } from "../program.js"
@@ -47,6 +48,10 @@ export class BaseTokenType extends Dict {
 	static STRING = "String"
 	/** Any Number token */
 	static NUMBER = "Number"
+
+	static [util.inspect.custom]() {
+		return `TT`
+	}
 }
 
 /**
@@ -667,7 +672,7 @@ export class BaseParser {
 	}
 
 	lex() {
-		if (this.tokenizer.tokens.length == 0) {
+		if (this.tokenizer?.tokens.length == 0) {
 			this._tokens = this.tokenizer.main()
 			this._index = 0
 		}
@@ -750,15 +755,17 @@ export class BaseParser {
 			}
 		}
 		if (
-			!Logger.isIgnoredType(Logger.types.PARSER_DEBUG_INFO_PARSED_TOKENS)
+			!Logger.isIgnoredType(
+				Logger.types.PARSER_DEBUG_INFO_PARSED_TOKENS_RESULT
+			)
 		) {
 			Logger.debug(`Parse result:`, {
 				name: this.constructor.name,
-				type: Logger.types.PARSER_DEBUG_INFO_PARSED_TOKENS,
+				type: Logger.types.PARSER_DEBUG_INFO_PARSED_TOKENS_RESULT,
 			})
 			this.logToken(this.tokens, "debug", {
 				name: this.constructor.name,
-				type: Logger.types.PARSER_DEBUG_INFO_PARSED_TOKENS,
+				type: Logger.types.PARSER_DEBUG_INFO_PARSED_TOKENS_RESULT,
 			})
 		}
 		Logger.debug(
@@ -821,8 +828,9 @@ export class BaseParser {
 			const token = nav.peek()
 			if (token == undefined || token.type == undefined) {
 				if (token) {
-					this.forceDelete(token)
+					nav.forceDelete(token)
 				} else {
+					nav.deleteIndex(nav.index)
 					nav.advance()
 				}
 				continue
@@ -1006,6 +1014,16 @@ export class BaseParser {
 	}
 
 	/**
+	 * Delete a single token based on index
+	 * @param {Number} index
+	 */
+	deleteIndex(index) {
+		this.tokens.splice(index, 1) // lol
+		this.index = index--
+		return true
+	}
+
+	/**
 	 * Insert a token at index
 	 * @param {BaseToken|BaseToken[]} token
 	 * @param {Number} index
@@ -1121,7 +1139,7 @@ export class Navigator {
 	 * @memberof Navigator
 	 */
 	isLast() {
-		return this.isEnd(1)
+		return this.isEnd(0)
 	}
 
 	/**
@@ -1191,6 +1209,17 @@ export class Navigator {
 		}
 		this.index = index2
 		return success
+	}
+
+	/**
+	 * Deletes a single token based on index
+	 * @param {Number} index
+	 * @memberof Navigator
+	 */
+	deleteIndex(index) {
+		this.tokens.splice(index, 1) // lol
+		this.index = index--
+		return true
 	}
 
 	/**

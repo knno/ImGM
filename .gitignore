@@ -15,6 +15,8 @@ imgm.config.js
 
 .terminal.bashrc
 node_modules/
+venv/
+env/
 
 *.so
 *.dll

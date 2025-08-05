@@ -14,11 +14,11 @@ const gmConfig = {
 let Config = {
 	gm: gmConfig,
 	logging: {
-		ignore: ["DM01", "DP03", "DP02"],
+		ignore: ["DM01", "DP02", "DP03", "DP04", "DP05",],
 	},
 	dll: {
 		modifierDirective: "GM",
-	}
+	},
 }
 
 Config = assignObjectRecursive(defaultConfig, Config)

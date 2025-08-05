@@ -1,5 +1,7 @@
+import util from "util"
 import * as converters from "../utils/string.js"
 import ImGMError from "./error.js"
+import { Program } from "../program.js"
 
 /**
  *
@@ -14,6 +16,9 @@ export default class Name {
 	 * @param {String} toStringSep
 	 */
 	constructor(name, toStringCase = "PascalCase", toStringSep = " ") {
+		if (name instanceof Name) {
+			return name;
+		}
 		this._name = name
 		this._case = toStringCase
 		this._sep = toStringSep
@@ -113,6 +118,10 @@ export default class Name {
 
 	toString() {
 		return this.to(this._case, this._sep)
+	}
+
+	[util.inspect.custom]() {
+		return `Name {${Program.colors.get("green", `'${this._name}'`)}, '${this._case}', '${this._sep}'}`
 	}
 
 	toExtra(key = "name") {

@@ -7,7 +7,10 @@
  */
 import path from "path"
 import { fileURLToPath } from "url"
+import Name from "../../lib/class/name.js"
 import { getOrCreateModule } from "../../lib/modules.js"
+import { CppToken } from "../../lib/parsers/langs/cpp.js"
+import { ApiFunction, getWrappers } from "../../lib/parsers/wrappers.js"
 import { Program } from "../../lib/program.js"
 
 const __filename = fileURLToPath(import.meta.url)
@@ -15,6 +18,7 @@ const __dirname = path.dirname(__filename)
 const NAME = "wrappers:gen"
 const Logger = Program.Logger
 const Term = Program.terminal
+let isReady = false
 
 async function main() {
 	const params = Program.getParams()
@@ -37,7 +41,7 @@ async function main() {
 	}
 
 	const filePaths = params._args.slice(1).map((p) => path.resolve(p))
-	const apis = []
+	let apis = []
 	const totalStartTime = Date.now()
 
 	Term.setProgressMax(filePaths.length)
@@ -55,7 +59,6 @@ async function main() {
 			},
 			{
 				resultSuccess: (message, resolve, reject) => {
-					// const tokens = JSON.parse(message.result)
 					apis.push(message.result)
 					Term.setProgress(Term.progress + 1)
 					Term.render()
@@ -94,23 +97,77 @@ async function main() {
 	)
 
 	// Process files with worker threads
-	Promise.all(tasks)
+	Promise.all(tasks).then(() => {
+		isReady = true
+	})
+
 	Term.main(
-		() => apis.length == filePaths.length,
+		() => isReady || apis.length >= filePaths.length,
 		() => {
 			Term.setProgressBarVisible(false)
 			Term.render()
 			const totalEndTime = Date.now()
 			const totalTime = (totalEndTime - totalStartTime) / 1000
 
+			// Tokenize result stuffs back
+			let createToken = (t) => {
+				let newTok = new CppToken({
+					type: t.type,
+					value: t.value,
+					line: t.line,
+					col: t.col,
+					children: (t.children || []).map(createToken), // recursive
+				})
+				newTok.source = t.source
+				newTok._extra = t._extra
+				return newTok
+			}
+			apis.tokens = apis
+				.flatMap((api) => {
+					let tokens = JSON.parse(api.tokens) || []
+					tokens = tokens.map((t) => {
+						t.source ??= api.file
+						return t
+					})
+					api.tokens = tokens
+					return tokens
+				})
+				.map(createToken)
+
+			let funcs = apis.flatMap((api) => JSON.parse(api.functions) || [])
+			apis.functions = funcs.map((f) => {
+				let func = new ApiFunction({
+					name: new Name(f.name._name, f.name._case, f.name._sep),
+					args: f.args,
+					returnType: f.returnType,
+					source: f.source,
+					sourceToken:
+						apis.tokens.find((t) => {
+							t.type == f.sourceToken.type &&
+								t.line == f.sourceToken.line &&
+								t.pos == f.sourceToken.pos
+						}) ?? f.sourceToken,
+					namespace: f.namespace,
+					comment: f.comment ?? "",
+				})
+				return func
+			})
+
+			// Analyze wrappers
+			let wrapperAnalyzer = getWrappers(apis.tokens, apis)
+
 			const fullApi = {
+				tokens: apis.tokens,
 				enums: apis.flatMap((api) => api.enums || []),
 				functions: apis.flatMap((api) => api.functions || []),
+				wrappers: wrapperAnalyzer.wrappers,
 				artifacts: apis.flatMap((api) => api.artifacts || []),
 			}
 
+			console.log(fullApi.wrappers[0])
+
 			// TODO: Here we should update the .gml files directly to the gm/scripts/..... for namespaces (e.g. ImGui, and ImExtExtensionName)
-			// from the enums and functions parsed above. with jsdocs (from config as a reference)
+			// from the enums and wrappers above. with jsdocs (from config as a reference)
 
 			Logger.info(`${"─".repeat(10)} Total Stats ${"─".repeat(10)}`)
 			Logger.info(
@@ -122,9 +179,21 @@ async function main() {
 				{ name: NAME }
 			)
 			Logger.info(
-				` - ${Program.colors.get("orange", fullApi.artifacts.length)} Artifacts`,
+				` - ${Program.colors.get("orange", fullApi.wrappers.length)} Wrappers`,
 				{ name: NAME }
 			)
+			Logger.info(
+				` - ${Program.colors.get("red", fullApi.artifacts.length)} Artifacts`,
+				{ name: NAME }
+			)
+			if (fullApi.artifacts.length > 0) {
+				Logger.info(`${"─".repeat(10)} Artifacts ${"─".repeat(10)}`)
+				for (const a of fullApi.artifacts) {
+					Logger.info(` - ${Program.colors.get("yellow", a)}`, {
+						name: NAME,
+					})
+				}
+			}
 			Logger.info(
 				`Total Time: ${Program.colors.get("green", totalTime.toFixed(2) + "s")}`,
 				{ name: NAME }

@@ -37,6 +37,7 @@ export const logTypes = {
 	PARSER_DEBUG_INFO_CHANGES: "DP02",
 	PARSER_DEBUG_INFO_PARSED_TOKENS: "DP03",
 	PARSER_DEBUG_INFO_LEXED_TOKENS: "DP04",
+	PARSER_DEBUG_INFO_PARSED_TOKENS_RESULT: "DP05",
 	// COPY
 	COPY_DEBUG_INFO: "DC01",
 }
@@ -345,6 +346,12 @@ export class Logger {
 						this.Program.workData.workerData.index,
 				}
 			}
+			if (extra.name.length > 13)
+				extra.name = extra.name.split(" > ")[0] + " > " + 
+					(this.Program.workData.workerData.name ?? "worker") +
+					"-" +
+					this.Program.workData.workerData.index +
+					"...."
 			this.Program.workData.parentPort.postMessage({
 				type: "log",
 				message: message,
