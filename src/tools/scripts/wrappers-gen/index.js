@@ -172,7 +172,7 @@ async function main() {
 
 					return new ApiFunction({
 						name: new Name(f.name._name, f.name._case, f.name._sep),
-						args: f.args,
+						args: JSON.parse(f.args),
 						returnType: f.returnType,
 						source: f.source,
 						sourceToken,

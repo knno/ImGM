@@ -34,7 +34,12 @@ const main = async () => {
 		result.file = filePath
 		result.tokens = JSON.stringify(api.tokens)
 		result.enums = JSON.stringify(api.enums)
-		result.functions = JSON.stringify(api.functions)
+		result.functions = JSON.stringify(
+			api.functions.map((f) => {
+				f.args = JSON.stringify(f.args)
+				return f
+			})
+		)
 		result.artifacts =
 			api.artifacts.length > 0 ? JSON.stringify(api.artifacts) : undefined
 

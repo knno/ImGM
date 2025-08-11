@@ -963,9 +963,10 @@ export class CppParser extends BaseParser {
 	 */
 	p_funcs(token) {
 		let changes = {}
+		let tok
 		switch (token.type) {
 			case this.TokenType.IDENTIFIER:
-				let tok = this.peek(1)
+				tok = this.peek(1)
 				if (tok) {
 					if (tok.type == this.TokenType.TEMPLATE_ARGS) {
 						changes.value = token.value + "|template=" + tok.value

@@ -42,7 +42,7 @@ export class BaseFunctionArgument {
 		...extra
 	} = {}) {
 		this.name = this.constructor.getName(
-			name instanceof Name ? name : new Name(name)
+			name instanceof Name ? name : new Name(name, "snake_case")
 		)
 		this.type = type
 		this.isHidden = isHidden

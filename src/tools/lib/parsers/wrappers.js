@@ -4,6 +4,7 @@ import Config from "../../config.js"
 import { BaseFunction, BaseFunctionArgument } from "../class/base-functions.js"
 import ImGMError from "../class/error.js"
 import Name from "../class/name.js"
+import { convertYYGetTypeToDataType } from "../gm.js"
 import { getChildModules, Module } from "../modules.js"
 import { CppKeywords, TokenType } from "../parsers/langs/cpp.js"
 import { Program } from "../program.js"
@@ -27,6 +28,20 @@ export const reservedArgumentNames = [
 	"ptr",
 	"argument",
 	"arguments",
+]
+
+export const reservedModifierNames = [
+	"PASSTHROUGH",
+	"PREPEND",
+	"APPEND",
+	"OVERRIDE",
+	"DEFAULT",
+	"RETURNS",
+	"RETURN",
+	"COLOR_TO",
+	"COLOR_FROM",
+	"HIDDEN",
+	"HINT",
 ]
 
 export class ApiFunction extends BaseFunction {}
@@ -99,7 +114,7 @@ export class ApiAnalyzer extends BaseParser {
 
 	_api_func(first, nav, ns) {
 		let token = first
-		if (first.type == TokenType.FUNCTION_DEF) {
+		if (first.type === TokenType.FUNCTION_DEF) {
 			token = nav.advance(-1)
 		} else if (
 			first.type !== TokenType.IDENTIFIER &&
@@ -107,109 +122,136 @@ export class ApiAnalyzer extends BaseParser {
 		) {
 			return
 		}
+
 		if (
-			token.type == TokenType.IDENTIFIER ||
-			token.type == TokenType.FUNCTION_CALL
+			token.type === TokenType.IDENTIFIER ||
+			token.type === TokenType.FUNCTION_CALL
 		) {
-			if (Config.modules[this.opts.module.handle]) {
-				let matchApiIdentifier = false
-				const patts =
-					Config.modules[this.opts.module.handle]
-						.apiIdentifierPatterns
-				let base_extras = {
-					...this.opts.module.name.toExtra("name"),
+			const moduleConfig = Config.modules[this.opts.module.handle]
+			if (!moduleConfig) return
+
+			const patts = moduleConfig.apiIdentifierPatterns
+			const base_extras = {
+				...this.opts.module.name.toExtra("name"),
+			}
+
+			const testIdent = (ident, extras, patts) => {
+				for (const pat of patts) {
+					const regex = new RegExp(resolveTemplate(pat, extras))
+					if (regex.test(ident)) return true
 				}
-				const testIdent = (ident, extras, patts) => {
-					for (const pat of patts) {
-						const regex = new RegExp(resolveTemplate(pat, extras))
-						return regex.test(ident)
-					}
-				}
-				if (this.opts.childModules.length > 0) {
-					for (const childModule of this.opts.childModules) {
-						let extras = Object.assign(
-							base_extras,
-							childModule.name.toExtra("name")
-						)
-						if (testIdent(token.value, extras, patts)) {
-							matchApiIdentifier = true
-							break
-						}
-					}
-				} else {
-					if (testIdent(token.value, base_extras, patts)) {
+				return false
+			}
+
+			let matchApiIdentifier = false
+			if (this.opts.childModules.length > 0) {
+				for (const childModule of this.opts.childModules) {
+					const extras = Object.assign(
+						base_extras,
+						childModule.name.toExtra("name")
+					)
+					if (testIdent(token.value, extras, patts)) {
 						matchApiIdentifier = true
+						break
 					}
 				}
-				if (matchApiIdentifier) {
-					let type = nav.advance()
-					switch (type.type) {
-						case TokenType.KEYWORD:
-							if (type.value == CppKeywords.CONST) {
-								type = nav.advance()
-								type.const = true
-							} else if (type.value == CppKeywords.STATIC) {
-								type = nav.advance()
-								type.static = true
-							}
-						case TokenType.IDENTIFIER:
-						case TokenType.DEREFERENCE:
-						case TokenType.POINTER:
-							break
-						case TokenType.DIRECTIVE:
-						case TokenType.NEWLINE:
-							return
-						default:
-							Logger.warn(
-								`Could not understand ${type} for ${token.value}`
-							)
-							return
+			} else {
+				matchApiIdentifier = testIdent(token.value, base_extras, patts)
+			}
+
+			if (!matchApiIdentifier) return
+
+			let type = nav.advance()
+			switch (type.type) {
+				case TokenType.KEYWORD:
+					if (type.value === CppKeywords.CONST) {
+						type = nav.advance()
+						type.const = true
+					} else if (type.value === CppKeywords.STATIC) {
+						type = nav.advance()
+						type.static = true
 					}
-					const func = nav.advance()
-					if (func.type.endsWith("Pair")) {
-						return
-					}
-					let comment
-					let i = 1
-					let after = nav.peek()
-					let args = []
-					while (
-						after &&
-						!after.matchesType(TokenType.COMMENT) &&
-						![
-							TokenType.KEYWORD,
-							TokenType.IDENTIFIER,
-							TokenType.DEREFERENCE,
-							TokenType.POINTER,
-						].includes(after.type)
-					) {
-						after = nav.peek(i)
-						i++
-					}
-					if (after && after.matchesType(TokenType.COMMENT)) {
-						comment = after
-					}
-					after = nav.advance()
-					if (after.type == TokenType.SEMI) {
-						this.artifacts.push({
-							token: type,
-						})
-					} else if (after.type == TokenType.IDENTIFIER) {
-						this.logToken([token, type, after])
-					}
-					let _func = new ApiFunction({
-						name: func.value,
-						args: args,
-						returnType: type.value,
-						sourceToken: func,
-						source: this.opts.source ?? func.source,
-						namespace: ns,
-						comment: comment ? comment.value : "",
+				// fallthrough
+				case TokenType.IDENTIFIER:
+				case TokenType.DEREFERENCE:
+				case TokenType.POINTER:
+					break
+				case TokenType.DIRECTIVE:
+				case TokenType.NEWLINE:
+					return
+				default:
+					Logger.warn(
+						`Could not understand ${type} for ${token.value}`
+					)
+					return
+			}
+
+			const func = nav.advance()
+			if (func.type.endsWith("Pair")) {
+				return
+			}
+
+			// Extract arguments from function pair
+			const args = []
+			const argNav = func.navigateChildren()
+			while (!argNav.isLast()) {
+				let argType = argNav.peek()
+				argNav.advance()
+				if (!argType || argType.type === TokenType.COMMA) continue
+
+				let argName = argNav.peek()
+				if (
+					argName &&
+					[argType.type, argName.type].includes(TokenType.IDENTIFIER)
+				) {
+					argNav.advance() // consume name
+					args.push({
+						name: argName.value,
+						type: argType.value,
 					})
-					this.functions.push(_func)
-					return // _func
 				}
 			}
+
+			// Optional comment detection
+			let comment
+			let i = 1
+			let after = nav.peek()
+			while (
+				after &&
+				!after.matchesType(TokenType.COMMENT) &&
+				![
+					TokenType.KEYWORD,
+					TokenType.IDENTIFIER,
+					TokenType.DEREFERENCE,
+					TokenType.POINTER,
+				].includes(after.type)
+			) {
+				after = nav.peek(i)
+				i++
+			}
+			if (after && after.matchesType(TokenType.COMMENT)) {
+				comment = after
+			}
+
+			after = nav.advance()
+			if (after.type === TokenType.SEMI) {
+				this.artifacts.push({ token: type })
+			} else if (after.type === TokenType.IDENTIFIER) {
+				this.logToken([token, type, after])
+			}
+
+			const _func = new ApiFunction({
+				name: func.value,
+				args,
+				returnType: type.value,
+				sourceToken: func,
+				source: this.opts.source ?? func.source,
+				namespace: ns,
+				comment: comment ? comment.value : "",
+			})
+
+			this.functions.push(_func)
+			return // _func
 		}
 	}
 
@@ -289,7 +331,10 @@ export class ApiAnalyzer extends BaseParser {
 						))
 				) {
 					let eCmts = []
-					let cmt = (this.opts.addNewline == true) ? nav.peek(-2) : nav.peek(-3)
+					let cmt =
+						this.opts.addNewline == true
+							? nav.peek(-2)
+							: nav.peek(-3)
 					let comment = undefined
 					if (
 						cmt.type == TokenType.COMMENT ||
@@ -302,7 +347,7 @@ export class ApiAnalyzer extends BaseParser {
 							)
 						) {
 							comment = cmt.value
-							let _f = 0;
+							let _f = 0
 							for (
 								let i = -4;
 								nav.peek(i).type == TokenType.COMMENT ||
@@ -313,12 +358,12 @@ export class ApiAnalyzer extends BaseParser {
 							) {
 								if (nav.peek(i).type == TokenType.NEWLINE) {
 									if (_f >= 2) {
-										break;
+										break
 									}
-									_f ++;
+									_f++
 									continue
 								}
-								_f --;
+								_f--
 								if (
 									nav
 										.peek(i)
@@ -485,6 +530,7 @@ export class WrapperArgument extends BaseFunctionArgument {
 export class WrapperFunction extends BaseFunction {
 	constructor({ targetFunc = undefined, ...options } = {}) {
 		super(options)
+		this.args = options.args ?? []
 		this.targetFunc = targetFunc
 		this.isWrapped = true
 		this.isUnsupported = false
@@ -499,7 +545,7 @@ export class WrapperFunction extends BaseFunction {
 	}
 
 	addArg(name, ind, origin) {
-		this.arg[ind] = new WrapperArgument({
+		this.args[ind] = new WrapperArgument({
 			name: name,
 			type: origin ? WrapperFunction.typefunc(origin) : "Any",
 			defaultValue: undefined,
@@ -509,7 +555,7 @@ export class WrapperFunction extends BaseFunction {
 		this.argIndex = ind
 	}
 
-	modifier(token) {
+	modifier(token, bodyNavigator) {
 		switch (token.value) {
 			case `${GMMOD}PREPEND`: {
 				this._start += token.getFlatString()
@@ -520,11 +566,18 @@ export class WrapperFunction extends BaseFunction {
 				return true
 			}
 			case `${GMMOD}OVERRIDE`: {
-				const name = token.children[0]
-				if (!name || name.type != TokenType.IDENTIFIER)
-					throw `Could not handle ${token.value} modifier, expected "name" argument as ${TokenType.IDENTIFIER} at line ${token.line}`
-				this.setNameOverride(name.value, true)
-				return true
+				const next = bodyNavigator.peek(1)
+				const name = next.children[0]
+				if (!name)
+					throw `Could not handle ${token.value} modifier, expected "name" argument as ${TokenType.IDENTIFIER} or String at line ${token.line}`
+				if (
+					name?.type == TokenType.IDENTIFIER ||
+					name?.type == TokenType.STRING_DQ ||
+					name?.type == TokenType.STRING_SQ
+				) {
+					this.setNameOverride(name.value, true)
+					return true
+				}
 			}
 
 			case `${GMMOD}DEFAULT`: {
@@ -586,7 +639,9 @@ export class WrapperFunction extends BaseFunction {
 			}
 
 			case `${GMMOD}RETURNS`: {
-				this.returnType = token.getFlatString()
+				const next = bodyNavigator.peek(1)
+				const ret = next.children[0]
+				this.returnType = ret.getFlatString()
 				Logger.info(
 					"Overwriting return type for " +
 						this.name +
@@ -883,8 +938,8 @@ export class WrapperAnalyzer extends BaseParser {
 		token.source ??= this.opts.source
 		if (
 			!token ||
-			token.type !== TokenType.IDENTIFIER ||
-			token.type !== TokenType.FUNCTION_CALL
+			(token.type !== TokenType.IDENTIFIER &&
+				token.type !== TokenType.FUNCTION_CALL)
 		)
 			return
 
@@ -912,81 +967,107 @@ export class WrapperAnalyzer extends BaseParser {
 
 		while (!bodyNav.isLast()) {
 			const token = bodyNav.advance()
+			if (!token) break
 			const left = bodyNav.peek(-1)
 
 			switch (token.type) {
 				case TokenType.ASSIGN: {
 					const offset =
 						bodyNav.peek()?.type === TokenType.CAST ? 1 : 0
-					const right = bodyNav.peek(offset)
+					let right = bodyNav.peek(offset + 1)
+					if (!right || left.type !== TokenType.IDENTIFIER) break
 
-					if (!right) break
+					let isCast = false
+					let rightArgs
+					if (
+						right.type == TokenType.CAST ||
+						(right.type == TokenType.KEYWORD &&
+							right.value == "static_cast")
+					) {
+						if (right.value == "static_cast") {
+							if (bodyNav.peek(offset + 2).type == TokenType.LT) {
+								bodyNav.advance(3)
+								right = bodyNav.peek(offset + 2).children // TODO: Iterate children and find the YYGet func.
+								if (right.children?.length == 0) {
+									rightArgs = bodyNav.peek(offset + 3)
+								}
+							}
+						}
+						isCast = true
+					}
+					if (isCast) {
+						bodyNav.advance(1)
+						right = bodyNav.peek(offset + 1)
+						if (right.children.length == 0) {
+							rightArgs = bodyNav.peek(offset + 2)
+						}
+					}
 
-					if (left.type === TokenType.IDENTIFIER) {
+					// Handle YYGet<type>(arg, index)
+					if (
+						(right.type === TokenType.FUNCTION_CALL ||
+							right.type === TokenType.IDENTIFIER) &&
+						right.value.startsWith("YYGet")
+					) {
+						const inner = rightArgs.children.filter(
+							(e) => e.type !== TokenType.COMMA
+						)
+						if (inner.length < 2)
+							throw `Expected at least 2 arguments for ${right.value} at line ${right.line}`
+
+						const [ident, ind] = inner
 						if (
-							left.value === "kind" &&
-							bodyNav.match(
-								[
-									[TokenType.IDENTIFIER, "Result"],
-									TokenType.PERIOD,
-									[TokenType.IDENTIFIER, "kind"],
-								],
-								-4
-							)
-						) {
-							wr.setReturns(right.value)
+							ident.type !== TokenType.IDENTIFIER ||
+							ident.value !== "arg"
+						)
+							throw `Expected "arg" as first argument for ${right.value} at line ${right.line}`
+						if (ind.type !== TokenType.NUMBER)
+							throw `Expected Number as second argument for ${right.value} at line ${right.line}`
+
+						wr.addArg(left.value, parseInt(ind.value), right.value)
+						bodyNav.advance()
+						break
+					}
+
+					// Handle arg[index]
+					if (
+						(right.type === TokenType.ADDRESS_OF ||
+							right.type === TokenType.IDENTIFIER) &&
+						right.value === "arg"
+					) {
+						const more = bodyNav.peek(offset + 1)
+						if (more?.type === TokenType.ARRAY_PAIR) {
+							const inner = more.children[0]
+							if (inner.type !== TokenType.NUMBER)
+								throw `Expected Number as index for argument array at line ${right.line}`
+
+							if (left.value === "Result")
+								wr.setToReturnArg(inner.value)
+							else {
+								console.log(wr)
+								wr.addArg(left.value, inner.value)
+							}
 							bodyNav.advance()
-							continue
 						}
+						break
+					}
 
-						switch (right.type) {
-							case TokenType.FUNCTION_CALL: {
-								if (right.value.startsWith("YYGet")) {
-									const inner = right.children.filter(
-										(e) => e.type !== TokenType.COMMA
-									)
-									if (inner.length < 2)
-										throw `Expected at least 2 arguments for ${right.value} at line ${right.line}`
-
-									const ident = inner[0]
-									if (
-										ident.type !== TokenType.IDENTIFIER ||
-										ident.value !== "arg"
-									)
-										throw `Expected "arg" as first argument for ${right.value} at line ${right.line}`
-
-									const ind = inner[1]
-									if (ind.type !== TokenType.NUMBER)
-										throw `Expected Number as second argument for ${right.value} at line ${right.line}`
-
-									wr.addArg(
-										left.value,
-										ind.value,
-										right.value
-									)
-									bodyNav.advance()
-								}
-								break
-							}
-
-							case TokenType.ADDRESS_OF:
-							case TokenType.IDENTIFIER: {
-								if (right.value === "arg") {
-									const more = bodyNav.peek(offset + 1)
-									if (more?.type === TokenType.ARRAY_PAIR) {
-										const inner = more.children[0]
-										if (inner.type !== TokenType.NUMBER)
-											throw `Expected Number as index for argument array at line ${right.line}`
-
-										if (left.value === "Result")
-											wr.setToReturnArg(inner.value)
-										else wr.addArg(left.value, inner.value)
-										bodyNav.advance()
-									}
-								}
-								break
-							}
-						}
+					// Handle Result.kind = VALUE_BOOL
+					if (
+						left.value === "kind" &&
+						bodyNav.match(
+							[
+								[TokenType.IDENTIFIER, "Result"],
+								TokenType.PERIOD,
+								[TokenType.IDENTIFIER, "kind"],
+							],
+							-3
+						)
+					) {
+						const more = bodyNav.peek(offset + 1)
+						wr.setReturns(more.value)
+						bodyNav.advance()
+						break
 					}
 					break
 				}
@@ -996,27 +1077,35 @@ export class WrapperAnalyzer extends BaseParser {
 						left.type === TokenType.IDENTIFIER &&
 						left.value === "ImGui"
 					) {
-						const right = bodyNav.peek()
-						if (right?.type !== TokenType.FUNCTION_CALL)
-							throw `Expected FunctionCall after scope resolution at line ${token.line}`
-
-						wr.calls(right.value)
-						bodyNav.advance()
+						const right = bodyNav.peek(1)
+						const after = bodyNav.peek(2)
+						if (
+							right?.type !== TokenType.FUNCTION_CALL &&
+							right?.type !== TokenType.IDENTIFIER &&
+							after?.type !== TokenType.PAREN_PAIR
+						) {
+							throw `Expected FunctionCall after scope resolution at line ${token.line} in file ${next.source}`
+						}
+						if (!wr.targetFunc) {
+							wr.targetFunc = right.value
+						}
+						bodyNav.advance(2)
 					}
 					break
 				}
 
-				case TokenType.FUNCTION_CALL: {
-					if (token.value.startsWith("GM")) wr.modifier(token)
-					break
-				}
-
+				case TokenType.FUNCTION_CALL:
 				case TokenType.IDENTIFIER: {
 					if (
 						token.value.startsWith(`${GMMOD}`) ||
 						token.value.startsWith("GM")
-					)
-						wr.modifier(token)
+					) {
+						try {
+							wr.modifier(token, bodyNav)
+						} catch (e) {
+							Logger.error(e + " in file " + next.source)
+						}
+					}
 					break
 				}
 			}
