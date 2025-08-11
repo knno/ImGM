@@ -6,7 +6,8 @@
 		"modules:copy": "node src/tools/scripts/modules-copy.js",
 		"wrappers:gen": "node src/tools/scripts/wrappers-gen/index.js",
 		"release": "standard-version",
-		"commit": "commit"
+		"commit": "commit",
+		"test": "echo \"No tests found.\" && exit 0"
 	},
 	"type": "module",
 	"author": {

@@ -1,17 +1,107 @@
-name: Release
+name: Release ImGM
+
 on:
-  push:
-    branches:
-      - main
+    push:
+        tags:
+            - "v*" # e.g. v1.2.3
+
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 'latest'
-      - run: npm install
-      - run: npx semantic-release
+    build:
+        name: Build on ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [windows-latest, ubuntu-latest, macos-latest]
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.ref }}
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "latest"
+
+            - name: Install dependencies
+              run: |
+                  npm ci
+                  pip install -r requirements.txt
+
+            - name: Setup Premake
+              uses: abel0b/setup-premake@v2.4
+              with:
+                  version: "5.0.0-beta2"
+
+            - name: Run Premake
+              run: premake5 gmake2
+
+            - name: Configure CMake
+              run: cmake -S src/dll -B build -DCMAKE_BUILD_TYPE=Release
+
+            - name: Build
+              run: cmake --build build --config Release
+
+            - name: Find Artifact
+              id: artifact
+              run: |
+                  if [[ "${{ runner.os }}" == "Windows" ]]; then
+                    echo "path=src/gm/ImGM/extensions/ImGM/ImGM.dll" >> $GITHUB_OUTPUT
+                  elif [[ "${{ runner.os }}" == "Linux" ]]; then
+                    echo "path=src/gm/ImGM/extensions/ImGM/libImGM.so" >> $GITHUB_OUTPUT
+                  elif [[ "${{ runner.os }}" == "macOS" ]]; then
+                    echo "path=src/gm/ImGM/extensions/ImGM/libImGM.dylib" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Zip Artifact
+              run: zip ImGM-${{ runner.os }}.zip ${{ steps.artifact.outputs.path }}
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: ImGM-${{ runner.os }}
+                  path: ImGM-${{ runner.os }}.zip
+
+    release:
+        name: Create GitHub Release
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Download all artifacts
+              uses: actions/download-artifact@v3
+              with:
+                  path: release-assets
+
+            - name: Generate Changelog with standard-version
+              run: |
+                  npm install
+                  npx standard-version --release-as ${{ github.ref_name }}
+
+            - name: Create Changelog Link
+              run: echo "See full changelog [here](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)\n\n" > changelog.txt
+
+            - name: Extract Changelog for Release
+              run: |
+                awk '/## 
+
+                \[${{ github.ref_name }}\]
+
+                /,/^## 
+
+                \[/' CHANGELOG.md >> changelog.txt || true
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  draft: true
+                  tag_name: ${{ github.ref_name }}
+                  name: ImGM ${{ github.ref_name }}
+                  body_path: changelog.txt
+                  files: |
+                      release-assets/**/ImGM.dll
+                      release-assets/**/libImGM.so
+                      release-assets/**/libImGM.dylib
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

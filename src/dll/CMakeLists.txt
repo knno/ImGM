@@ -130,7 +130,11 @@ set(ImGui
 )
 source_group("ImGui" FILES ${ImGui})
 
-set(ImGui__internal
+set(ImGui__Internal
+    "imgui/internal/backends/imgui_impl_dx11.cpp"
+    "imgui/internal/backends/imgui_impl_dx11.h"
+    "imgui/internal/backends/imgui_impl_win32.cpp"
+    "imgui/internal/backends/imgui_impl_win32.h"
     "imgui/internal/imconfig.h"
     "imgui/internal/imgui.cpp"
     "imgui/internal/imgui.h"
@@ -143,15 +147,7 @@ set(ImGui__internal
     "imgui/internal/imstb_textedit.h"
     "imgui/internal/imstb_truetype.h"
 )
-source_group("ImGui\\internal" FILES ${ImGui__internal})
-
-set(ImGui__internal__backends
-    "imgui/internal/backends/imgui_impl_dx11.cpp"
-    "imgui/internal/backends/imgui_impl_dx11.h"
-    "imgui/internal/backends/imgui_impl_win32.cpp"
-    "imgui/internal/backends/imgui_impl_win32.h"
-)
-source_group("ImGui\\internal\\backends" FILES ${ImGui__internal__backends})
+source_group("ImGui\\Internal" FILES ${ImGui__Internal})
 
 set(ImGui__wrappers
     "imgui/wrappers/imgui_api_gm.cpp"
@@ -190,8 +186,7 @@ set(ALL_FILES
     ${no_group_source_files}
     ${Config}
     ${ImGui}
-    ${ImGui__internal}
-    ${ImGui__internal__backends}
+    ${ImGui__Internal}
     ${ImGui__wrappers}
 )
 

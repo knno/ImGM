@@ -13,6 +13,8 @@ imgm.config.js
 
 #region Internal
 
+.env
+.actrc
 .terminal.bashrc
 node_modules/
 venv/

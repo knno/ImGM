@@ -1,4 +1,4 @@
-name: Build ImGui for M1 Mac
+name: Build ImGM for M1 Mac
 on:
   workflow_dispatch:
 

@@ -1,4 +1,4 @@
-name: Build ImGui for Ubuntu
+name: Build ImGM for Ubuntu
 on:
   workflow_dispatch:
 

@@ -1,0 +1,63 @@
+name: Build ImGM for Windows
+on:
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.ref }}
+
+            - name: Setup Premake
+              uses: abel0b/setup-premake@v2.4
+              with:
+                  version: "5.0.0-beta2"
+                  # Premake generates dll.sln, which is then converted to CMake
+
+            - name: Setup NodeJS and NPM
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "latest"
+
+            - name: Cache NPM
+              uses: actions/cache@v3
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-npm-
+
+            - run: npm ci
+
+            - name: Install Python dependencies
+              run: pip install -r requirements.txt
+
+            - name: Run Premake
+              run: |
+                  premake5 vs2022
+                  cd src/dll/
+
+            - name: Ensure cmake-converter is available
+              run: |
+                  if not exist cmake-converter.exe (
+                  echo "cmake-converter.exe not found!"
+                  exit 1
+                  )
+
+            - name: Convert SLN to CMake
+              run: |
+                  ./cmake-converter.exe -s ./src/dll/dll.sln
+
+            - name: Configure CMake
+              run: cmake -S src/dll -B build
+
+            - name: Build DLL
+              run: cmake --build build --config Release
+
+            - name: Upload Files
+              uses: actions/upload-artifact@v3
+              with:
+                  name: ImGM-Windows-x64-${{ github.sha }}
+                  path: build/**/*.dll

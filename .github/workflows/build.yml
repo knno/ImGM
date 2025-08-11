@@ -1,0 +1,87 @@
+name: Build ImGM
+
+on:
+    workflow_dispatch:
+
+jobs:
+    build:
+        strategy:
+            matrix:
+                os: [windows-latest, ubuntu-latest, macos-latest]
+
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.ref }}
+
+            - name: Setup NodeJS
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "latest"
+
+            - name: Cache NPM
+              uses: actions/cache@v3
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-npm-
+
+            - name: Install NPM dependencies
+              run: npm ci
+
+            - name: Install Python dependencies
+              run: pip install -r requirements.txt
+
+            - name: Setup Premake
+              uses: abel0b/setup-premake@v2.4
+              with:
+                  version: "5.0.0-beta2"
+
+            - name: Run Premake (Windows)
+              if: matrix.os == 'windows-latest'
+              run: premake5 vs2022
+
+            - name: Run Premake (Linux/macOS)
+              if: matrix.os != 'windows-latest'
+              run: premake5 gmake2
+
+            - name: Convert SLN to CMake (Windows only)
+              if: matrix.os == 'windows-latest'
+              run: |
+                  if (!(Test-Path "cmake-converter.exe")) {
+                    Write-Host "cmake-converter.exe not found!"
+                    exit 1
+                  }
+                  ./cmake-converter.exe -s ./src/dll/dll.sln
+
+            - name: Configure CMake (Windows)
+              if: matrix.os == 'windows-latest'
+              run: cmake -S src/dll -B build -G "Visual Studio 17 2022" -A x64
+
+            - name: Configure CMake (Linux/macOS)
+              if: matrix.os != 'windows-latest'
+              run: cmake -S src/dll -B build
+
+            - name: Build Project (Windows)
+              if: matrix.os == 'windows-latest'
+              run: cmake --build build --config Release
+
+            - name: Build Project (Linux/macOS)
+              if: matrix.os != 'windows-latest'
+              run: cmake --build build
+
+            - name: Upload Artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                  name: ImGM-${{ matrix.os }}-${{ github.sha }}
+                  path: |
+                      src/gm/ImGM/extensions/ImGM/ImGM.dll
+                      src/gm/ImGM/extensions/ImGM/ImGM.exp
+                      src/gm/ImGM/extensions/ImGM/ImGM.lib
+                      src/gm/ImGM/extensions/ImGM/ImGM.pdb
+                      src/gm/ImGM/extensions/ImGM/ImGM.so
+                      src/gm/ImGM/extensions/ImGM/ImGM.dylib
+                      src/gm/ImGM/extensions/ImGM/ImGM.yy
