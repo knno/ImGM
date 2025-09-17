@@ -43,11 +43,13 @@ jobs:
               run: cmake-converter.exe -s ./src/dll/dll.sln
 
             - name: Configure CMake
-              run: cmake -S src/dll -B src/dll/build -G "Visual Studio 17 2022" -A x64
+              run: |
+                  cmake -S src/dll -B src/dll/build-debug -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 17 2022" -A x64
+                  cmake -S src/dll -B src/dll/build-release -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022" -A x64
 
             - name: Build Debug
               run: |
-                  cmake --build src/dll/build --config Debug
+                  cmake --build src/dll/build-debug --config Debug
 
                   $artifacts = @(
                     "ImGM.dll", "ImGM.exp", "ImGM.lib",
@@ -67,7 +69,7 @@ jobs:
                   }
 
             - name: Build Release
-              run: cmake --build src/dll/build --config Release
+              run: cmake --build src/dll/build-release --config Release
 
             - name: Upload Release Artifacts
               uses: actions/upload-artifact@v4
