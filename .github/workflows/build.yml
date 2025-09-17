@@ -31,28 +31,10 @@ jobs:
             - name: Install Python Dependencies
               run: pip install -r requirements.txt
 
-            - name: Manual Install CMake
-              run: |
-                  $CMAKE_VERSION = "4.1.1"
-                  $CMAKE_DIR = "$env:USERPROFILE/cmake-$CMAKE_VERSION"
-                  New-Item -ItemType Directory -Force -Path $CMAKE_DIR | Out-Null
-
-                  if ($env:RUNNER_OS -eq "Windows") {
-                    $url = "https://cmake.org/files/v4.1/cmake-$CMAKE_VERSION-windows-x86_64.zip"
-                    Invoke-WebRequest -Uri $url -OutFile "cmake.zip"
-                    Expand-Archive -Path "cmake.zip" -DestinationPath $CMAKE_DIR -Force
-                  } elseif ($env:RUNNER_OS -eq "Linux") {
-                    $url = "https://cmake.org/files/v4.1/cmake-$CMAKE_VERSION-linux-x86_64.tar.gz"
-                    Invoke-WebRequest -Uri $url -OutFile "cmake.tar.gz"
-                    tar -xzf "cmake.tar.gz" --strip-components=1 -C $CMAKE_DIR
-                  } elseif ($env:RUNNER_OS -eq "macOS") {
-                    $url = "https://cmake.org/files/v4.1/cmake-$CMAKE_VERSION-macos-universal.tar.gz"
-                    Invoke-WebRequest -Uri $url -OutFile "cmake.tar.gz"
-                    tar -xzf "cmake.tar.gz" --strip-components=1 -C $CMAKE_DIR
-                  }
-
-                  $env:PATH = "$CMAKE_DIR/bin;$env:PATH"
-                  cmake --version
+            - name: Setup CMake
+              uses: jwlawson/actions-setup-cmake@v2
+              with:
+                cmake-version: '4.1.1'
 
             - name: Install Premake
               uses: abel0b/setup-premake@v2.4
@@ -148,10 +130,10 @@ jobs:
             - name: Install Python Dependencies
               run: pip install -r requirements.txt
 
-            - name: Install Newer CMake
-              uses: ssrobins/install-cmake@v1
+            - name: Setup CMake
+              uses: jwlawson/actions-setup-cmake@v2
               with:
-                  version: "4.1.1"
+                cmake-version: '4.1.1'
 
             - name: Setup Premake
               uses: abel0b/setup-premake@v2.4
@@ -227,10 +209,10 @@ jobs:
             - name: Install Python Dependencies
               run: pip install -r requirements.txt
 
-            - name: Install Newer CMake
-              uses: ssrobins/install-cmake@v1
+            - name: Setup CMake
+              uses: jwlawson/actions-setup-cmake@v2
               with:
-                  version: "4.1.1"
+                cmake-version: '4.1.1'
 
             - name: Setup Premake
               uses: abel0b/setup-premake@v2.4
