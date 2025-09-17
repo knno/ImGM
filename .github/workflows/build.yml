@@ -12,7 +12,8 @@ jobs:
         runs-on: ${{ matrix.os }}
 
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout Repository
+              uses: actions/checkout@v4
               with:
                   ref: ${{ github.ref }}
 
@@ -29,10 +30,10 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-npm-
 
-            - name: Install NPM dependencies
+            - name: Install NPM Dependencies
               run: npm ci
 
-            - name: Install Python dependencies
+            - name: Install Python Dependencies
               run: pip install -r requirements.txt
 
             - name: Setup Premake
@@ -40,6 +41,7 @@ jobs:
               with:
                   version: "5.0.0-beta2"
 
+            # Premake
             - name: Run Premake (Windows)
               if: matrix.os == 'windows-latest'
               run: premake5 vs2022
@@ -48,35 +50,79 @@ jobs:
               if: matrix.os != 'windows-latest'
               run: premake5 gmake2
 
-            - name: Convert SLN to CMake (Windows only)
+            # Convert SLN to CMake (Windows only)
+            - name: Convert SLN to CMake
               if: matrix.os == 'windows-latest'
               run: |
                   if (!(Test-Path "cmake-converter.exe")) {
                     Write-Host "cmake-converter.exe not found!"
                     exit 1
                   }
-                  ./cmake-converter.exe -s ./src/dll/dll.sln
+                  cmake-converter.exe -s ./src/dll/dll.sln
 
+            # Configure CMake
             - name: Configure CMake (Windows)
               if: matrix.os == 'windows-latest'
-              run: cmake -S src/dll -B build -G "Visual Studio 17 2022" -A x64
+              run: cmake -S src/dll -B src/dll/build -G "Visual Studio 17 2022" -A x64
 
-            - name: Configure CMake (Linux/macOS)
+            - name: Configure CMake (Linux/macOS) Debug
               if: matrix.os != 'windows-latest'
-              run: cmake -S src/dll -B build
+              run: cmake -S src/dll -B src/dll/build-debug -DCMAKE_BUILD_TYPE=Debug
 
-            - name: Build Project (Windows)
+            - name: Configure CMake (Linux/macOS) Release
+              if: matrix.os != 'windows-latest'
+              run: cmake -S src/dll -B src/dll/build-release -DCMAKE_BUILD_TYPE=Release
+
+            # Build Debug
+            - name: Build Debug (Windows)
               if: matrix.os == 'windows-latest'
-              run: cmake --build build --config Release
+              run: |
+                  cmake --build src/dll/build --config Debug
 
-            - name: Build Project (Linux/macOS)
+                  $artifacts = @(
+                    "ImGM.dll", "ImGM.exp", "ImGM.lib",
+                    "ImGM.pdb", "ImGM.so", "ImGM.dylib", "ImGM.yy"
+                  )
+
+                  $basePath = "src/gm/ImGM/extensions/ImGM"
+
+                  foreach ($file in $artifacts) {
+                    $source = Join-Path $basePath $file
+                    $target = Join-Path $basePath ("{0}.debug{1}" -f [System.IO.Path]::GetFileNameWithoutExtension($file), [System.IO.Path]::GetExtension($file))
+                    if (Test-Path $source) {
+                      Rename-Item -Path $source -NewName $target
+                    } else {
+                      Write-Host "$file not found, skipping..."
+                    }
+                  }
+
+            - name: Build Debug (Linux/macOS)
               if: matrix.os != 'windows-latest'
-              run: cmake --build build
+              run: cmake --build src/dll/build-debug
 
-            - name: Upload Artifacts
+            - name: Rename Debug Artifacts (Linux/macOS)
+              if: matrix.os != 'windows-latest'
+              run: |
+                  for file in ImGM.so ImGM.dylib ImGM.yy; do
+                    src="src/gm/ImGM/extensions/ImGM/$file"
+                    dst="src/gm/ImGM/extensions/ImGM/${file%.${file##*.}}.debug.${file##*.}"
+                    [ -f "$src" ] && mv "$src" "$dst" || echo "$file not found, skipping..."
+                  done
+
+            # Build Release
+            - name: Build Release (Windows)
+              if: matrix.os == 'windows-latest'
+              run: cmake --build src/dll/build --config Release
+
+            - name: Build Release (Linux/macOS)
+              if: matrix.os != 'windows-latest'
+              run: cmake --build src/dll/build-release
+
+            # Upload Artifacts
+            - name: Upload Release Artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: ImGM-${{ matrix.os }}-${{ github.sha }}
+                  name: ImGM-Release-${{ matrix.os }}-${{ github.sha }}
                   path: |
                       src/gm/ImGM/extensions/ImGM/ImGM.dll
                       src/gm/ImGM/extensions/ImGM/ImGM.exp
@@ -85,3 +131,16 @@ jobs:
                       src/gm/ImGM/extensions/ImGM/ImGM.so
                       src/gm/ImGM/extensions/ImGM/ImGM.dylib
                       src/gm/ImGM/extensions/ImGM/ImGM.yy
+
+            - name: Upload Debug Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ImGM-Debug-${{ matrix.os }}-${{ github.sha }}
+                  path: |
+                      src/gm/ImGM/extensions/ImGM/ImGM.debug.dll
+                      src/gm/ImGM/extensions/ImGM/ImGM.debug.exp
+                      src/gm/ImGM/extensions/ImGM/ImGM.debug.lib
+                      src/gm/ImGM/extensions/ImGM/ImGM.debug.pdb
+                      src/gm/ImGM/extensions/ImGM/ImGM.debug.so
+                      src/gm/ImGM/extensions/ImGM/ImGM.debug.dylib
+                      src/gm/ImGM/extensions/ImGM/ImGM.debug.yy
