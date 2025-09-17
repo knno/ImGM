@@ -40,12 +40,7 @@ jobs:
               run: premake5 vs2022
 
             - name: Convert SLN to CMake
-              run: |
-                  if (!(Test-Path "cmake-converter.exe")) {
-                    Write-Host "cmake-converter.exe not found!"
-                    exit 1
-                  }
-                  cmake-converter.exe -s ./src/dll/dll.sln
+              run: cmake-converter.exe -s ./src/dll/dll.sln
 
             - name: Configure CMake
               run: cmake -S src/dll -B src/dll/build -G "Visual Studio 17 2022" -A x64
