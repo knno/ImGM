@@ -33,27 +33,30 @@ jobs:
 
             - name: Manual Install CMake
               run: |
-                CMAKE_VERSION=4.1.1
-                CMAKE_DIR="$HOME/cmake-$CMAKE_VERSION"
-                mkdir -p "$CMAKE_DIR"
+                  $CMAKE_VERSION = "4.1.1"
+                  $CMAKE_DIR = "$env:USERPROFILE/cmake-$CMAKE_VERSION"
+                  New-Item -ItemType Directory -Force -Path $CMAKE_DIR | Out-Null
 
-                if [[ "$RUNNER_OS" == "Linux" ]]; then
-                  curl -sSL "https://cmake.org/files/v4.1/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C "$CMAKE_DIR"
-                elif [[ "$RUNNER_OS" == "macOS" ]]; then
-                  curl -sSL "https://cmake.org/files/v4.1/cmake-${CMAKE_VERSION}-macos-universal.tar.gz" | tar --strip-components=1 -xz -C "$CMAKE_DIR"
-                elif [[ "$RUNNER_OS" == "Windows" ]]; then
-                  curl -sSL -o cmake.zip "https://cmake.org/files/v4.1/cmake-${CMAKE_VERSION}-windows-x86_64.zip"
-                  unzip -q cmake.zip -d "$CMAKE_DIR"
-                fi
+                  if ($env:RUNNER_OS -eq "Windows") {
+                    $url = "https://cmake.org/files/v4.1/cmake-$CMAKE_VERSION-windows-x86_64.zip"
+                    Invoke-WebRequest -Uri $url -OutFile "cmake.zip"
+                    Expand-Archive -Path "cmake.zip" -DestinationPath $CMAKE_DIR -Force
+                  } elseif ($env:RUNNER_OS -eq "Linux") {
+                    $url = "https://cmake.org/files/v4.1/cmake-$CMAKE_VERSION-linux-x86_64.tar.gz"
+                    Invoke-WebRequest -Uri $url -OutFile "cmake.tar.gz"
+                    tar -xzf "cmake.tar.gz" --strip-components=1 -C $CMAKE_DIR
+                  } elseif ($env:RUNNER_OS -eq "macOS") {
+                    $url = "https://cmake.org/files/v4.1/cmake-$CMAKE_VERSION-macos-universal.tar.gz"
+                    Invoke-WebRequest -Uri $url -OutFile "cmake.tar.gz"
+                    tar -xzf "cmake.tar.gz" --strip-components=1 -C $CMAKE_DIR
+                  }
 
-                echo "$CMAKE_DIR/bin" >> $GITHUB_PATH
-
+                  echo "$CMAKE_DIR/bin" >> $env:GITHUB_PATH
 
             - name: Install Premake
               uses: abel0b/setup-premake@v2.4
               with:
                   version: "5.0.0-beta2"
-
 
             - name: Run Premake
               run: premake5 vs2022
