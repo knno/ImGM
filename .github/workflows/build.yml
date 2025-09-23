@@ -1,261 +1,165 @@
-name: Build ImGM
+name: Build and Test ImGM
 
 on:
     workflow_dispatch:
+        inputs:
+            runtime:
+                description: "Target runtime"
+                required: false
+env:
+    CMAKE_VERSION: "4.1.1"
+    NODE_VERSION: "20"
+    PREMAKE_VERSION: "5.0.0-beta2"
+    DLL_PATH: "src/gm/ImGM/extensions/ImGM"
+    YYP_PATH: "${{ github.workspace }}/src/gm/ImGM/ImGM.yyp"
 
 jobs:
-    build-windows:
-        runs-on: windows-latest
+    build-imgm:
+        strategy:
+            matrix:
+                os: [windows-latest, ubuntu-latest, macos-latest]
+        runs-on: ${{ matrix.os }}
+        name: Build ImGM (${{ matrix.os }})
         steps:
-            - name: Checkout Repository
+            - name: Checkout
               uses: actions/checkout@v4
               with:
-                  ref: ${{ github.ref }}
+                submodules: recursive
 
-            - name: Setup NodeJS
+            - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: "20"
+                  node-version: ${{ env.NODE_VERSION }}
 
             - name: Cache NPM
               uses: actions/cache@v3
               with:
                   path: ~/.npm
-                  key: windows-npm-${{ hashFiles('**/package-lock.json') }}
+                  key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
-                      windows-npm-
+                      ${{ runner.os }}-npm-
 
-            - name: Install NPM Dependencies
-              run: npm ci
-
-            - name: Install Python Dependencies
-              run: pip install -r requirements.txt
+            - name: Install Dependencies
+              run: |
+                  npm ci
+                  pip install -r requirements.txt
 
             - name: Setup CMake
               uses: jwlawson/actions-setup-cmake@v2
               with:
-                cmake-version: '4.1.1'
+                  cmake-version: ${{ env.CMAKE_VERSION }}
 
-            - name: Install Premake
+            - name: Setup Premake
               uses: abel0b/setup-premake@v2.4
               with:
-                  version: "5.0.0-beta2"
+                  version: ${{ env.PREMAKE_VERSION }}
+
+            - name: Setup GameMaker IDE and Runtime
+              uses: bscotch/igor-setup@v1
+              id: igor
+              with:
+                  target-yyp: ${{ env.YYP_PATH }}
+                  access-key: ${{ secrets.ACCESS_KEY }}
+                  local-settings-override-file: ${{ github.workspace }}/local_settings.json
+                  runtime-version: ${{ inputs.runtime }}
+            - name: Store Directory into Environment
+              run: echo "IGOR_USER_DIR=${{ steps.igor.outputs.user-dir }}" >> $GITHUB_ENV
+
+            - name: Prepare ImGM Modules
+              env:
+                  GM_DATA: ${{ env.IGOR_USER_DIR }}
+              run: npm run modules:copy -- --gm --imgui --ext all
 
             - name: Run Premake
-              run: premake5 vs2022
-
-            - name: Convert SLN to CMake
-              run: cmake-converter.exe -s ./src/dll/dll.sln
+              run: |
+                  if [ "${{ matrix.os }}" = "windows-latest" ]; then
+                    premake5 vs2022
+                    cmake-converter.exe -s ./src/dll/dll.sln
+                  else
+                    premake5 gmake2
+                  fi
 
             - name: Configure CMake
               run: |
-                  cmake -S src/dll -B src/dll/build-debug -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 17 2022" -A x64
-                  cmake -S src/dll -B src/dll/build-release -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022" -A x64
+                  cmake -S src/dll -B src/dll/build-debug -DCMAKE_BUILD_TYPE=Debug
+                  cmake -S src/dll -B src/dll/build-release -DCMAKE_BUILD_TYPE=Release
 
             - name: Build Debug
               run: |
-                  cmake --build src/dll/build-debug --config Debug
+                  cmake --build src/dll/build-debug
+                  if [ "${{ matrix.os }}" = "windows-latest" ]; then
+                    pwsh -Command "
+                      \$artifacts = @('ImGM.dll','ImGM.exp','ImGM.lib','ImGM.pdb','ImGM.so','ImGM.dylib','ImGM.yy');
+                      \$base = '${{ env.DLL_PATH }}';
+                      foreach (\$f in \$artifacts) {
+                        \$src = Join-Path \$base \$f;
+                        \$dst = Join-Path \$base ('{0}.debug{1}' -f [System.IO.Path]::GetFileNameWithoutExtension(\$f), [System.IO.Path]::GetExtension(\$f));
+                        if (Test-Path \$src) { Rename-Item \$src \$dst }
+                      }
+                    "
+                  else
+                    for file in ImGM.so ImGM.dylib ImGM.yy; do
+                      src="${{ env.DLL_PATH }}/$file"
+                      dst="${{ env.DLL_PATH }}/${file%.${file##*.}}.debug.${file##*.}"
+                      [ -f "$src" ] && mv "$src" "$dst"
+                    done
+                  fi
 
-                  $artifacts = @(
-                    "ImGM.dll", "ImGM.exp", "ImGM.lib",
-                    "ImGM.pdb", "ImGM.so", "ImGM.dylib", "ImGM.yy"
-                  )
+            - name: Build Release
+              run: cmake --build src/dll/build-release
 
-                  $basePath = "src/gm/ImGM/extensions/ImGM"
+            - name: Upload Debug Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ImGM-Debug-${{ matrix.os }}
+                  path: ${{ env.DLL_PATH }}/*.debug.*
 
-                  foreach ($file in $artifacts) {
-                    $source = Join-Path $basePath $file
-                    $target = Join-Path $basePath ("{0}.debug{1}" -f [System.IO.Path]::GetFileNameWithoutExtension($file), [System.IO.Path]::GetExtension($file))
-                    if (Test-Path $source) {
-                      Rename-Item -Path $source -NewName $target
-                    } else {
-                      Write-Host "$file not found, skipping..."
-                    }
+            - name: Upload Release Artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ImGM-Release-${{ matrix.os }}
+                  path: ${{ env.DLL_PATH }}/ImGM.*
+
+    test-gamemaker:
+        needs: build-imgm
+        strategy:
+            matrix:
+                os: [windows-latest, ubuntu-latest, macos-latest]
+        runs-on: ${{ matrix.os }}
+        name: Test GameMaker (${{ matrix.os }})
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Download Debug DLLs
+              uses: actions/download-artifact@v4
+              with:
+                  name: ImGM-Debug-${{ matrix.os }}
+                  path: ${{ env.DLL_PATH }}/debug
+
+            - name: Download Release DLLs
+              uses: actions/download-artifact@v4
+              with:
+                  name: ImGM-Release-${{ matrix.os }}
+                  path: ${{ env.DLL_PATH }}/release
+
+            - name: Restore DLLs to Original Paths
+              shell: pwsh
+              run: |
+                  $base = "${{ env.DLL_PATH }}"
+                  $debugDir = Join-Path $base "debug"
+                  $releaseDir = Join-Path $base "release"
+                  $files = @("ImGM.dll", "ImGM.exp", "ImGM.lib", "ImGM.pdb", "ImGM.so", "ImGM.dylib", "ImGM.yy")
+                  foreach ($f in $files) {
+                    $debug = Join-Path $debugDir $f
+                    $release = Join-Path $releaseDir $f
+                    $target = Join-Path $base $f
+                    if (Test-Path $debug) { Copy-Item $debug -Destination $target -Force }
+                    elseif (Test-Path $release) { Copy-Item $release -Destination $target -Force }
                   }
 
-            - name: Build Release
-              run: cmake --build src/dll/build-release --config Release
-
-            - name: Upload Release Artifacts
-              uses: actions/upload-artifact@v4
+            - name: Build GameMaker Project
+              uses: bscotch/igor-build@v1
               with:
-                  name: ImGM-Release-windows-${{ github.sha }}
-                  path: |
-                      src/gm/ImGM/extensions/ImGM/ImGM.dll
-                      src/gm/ImGM/extensions/ImGM/ImGM.exp
-                      src/gm/ImGM/extensions/ImGM/ImGM.lib
-                      src/gm/ImGM/extensions/ImGM/ImGM.pdb
-                      src/gm/ImGM/extensions/ImGM/ImGM.so
-                      src/gm/ImGM/extensions/ImGM/ImGM.dylib
-                      src/gm/ImGM/extensions/ImGM/ImGM.yy
-
-            - name: Upload Debug Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: ImGM-Debug-windows-${{ github.sha }}
-                  path: |
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.dll
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.exp
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.lib
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.pdb
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.so
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.dylib
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.yy
-
-    build-ubuntu:
-        needs: build-windows
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{ github.ref }}
-
-            - name: Setup NodeJS
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-
-            - name: Cache NPM
-              uses: actions/cache@v3
-              with:
-                  path: ~/.npm
-                  key: ubuntu-npm-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ubuntu-npm-
-
-            - name: Install NPM Dependencies
-              run: npm ci
-
-            - name: Install Python Dependencies
-              run: pip install -r requirements.txt
-
-            - name: Setup CMake
-              uses: jwlawson/actions-setup-cmake@v2
-              with:
-                cmake-version: '4.1.1'
-
-            - name: Setup Premake
-              uses: abel0b/setup-premake@v2.4
-              with:
-                  version: "5.0.0-beta2"
-
-            - name: Run Premake
-              run: premake5 gmake2
-
-            - name: Configure CMake Debug
-              run: cmake -S src/dll -B src/dll/build-debug -DCMAKE_BUILD_TYPE=Debug
-
-            - name: Configure CMake Release
-              run: cmake -S src/dll -B src/dll/build-release -DCMAKE_BUILD_TYPE=Release
-
-            - name: Build Debug
-              run: cmake --build src/dll/build-debug
-
-            - name: Rename Debug Artifacts
-              run: |
-                  for file in ImGM.so ImGM.dylib ImGM.yy; do
-                    src="src/gm/ImGM/extensions/ImGM/$file"
-                    dst="src/gm/ImGM/extensions/ImGM/${file%.${file##*.}}.debug.${file##*.}"
-                    [ -f "$src" ] && mv "$src" "$dst" || echo "$file not found, skipping..."
-                  done
-
-            - name: Build Release
-              run: cmake --build src/dll/build-release
-
-            - name: Upload Release Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: ImGM-Release-ubuntu-${{ github.sha }}
-                  path: |
-                      src/gm/ImGM/extensions/ImGM/ImGM.so
-                      src/gm/ImGM/extensions/ImGM/ImGM.dylib
-                      src/gm/ImGM/extensions/ImGM/ImGM.yy
-
-            - name: Upload Debug Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: ImGM-Debug-ubuntu-${{ github.sha }}
-                  path: |
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.so
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.dylib
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.yy
-
-    build-macos:
-        needs: build-ubuntu
-        runs-on: macos-latest
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-              with:
-                  ref: ${{ github.ref }}
-
-            - name: Setup NodeJS
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-
-            - name: Cache NPM
-              uses: actions/cache@v3
-              with:
-                  path: ~/.npm
-                  key: macos-npm-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      macos-npm-
-
-            - name: Install NPM Dependencies
-              run: npm ci
-
-            - name: Install Python Dependencies
-              run: pip install -r requirements.txt
-
-            - name: Setup CMake
-              uses: jwlawson/actions-setup-cmake@v2
-              with:
-                cmake-version: '4.1.1'
-
-            - name: Setup Premake
-              uses: abel0b/setup-premake@v2.4
-              with:
-                  version: "5.0.0-beta2"
-
-            - name: Run Premake
-              run: premake5 gmake2
-
-            - name: Configure CMake (Debug)
-              run: cmake -S src/dll -B src/dll/build-debug -DCMAKE_BUILD_TYPE=Debug
-
-            - name: Configure CMake (Release)
-              run: cmake -S src/dll -B src/dll/build-release -DCMAKE_BUILD_TYPE=Release
-
-            - name: Build Debug
-              run: cmake --build src/dll/build-debug
-
-            - name: Rename Debug Artifacts
-              run: |
-                  for file in ImGM.so ImGM.dylib ImGM.yy; do
-                    src="src/gm/ImGM/extensions/ImGM/$file"
-                    dst="src/gm/ImGM/extensions/ImGM/${file%.${file##*.}}.debug.${file##*.}"
-                    [ -f "$src" ] && mv "$src" "$dst" || echo "$file not found, skipping..."
-                  done
-
-            - name: Build Release
-              run: cmake --build src/dll/build-release
-
-            - name: Upload Release Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: ImGM-Release-macos-${{ github.sha }}
-                  path: |
-                      src/gm/ImGM/extensions/ImGM/ImGM.so
-                      src/gm/ImGM/extensions/ImGM/ImGM.dylib
-                      src/gm/ImGM/extensions/ImGM/ImGM.yy
-
-            - name: Upload Debug Artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: ImGM-Debug-macos-${{ github.sha }}
-                  path: |
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.so
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.dylib
-                      src/gm/ImGM/extensions/ImGM/ImGM.debug.yy
+                  yyp-path: ${{ env.YYP_PATH }}
+                  user-dir: ${{ steps.igor.outputs.user-dir }}
