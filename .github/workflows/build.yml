@@ -15,6 +15,10 @@ env:
     DLL_PATH: "src/gm/ImGM/extensions/ImGM"
     YYP_PATH: "${{ github.workspace }}/src/gm/ImGM/ImGM.yyp"
 
+defaults:
+  run:
+    working-directory: ${{ github.workspace }}
+
 jobs:
     build-imgm:
         strategy:
@@ -23,6 +27,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         name: Build ImGM (${{ matrix.os }})
         steps:
+            #region Init Jobs
             - name: Checkout
               uses: actions/checkout@v4
               with:
@@ -32,14 +37,6 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
-
-            - name: Cache NPM
-              uses: actions/cache@v3
-              with:
-                  path: ~/.npm
-                  key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-npm-
 
             - name: Install Dependencies
               run: |
@@ -55,15 +52,39 @@ jobs:
               uses: abel0b/setup-premake@v2.4
               with:
                   version: ${{ env.PREMAKE_VERSION }}
+            #endregion
 
-            - name: Setup GameMaker IDE and Runtime
-              uses: bscotch/igor-setup@v1
+            #region Setup Jobs
+            - name: Get YYP version from file (Linux)
+              if: runner.os == 'Linux'
+              run: |
+                echo "YYP_VERSION=$(grep -oP '(?<=IDEVersion":")(\d+\.\d+\.\d+\.\d+)(?=")' ${{ env.YYP_PATH }})" >> $GITHUB_ENV
+            - name: Get YYP version from file (Windows)
+              if: runner.os == 'Windows'
+              run: |
+                $yypVersion = Select-String -Path "${{ env.YYP_PATH }}" -Pattern 'IDEVersion":"(\d+\.\d+\.\d+\.\d+)' -AllMatches | ForEach-Object { $_.Matches.Groups[1].Value }
+                "YYP_VERSION=$yypVersion" | Out-File -Append -FilePath $env:GITHUB_ENV
+
+            - name: Igor Setup
+              uses: bscotch/igor-setup@main
               id: igor
               with:
                   target-yyp: ${{ env.YYP_PATH }}
                   access-key: ${{ secrets.ACCESS_KEY }}
                   local-settings-override-file: ${{ github.workspace }}/local_settings.json
                   runtime-version: ${{ inputs.runtime }}
+
+            - name: Caching
+              uses: actions/cache@v4
+              with:
+                path: |
+                  ${{ github.workspace }}/bootstrapper
+                  ${{ github.workspace }}/runtimes
+                key: ${{ runner.os }}-${{ env.YYP_VERSION }}-${{ inputs.runtime }}
+
+            #endregion
+
+            #region Process Jobs
             - name: Store Directory into Environment
               run: echo "IGOR_USER_DIR=${{ steps.igor.outputs.user-dir }}" >> $GITHUB_ENV
 
@@ -121,6 +142,7 @@ jobs:
               with:
                   name: ImGM-Release-${{ matrix.os }}
                   path: ${{ env.DLL_PATH }}/ImGM.*
+            #endregion
 
     test-gamemaker:
         needs: build-imgm
@@ -128,7 +150,7 @@ jobs:
             matrix:
                 os: [windows-latest] # ubuntu-latest, macos-latest
         runs-on: ${{ matrix.os }}
-        name: Test ImGM (${{ matrix.os }}) using ${{ inputs.runtime }}
+        name: Test ImGM (${{ matrix.os }}) - GM Runtime ${{ inputs.runtime }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -160,8 +182,8 @@ jobs:
                     elseif (Test-Path $release) { Copy-Item $release -Destination $target -Force }
                   }
 
-            - name: Build GameMaker Project
-              uses: bscotch/igor-build@v1
+            - name: Igor Build GameMaker Project
+              uses: bscotch/igor-build@main
               with:
                   yyp-path: ${{ env.YYP_PATH }}
-                  user-dir: ${{ steps.igor.outputs.user-dir }}
+                  user-dir: ${{ env.IGOR_USER_DIR }}
