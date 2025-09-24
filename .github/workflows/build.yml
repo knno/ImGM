@@ -22,6 +22,9 @@ jobs:
                 os: [windows-latest] # ignore for now: ubuntu-latest, macos-latest
         runs-on: ${{ matrix.os }}
         name: Build ImGM (${{ matrix.os }})
+        environment: GameMaker
+        outputs:
+          igor-user-dir: ${{ steps.igor.outputs.user-dir }}
         steps:
             #region Init Jobs
             - name: Checkout
@@ -76,7 +79,7 @@ jobs:
                 path: |
                   ${{ github.workspace }}/bootstrapper
                   ${{ github.workspace }}/runtimes
-                key: ${{ runner.os }}-${{ env.YYP_VERSION }}-${{ inputs.runtime }}
+                key: ${{ runner.os }}-${{ inputs.runtime }}
 
             #endregion
 
@@ -140,13 +143,16 @@ jobs:
                   path: ${{ env.DLL_PATH }}/ImGM.*
             #endregion
 
-    test-gamemaker:
+    test-imgm:
         needs: build-imgm
         strategy:
             matrix:
                 os: [windows-latest] # ubuntu-latest, macos-latest
         runs-on: ${{ matrix.os }}
         name: Test ImGM (${{ matrix.os }}) - GM Runtime ${{ inputs.runtime }}
+        environment: GameMaker
+        env:
+          IGOR_USER_DIR: ${{ needs.build-imgm.outputs.igor-user-dir }}
         steps:
             - name: Checkout
               uses: actions/checkout@v4
