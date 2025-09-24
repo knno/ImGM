@@ -80,7 +80,9 @@ jobs:
                 path: |
                   ${{ github.workspace }}/bootstrapper
                   ${{ github.workspace }}/runtimes
-                key: ${{ runner.os }}-${{ inputs.runtime }}
+                  ${{ steps.igor.outputs.runtime-dir }}
+                  ${{ steps.igor.outputs.user-dir }}
+                key: OS-${{ runner.os }}-_-GM-${{ inputs.runtime }}
 
             #endregion
 
