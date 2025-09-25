@@ -8,12 +8,6 @@
   #endif
 #endif
 
-#ifndef __YY__RUNNER_INTERFACE_H_
 #include <YYRunnerInterface.h>
-#endif
-#ifndef __YYRVALUE_H__
-#include <YYRValue.h>
-#endif
-#ifndef __REF_H__
 #include <Ref.h>
-#endif
+#include <YYRValue.h>

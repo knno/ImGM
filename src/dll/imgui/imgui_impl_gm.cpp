@@ -4,8 +4,7 @@
 #include <tchar.h>
 #include <imgui_gm.h>
 #include <imgui_impl_gm.h>
-#include <YYRunnerInterface.h>
-#include <YYRValue.h>
+#include <../internal/gm.h>
 
 static char* g_pWrite[128];
 template<typename T> inline void BufferWrite(int buffer, T val, int& offset, bool grow = true) {
@@ -48,7 +47,7 @@ void UpdateStateFromStruct(RValue* state, StateUpdateFlags flags = StateUpdateFl
 	RValue* input = YYStructGetMember(state, "Input");
 	RValue* engine = YYStructGetMember(state, "Engine");
 	RValue* renderer = YYStructGetMember(state, "Renderer");
-	
+
 	// Read RValues
 	{
 		if (display->kind != VALUE_UNDEFINED) {
@@ -123,7 +122,7 @@ bool ImGui_ImplGM_Init(void* window_handle) {
 	main_viewport->PlatformHandleRaw = window_handle;
 
 	io.UserData = &ud;
-	
+
 	return true;
 }
 

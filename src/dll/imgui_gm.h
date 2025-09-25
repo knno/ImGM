@@ -1,8 +1,7 @@
 #pragma once
+//#pragma warning( disable : 4244 )
 #include <stddef.h>
 #include <internal/gm.h>
-#include <internal/YYRunnerInterface.h>
-#include <internal/YYRValue.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -45,10 +44,10 @@ static inline ImVec4 GMCOLOR_TO(int col, float alpha) {
 }
 
 static inline double GMCOLOR_FROM(ImVec4 col) {
-	int r = col.x * 0xFF;
-	int g = col.y * 0xFF;
-	int b = col.z * 0xFF;
-	int alpha = col.w * 0xFF;
+	int r = (int)(col.x * 0xFF);
+	int g = (int)(col.y * 0xFF);
+	int b = (int)(col.z * 0xFF);
+	int alpha = (int)(col.w * 0xFF);
 	return r | (g << 8) | (b << 16) | (alpha << 24);
 }
 
@@ -111,7 +110,7 @@ template<typename T> static inline T* YYGetArray(RValue* arg, int ind, int len) 
 	T* val = new T[len];
 	for (int i = 0; i < len; i++) {
 		GET_RValue(&g_Copy, arr, NULL, i);
-		val[i] = g_Copy.val;
+		val[i] = (T)g_Copy.val;
 	}
 	return val;
 }

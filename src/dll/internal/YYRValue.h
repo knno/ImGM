@@ -2,7 +2,7 @@
 #define  __YYRVALUE_H__
 // Modified for ImGM
 
-typedef signed int  int32;
+typedef signed int int32;
 typedef long long int64;
 
 class YYObjectBase;

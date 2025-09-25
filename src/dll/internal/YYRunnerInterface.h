@@ -1375,7 +1375,7 @@ inline void ShowMessage(const char* msg) { g_pYYRunnerInterface->ShowMessage(msg
 inline void* YYAlloc(int _size) { return g_pYYRunnerInterface->YYAlloc(_size); }
 inline void* YYRealloc(void* pOriginal, int _newSize) { return g_pYYRunnerInterface->YYRealloc(pOriginal, _newSize); }
 inline void  YYFree(const void* p) { g_pYYRunnerInterface->YYFree(p); }
-inline char* YYStrDup(const char* _pS) { return g_pYYRunnerInterface->YYStrDup(_pS); }
+inline const char* YYStrDup(const char* _pS) { return g_pYYRunnerInterface->YYStrDup(_pS); }
 
 // yyget* functions for parsing arguments out of the arg index
 inline bool YYGetBool(const RValue* _pBase, int _index) { return g_pYYRunnerInterface->YYGetBool(_pBase, _index); }

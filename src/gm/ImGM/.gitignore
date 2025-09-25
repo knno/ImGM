@@ -1,2 +1,4 @@
 *.zip
 *.resource_order
+
+extensions/ImGM/*.exp

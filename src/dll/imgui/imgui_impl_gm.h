@@ -1,7 +1,6 @@
 #pragma once
 #include <imgui.h>
-#include "../internal/YYRunnerInterface.h"
-#include "../internal/YYRValue.h"
+#include <../internal/gm.h>
 
 extern int g_CmdBuffer;
 extern int g_FontBuffer;

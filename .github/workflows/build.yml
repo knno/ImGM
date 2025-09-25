@@ -6,7 +6,7 @@ on:
         inputs:
             runtime:
                 description: "Target runtime"
-                default: "2024.11.0.227"
+                default: "2024.13.1.242"
                 required: false
 env:
     CMAKE_VERSION: "4.1.1"
@@ -115,7 +115,7 @@ jobs:
               run: |
                 cmake --build src/dll/build-debug
                 if ($env:RUNNER_OS -eq "Windows") {
-                  $files = @("ImGM.dll", "ImGM.exp", "ImGM.lib", "ImGM.pdb", "ImGM.so", "ImGM.dylib", "ImGM.yy")
+                  $files = @("ImGM.dll", "ImGM.exp", "ImGM.lib", "ImGM.pdb", "ImGM.so", "ImGM.dylib")
                   $base = "${{ env.DLL_PATH }}"
                   foreach ($file in $files) {
                     $src = Join-Path $base $file
@@ -135,7 +135,7 @@ jobs:
                   }
                 } else {
                   $base = "${{ env.DLL_PATH }}"
-                  $files = @("ImGM.so", "ImGM.dylib", "ImGM.yy")
+                  $files = @("ImGM.so", "ImGM.dylib")
                   foreach ($file in $files) {
                     $src = Join-Path $base $file
                     $nameOnly = $file.Substring(0, $file.LastIndexOf('.'))
@@ -207,7 +207,7 @@ jobs:
                   $base = "${{ env.DLL_PATH }}"
                   $debugDir = Join-Path $base "debug"
                   $releaseDir = Join-Path $base "release"
-                  $files = @("ImGM.dll", "ImGM.exp", "ImGM.lib", "ImGM.pdb", "ImGM.so", "ImGM.dylib", "ImGM.yy")
+                  $files = @("ImGM.dll", "ImGM.exp", "ImGM.lib", "ImGM.pdb", "ImGM.so", "ImGM.dylib")
                   foreach ($f in $files) {
                     $debug = Join-Path $debugDir $f
                     $release = Join-Path $releaseDir $f
