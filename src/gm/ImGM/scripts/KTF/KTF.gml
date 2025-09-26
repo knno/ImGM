@@ -88,8 +88,10 @@ function __KTF() constructor {
 
     /// Attrs
     static enabled = os_get_config() == "Test";
-	static __started = false;
 	static fixtures = [] // Default fixtures
+
+    static __started = false;
+    static __exc_orig_fn = function(ex){};
     static __out_json = {
         success: 0,
         failed: 0,
@@ -103,12 +105,58 @@ function __KTF() constructor {
 	static test_manager = new __KTFManager()
 
     /// Funcs
-	static __Step = function() {
+
+    static UpdateOutJson = function() {
+        var json = json_stringify(__KTF.__out_json);
+        var f = file_text_open_write("ktf-stats.log");
+        file_text_write_string(f, json);
+        file_text_close(f);
+    }
+
+    static __UpdateExceptionHandler = function() {
+        static __handler = function(ex) {
+            // Print some messages to the output log
+            show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
+            show_debug_message($"{__KTFManager.__console_tag} Unhandled exception " );
+            show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
+            show_debug_message($"{__KTFManager.__console_tag} " + ex.longMessage);
+
+            var _original_meth = __KTF.__exc_orig_fn
+            if (is_method(_original_meth)){
+                __KTF.__exc_orig_fn(ex);
+            }
+            __KTF.test_manager.Complete(1, {error: string(ex)}); // game end
+            return 0;
+        }
+        static __get_current_exception_handler = function(){
+            var _a = exception_unhandled_handler(__KTF.__exc_orig_fn);
+            exception_unhandled_handler(_a);
+            return _a;
+        }
+
+        var _fn = __get_current_exception_handler();
+        if (_fn != undefined) {
+            if (_fn == __handler) {
+                return _fn;
+            } else {
+                __KTF.__exc_orig_fn = _fn;
+                exception_unhandled_handler(__handler);
+            }
+        } else {
+            if (__KTF.__exc_orig_fn != undefined) {
+                exception_unhandled_handler(__KTF.__exc_orig_fn);
+                __UpdateExceptionHandler();
+            }
+        }
+    }
+
+    static __Step = function() {
         if (__KTF.enabled) {
     		if (not __KTF.__started) {
     			__KTF.__started = true;
+                __KTF.__UpdateExceptionHandler();
     		    __KTF.test_manager.FindTests();
-                __KTF.test_manager.UpdateOutJson()
+                __KTF.UpdateOutJson();
     			__KTF.test_manager.Test();
     		}
     		if (__KTF.test_manager != undefined) {
@@ -131,11 +179,9 @@ function __KTFAssertionError(error, message=undefined, longMessage=undefined) co
 function __KTFManager() constructor {
 	var this = self;
 
-    self._console_tag = "KTF: ";
-    self.testing_tests = [];
-    // self.available_tests = tests;
-
     static reports = undefined;
+    static __console_tag = "[KTF]";
+    self.testing_tests = [];
     self.step_enabled = true;
 
     static FindTests = function() {
@@ -152,11 +198,18 @@ function __KTFManager() constructor {
         return fs;
     }
 
-    static UpdateOutJson = function() {
-        var json = json_stringify(__KTF.__out_json);
-        var f = file_text_open_write("ktf-stats.log");
-        file_text_write_string(f, json);
-        file_text_close(f);
+    static Complete = function(exitCode=0, err=undefined){
+        var this=self;
+        this.step_enabled = false;
+        __KTF.__out_json.status = "success";
+        if (exitCode != 0) {
+            __KTF.__out_json.status = "success";
+            __KTF.__out_json.error = err;
+        }
+        __KTF.__out_json.stats.completed_at = date_datetime_string(date_current_datetime());
+        __KTF.UpdateOutJson();
+        show_debug_message($"{__KTFManager.__console_tag} {__KTF.__out_json.success}/{__KTF.__out_json.count} Tests passed" + (exitCode == 0 ? " ✔️" : " ✖️"));
+        game_end(exitCode);
     }
 
     static Test = function() {
@@ -171,16 +224,16 @@ function __KTFManager() constructor {
                 status: "pending",
                 success: undefined,
             }
-            UpdateOutJson();
+            __KTF.UpdateOutJson();
 
             test.Test(); // Run synchronously
-            show_debug_message("[KTF] testing \"" + test.name + "\"...");
+            show_debug_message($"{__KTFManager.__console_tag} Testing \"{test.name}\" ...");
             self.Step();
         }
     }
 
     Step = method({this}, function() {
-        var test, status, report, _f = false;
+        var test, status, report, _f = false, errors = undefined;
         for (var i=0; i<array_length(this.testing_tests); i++) {
             test = this.testing_tests[i];
             report = __KTF.__out_json.tests[$ test.name];
@@ -194,20 +247,19 @@ function __KTFManager() constructor {
                     __KTF.__out_json.success ++;
                     report.status = "success";
                 } else {
+                    if (__KTF.__out_json.failed == 0) {
+                        errors = {};
+                    }
                     __KTF.__out_json.failed ++;
                     report.status = "failed";
+                    errors[$ test.name] = report.error;
                 }
             } else {
                 report.status = "running";
             }
         }
         if (__KTF.__out_json.success + __KTF.__out_json.failed) == (__KTF.__out_json.count) {
-            this.step_enabled = false;
-            __KTF.__out_json.status = "done";
-            __KTF.__out_json.stats.completed_at = date_datetime_string(date_current_datetime());
-            this.UpdateOutJson();
-            show_debug_message($"{__KTF.__out_json.success}/{__KTF.__out_json.count} Tests passed" + (__KTF.__out_json.failed == 0 ? " ✔️" : " ✖️"));
-            game_end();
+            this.Complete((__KTF.__out_json.failed == 0) ? 0 : 1, errors);
         }
     });
 }
@@ -217,7 +269,41 @@ function __KTFTest(name, fixtures, func, step_func=undefined) constructor {
     self.name = name;
     self.fixtures = fixtures ?? [];
     self.is_testing = false;
-    ResolveFixtures = method({this}, function() {
+    self.Test = function() {
+        var this = self;
+
+        self.result = {
+            // test: this,
+            assertions: 0,
+            success: undefined,
+            error: undefined,
+            output: undefined,
+        };
+
+		try {self.fixtures = self.ResolveFixtures();}
+        catch (error) {
+            self.Fail(error);
+            return; // Nothing done.
+        }
+
+        for (var i=0; i<array_length(self.fixtures); i++) {
+            self.fixtures[i].Setup({
+                test: this,
+				test_manager: __KTF.test_manager,
+            });
+        }
+        try {
+            self.is_testing = true;
+            array_push(__KTF.test_manager.testing_tests, this);
+
+            method({test_manager: __KTF.test_manager, test: this}, this.func)();
+            return true;
+
+        } catch (error) {
+            self.Fail(error);
+        }
+	}
+    self.ResolveFixtures = method({this}, function() {
         var _resolved_fixtures = [];
         array_foreach(this.fixtures, method({this, _resolved_fixtures}, function(_element, _index) {
             if !is_instanceof(_element, __KTFFixture) {
@@ -256,40 +342,6 @@ function __KTFTest(name, fixtures, func, step_func=undefined) constructor {
         this.fixtures = _resolved_fixtures;
         return this.fixtures;
     });
-    self.Test = function() {
-        var this = self;
-
-        self.result = {
-            // test: this,
-            assertions: 0,
-            success: undefined,
-            error: undefined,
-            output: undefined,
-        };
-
-		try {self.fixtures = self.ResolveFixtures();}
-        catch (error) {
-            self.Fail(error);
-            return; // Nothing done.
-        }
-
-        for (var i=0; i<array_length(self.fixtures); i++) {
-            self.fixtures[i].Setup({
-                test: this,
-				test_manager: __KTF.test_manager,
-            });
-        }
-        try {
-            self.is_testing = true;
-            array_push(__KTF.test_manager.testing_tests, this);
-
-            method({test_manager: __KTF.test_manager, test: this}, this.func)();
-            return true;
-
-        } catch (error) {
-            self.Fail(error);
-        }
-	}
     self.Proceed = method({this}, function() {
 
         if this.step_func != undefined {
@@ -331,7 +383,6 @@ function __KTFTest(name, fixtures, func, step_func=undefined) constructor {
         }
     });
 
-
 	self.func = func;
 	if self.func != undefined {
         self.func = method({test: this}, self.func);
@@ -372,7 +423,7 @@ function __KTFFixture(name, _func_setup, _func_cleanup) constructor {
         }
     }
 
-    self._testing_tests = [];
+    self.my_testing_tests = [];
     self.func_setup = _func_setup;
     self.func_cleanup = _func_cleanup;
     self.is_applied = false;
@@ -381,15 +432,15 @@ function __KTFFixture(name, _func_setup, _func_cleanup) constructor {
         if not self.is_applied {
             method({test_manager: __KTF.test_manager}, self.func_setup)();
             self.is_applied = true;
-            array_push(self._testing_tests, args.test);
+            array_push(self.my_testing_tests, args.test);
         }
     };
 
     static Cleanup = function(args=undefined) {
         var this = self;
         if self.is_applied {
-            array_delete(self._testing_tests, array_get_index(self._testing_tests, args.test), 1);
-            if array_length(self._testing_tests) == 0 {
+            array_delete(self.my_testing_tests, array_get_index(self.my_testing_tests, args.test), 1);
+            if array_length(self.my_testing_tests) == 0 {
                 var _found = false;
                 var fixt;
                 for (var _i=0;_i<array_length(__KTF.test_manager.testing_tests);_i++) {
