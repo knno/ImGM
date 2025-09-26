@@ -89,10 +89,11 @@ jobs:
 
             - name: Caching
               uses: actions/cache@v4
+              if: runner.os == 'Windows'
               with:
                   path: |
                       ${{ env.YYP_PATH }}
-                  key: OS-${{ runner.os }}-_-GM-${{ inputs.runtime }}
+                  key: win32-windows-${{ inputs.runtime }}
 
             #endregion
 
@@ -288,7 +289,7 @@ jobs:
                   New-Item -Path $logFile -ItemType File -Force
                   $logFile = Resolve-Path $logFile
 
-                  $ktfLog = "ktf-stats.log"
+                  $ktfLog = Join-Path "${{ steps.igor-build.outputs.out-dir }}" "ktf-stats.log"
                   if (Test-Path $ktfLog) {
                       Remove-Item $ktfLog -Force
                   }
@@ -301,12 +302,12 @@ jobs:
                   }
 
                   Write-Host "Testing..."
-                  $maxWaitSeconds = 600
+                  $maxWaitSeconds = 240
                   $startTime = Get-Date
                   $done = $false
 
                   while (-not $done -and ((Get-Date) - $startTime).TotalSeconds -lt $maxWaitSeconds) {
-                      Start-Sleep -Seconds 1
+                      Start-Sleep -Seconds 10
                       if (Test-Path $ktfLog) {
                           try {
                               $json = Get-Content $ktfLog -Raw | ConvertFrom-Json

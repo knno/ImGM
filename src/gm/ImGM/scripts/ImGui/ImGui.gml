@@ -5316,3 +5316,6 @@ function ImGui() constructor {
 
     return self;
 };
+
+
+new ImGui();

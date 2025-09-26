@@ -154,7 +154,7 @@ function __KTFManager() constructor {
 
     static UpdateOutJson = function() {
         var json = json_stringify(__KTF.__out_json);
-        var f = file_text_open_write(working_directory + "ktf-stats.log");
+        var f = file_text_open_write("ktf-stats.log");
         file_text_write_string(f, json);
         file_text_close(f);
     }
