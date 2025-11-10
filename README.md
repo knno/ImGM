@@ -1,5 +1,10 @@
 # ImGM
 
+
+> ⚠️ Work-In-Progress!
+> This readme and the project itself is considered W.I.P.
+> Feel free to contribute
+
 An ImGui wrapper for modern GameMaker.
 
 [<!-- Screenshot -->](https://github.com/knno/ImGM/blob/dev/.github/Screenshot%202025-03-14%20043958.png)
