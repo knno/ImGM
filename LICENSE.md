@@ -1,22 +1,21 @@
+MIT License
+
 Copyright (c) Kenan Masri
 
-Permission is hereby granted, free of charge, to any individual developer or small team ("Indie Developer") to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of this software, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-### Indie Developer Terms
-An "Indie Developer" is defined as:
-- An individual or team with fewer than 5 full-time employees
-- Annual gross revenue under $100,000 USD
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-Indie Developers may use this software for both non-commercial and commercial purposes, including incorporation into paid products or services.
-
-### Company Terms
-Any legal entity ("Company") that does not meet the above criteria may use this software **only for non-commercial purposes**, such as internal research, education, or evaluation.
-
-Commercial use by Companies—including integration into paid products, services, or monetized platforms—is **not permitted** without prior written permission from the copyright holder.
-
-To request a commercial license, contact: kenanmasri@outlook.com
-
-### General Terms
-- Redistribution must retain this license notice in full.
-- This software is provided "as is", without warranty of any kind.
-- The copyright holder reserves the right to update or revoke licensing terms.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
