@@ -49,6 +49,26 @@ export class BaseTokenType extends Dict {
 	/** Any Number token */
 	static NUMBER = "Number"
 
+	/** ( */
+	static LPAREN = "ParenthesesLeft"
+	/** ) */
+	static RPAREN = "ParenthesesRight"
+	/** { */
+	static LBRACE = "BraceLeft"
+	/** } */
+	static RBRACE = "BraceRight"
+	/** [ */
+	static LBRACKET = "BracketLeft"
+	/** ] */
+	static RBRACKET = "BracketRight"
+
+	/** () */
+	static PAREN_PAIR = "ParenthesesPair"
+	/** {} */
+	static BRACE_PAIR = "BracePair"
+	/** [] */
+	static BRACKET_PAIR = "BracketPair"
+
 	static [util.inspect.custom]() {
 		return `TT`
 	}
@@ -100,22 +120,26 @@ export class BaseToken {
 		let before = undefined,
 			after = undefined,
 			end = undefined,
-			inner = undefined
+			value = this.value,
+			inner = ""
 
 		switch (this.type) {
-			case TT.PAIR_PAREN: {
+			case TT.PAREN_PAIR: {
 				after = "("
 				end = ")"
+				value = ""
 				break
 			}
-			case TT.PAIR_BRACE: {
+			case TT.BRACE_PAIR: {
 				after = "{"
 				end = "}"
+				value = ""
 				break
 			}
-			case TT.PAIR_BRACKET: {
+			case TT.BRACKET_PAIR: {
 				after = "["
 				end = "]"
+				value = ""
 				break
 			}
 			case TT.IDENTIFIER: {
@@ -146,7 +170,8 @@ export class BaseToken {
 		}
 		return (
 			(begin ?? "") +
-			this.value +
+			(before ?? "") +
+			value +
 			(after ?? "") +
 			(inner ?? "") +
 			(end ?? "")
@@ -175,11 +200,11 @@ export class BaseToken {
 			case "]":
 				return TT.RBRACKET
 			case "()":
-				return TT.PAIR_PAREN
+				return TT.PAREN_PAIR
 			case "[]":
-				return TT.PAIR_BRACKET
+				return TT.BRACKET_PAIR
 			case "{}":
-				return TT.PAIR_BRACE
+				return TT.BRACE_PAIR
 		}
 		return undefined
 	}

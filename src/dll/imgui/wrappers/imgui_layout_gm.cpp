@@ -17,7 +17,7 @@ GMFUNC(__imgui_dummy) {
 	Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_newline) {
+GMFUNC(__imgui_new_line) {
 	ImGui::NewLine();
 	Result.kind = VALUE_UNDEFINED;
 }
@@ -56,7 +56,7 @@ GMFUNC(__imgui_unindent) {
 	Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_sameline) {
+GMFUNC(__imgui_same_line) {
 	double offset_from_start_x = YYGetReal(arg, 0);
 	GMDEFAULT(0);
 	double spacing = YYGetReal(arg, 1);

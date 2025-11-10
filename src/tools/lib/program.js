@@ -558,8 +558,8 @@ class ProcessProgram {
 		ProcessProgram._useTerminal =
 			(workerData == null || workerData == undefined) &&
 			(Config.logging.useTerminal == true ||
-				(typeof ProcessProgram.params?.useTerminal != "undefined" &&
-					ProcessProgram.params.useTerminal == true))
+				(typeof ProcessProgram.params?.term != "undefined" &&
+					ProcessProgram.params.term == true))
 	}
 }
 

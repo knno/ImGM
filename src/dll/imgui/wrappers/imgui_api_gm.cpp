@@ -143,6 +143,7 @@ GMFUNC(__imgui_get_version) {
 }
 
 GMFUNC(__imgui_push_id) {
+	GMOVERRIDE(PushID)
 	RValue* id = &arg[0];
 	GMHINT(String|Real);
 
@@ -155,11 +156,13 @@ GMFUNC(__imgui_push_id) {
 }
 
 GMFUNC(__imgui_pop_id) {
+	GMOVERRIDE(PopID)
 	ImGui::PopID();
 	Result.kind = VALUE_UNDEFINED;
 }
 
 GMFUNC(__imgui_get_id) {
+	GMOVERRIDE(GetID)
 	const char* str_id = YYGetString(arg, 0);
 
 	Result.kind = VALUE_REAL;
@@ -267,6 +270,7 @@ GMFUNC(__imgui_is_any_item_focused) {
 }
 
 GMFUNC(__imgui_get_item_id) {
+	GMOVERRIDE(GetItemID)
 	Result.kind = VALUE_REAL;
 	Result.val = ImGui::GetItemID();
 }

@@ -13,7 +13,7 @@ GMFUNC(__imgui_input_text) {
 	COPY_RValue(&Result, &g_Copy);
 }
 
-GMFUNC(__imgui_input_textmultiline) {
+GMFUNC(__imgui_input_text_multiline) {
 	const char* label = YYGetString(arg, 0);
 	const char* val = YYGetString(arg, 1);
 	GMRETURN();
@@ -30,7 +30,7 @@ GMFUNC(__imgui_input_textmultiline) {
 	COPY_RValue(&Result, &g_Copy);
 }
 
-GMFUNC(__imgui_input_textwithhint) {
+GMFUNC(__imgui_input_text_with_hint) {
 	const char* label = YYGetString(arg, 0);
 	const char* hint = YYGetString(arg, 1);
 	const char* val = YYGetString(arg, 2);

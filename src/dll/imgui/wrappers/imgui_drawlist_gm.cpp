@@ -29,7 +29,7 @@ GMFUNC(__imgui_get_foreground_drawlist) {
 	return;
 }
 
-GMFUNC(__imgui_get_window_drawlist) {
+GMFUNC(__imgui_get_window_draw_list) {
 	Result.kind = VALUE_PTR;
 	Result.ptr = ImGui::GetWindowDrawList();
 }
@@ -162,7 +162,7 @@ GMFUNC(__imgui_drawlist_add_triangle_filled) {
 	double y2 = YYGetReal(arg, 4);
 	double x3 = YYGetReal(arg, 5);
 	double y3 = YYGetReal(arg, 6);
-	int col = (int)YYGetReal(arg, 9);
+	int col = (int)YYGetReal(arg, 7);
 	GMOVERRIDE(DrawListAddTriangleFilled);
 
 	list->AddTriangleFilled(ImVec2(x1, y1), ImVec2(x2, y2), ImVec2(x3, y3), col | (0xFF << 24));
@@ -563,7 +563,7 @@ GMFUNC(__imgui_drawlist_pop_textureid) {
 GMFUNC(__imgui_drawlist_flags_get) {
 	ImDrawList* list = (ImDrawList*)YYGetPtr(arg, 0);
 	GMOVERRIDE(DrawListFlagsGet);
-	
+
 	Result.kind = VALUE_INT64;
 	Result.val = list->Flags;
 }

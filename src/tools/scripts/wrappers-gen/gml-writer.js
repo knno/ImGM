@@ -1,27 +1,36 @@
-export function writeGmlScript({ namespace, enums, wrappers, jsdocConfig }) {
-    /// TODO: SAMPLE... Refer to toGML and toJsdoc
-	let lines = [`/// @namespace ${namespace}`, ""]
+export function generateGMLScript({ namespace, enums, wrappers, cfg }) {
+	const ret = {
+		enums: "",
+		binds: "",
+	};
+
+	let lines = []
 
 	for (const en of enums) {
-		lines.push(`/// @enum ${en.name}`)
-		for (const entry of en.entries) {
-			lines.push(`${en.name}_${entry} = ${entry};`)
+		lines.push(cfg.style.spacing + `/// @enum ${en.name.toPascalCase()}`)
+		if (en.comment) {
+			lines.push(cfg.style.spacing + `/// @desc ${en.comment.split("\n")[0]}`)
 		}
+		lines.push(cfg.style.spacing + `enum ${en.name.toPascalCase()} {`)
+		for (const entry of Object.keys(en.entries)) {
+			if (en.entries[entry] == null) {
+				lines.push(cfg.style.spacing.repeat(2) + `${entry},`)
+			} else {
+				lines.push(cfg.style.spacing.repeat(2) + `${entry} = ${en.entries[entry]},`)
+			}
+		}
+		lines.push(cfg.style.spacing + "}")
 		lines.push("")
 	}
 
+	ret.enums = lines.join("\n").trimStart();
+	lines = [];
+
 	for (const fn of wrappers) {
-		// lines.push(fn.toGMExtensionFunction())
-		lines.push(fn.toGML(1, false))
-		// if (jsdocConfig.enabled) {
-		// 	lines.push(`/// @function ${fn.name}`)
-		// 	if (fn.comment) lines.push(`/// ${fn.comment}`)
-		// }
-		// lines.push(`${fn.name} = function(${fn.args.join(", ")}) {`)
-		// lines.push(`    // TODO: implement wrapper logic`)
-		// lines.push("};")
-		// lines.push("")
+		lines.push(fn.toJsdoc(enums));
+		lines.push(fn.toGML(1, false));
 	}
 
-	return lines.join("\n")
+	ret.binds = lines.join("\n").trimStart()
+	return ret;
 }

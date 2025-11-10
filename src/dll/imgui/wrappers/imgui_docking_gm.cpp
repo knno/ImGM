@@ -27,6 +27,7 @@ GMFUNC(__imgui_dock_space) {
 }
 
 GMFUNC(__imgui_find_viewport_by_id) {
+	GMOVERRIDE(FindViewportByID)
     ImGuiID id = YYGetUint32(arg, 0);
 
     Result.kind = VALUE_PTR;
@@ -73,6 +74,7 @@ GMFUNC(__imgui_dock_space_over_viewport) {
 }
 
 GMFUNC(__imgui_set_next_window_dock_id) {
+	GMOVERRIDE(SetNextWindowDockID)
     ImGuiID dock_id = YYGetUint32(arg, 0);
     ImGuiCond cond = (int)YYGetReal(arg, 1);
     GMDEFAULT(ImGuiCond.None);
@@ -97,6 +99,7 @@ GMFUNC(__imgui_set_next_window_class) {
 }
 
 GMFUNC(__imgui_get_window_dock_id) {
+	GMOVERRIDE(GetWindowDockID)
     Result.kind = VALUE_REAL;
     Result.val = ImGui::GetWindowDockID();
 }
@@ -109,7 +112,7 @@ GMFUNC(__imgui_is_window_docked) {
 // DockBuilder
 
 
-GMFUNC(__imgui_dockbuilder_dock_window) {
+GMFUNC(__imgui_dock_builder_dock_window) {
     const char* window_name = YYGetString(arg, 0);
     ImGuiID node_id = YYGetUint32(arg, 1);
 
@@ -117,21 +120,21 @@ GMFUNC(__imgui_dockbuilder_dock_window) {
     Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_dockbuilder_get_node) {
+GMFUNC(__imgui_dock_builder_get_node) {
     ImGuiID node_id = YYGetUint32(arg, 0);
 
     Result.kind = VALUE_PTR;
     Result.ptr = ImGui::DockBuilderGetNode(node_id);
 }
 
-GMFUNC(__imgui_dockbuilder_get_central_node) {
+GMFUNC(__imgui_dock_builder_get_central_node) {
     ImGuiID node_id = YYGetUint32(arg, 0);
 
     Result.kind = VALUE_PTR;
     Result.ptr = ImGui::DockBuilderGetCentralNode(node_id);
 }
 
-GMFUNC(__imgui_dockbuilder_add_node) {
+GMFUNC(__imgui_dock_builder_add_node) {
     ImGuiID node_id = YYGetUint32(arg, 0);
     GMDEFAULT(0);
     ImGuiDockNodeFlags flags = (int)YYGetReal(arg, 1);
@@ -141,14 +144,14 @@ GMFUNC(__imgui_dockbuilder_add_node) {
     Result.val = ImGui::DockBuilderAddNode(node_id, flags);
 }
 
-GMFUNC(__imgui_dockbuilder_remove_node) {
+GMFUNC(__imgui_dock_builder_remove_node) {
     ImGuiID node_id = YYGetUint32(arg, 0);
 
     ImGui::DockBuilderRemoveNode(node_id);
     Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_dockbuilder_remove_node_docked_windows) {
+GMFUNC(__imgui_dock_builder_remove_node_docked_windows) {
     ImGuiID node_id = YYGetUint32(arg, 0);
     bool clear_settings_refs = YYGetBool(arg, 1);
     GMDEFAULT(true);
@@ -157,14 +160,14 @@ GMFUNC(__imgui_dockbuilder_remove_node_docked_windows) {
     Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_dockbuilder_remove_node_child_nodes) {
+GMFUNC(__imgui_dock_builder_remove_node_child_nodes) {
     ImGuiID node_id = YYGetUint32(arg, 0);
 
     ImGui::DockBuilderRemoveNodeChildNodes(node_id);
     Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_dockbuilder_set_node_pos) {
+GMFUNC(__imgui_dock_builder_set_node_pos) {
     ImGuiID node_id = YYGetUint32(arg, 0);
     float x = static_cast<float>(YYGetReal(arg, 1));
     float y = static_cast<float>(YYGetReal(arg, 2));
@@ -173,7 +176,7 @@ GMFUNC(__imgui_dockbuilder_set_node_pos) {
     Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_dockbuilder_set_node_size) {
+GMFUNC(__imgui_dock_builder_set_node_size) {
     ImGuiID node_id = YYGetUint32(arg, 0);
     float width = static_cast<float>(YYGetReal(arg, 1));
     float height = static_cast<float>(YYGetReal(arg, 2));
@@ -182,12 +185,12 @@ GMFUNC(__imgui_dockbuilder_set_node_size) {
     Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_dockbuilder_split_node) {
+GMFUNC(__imgui_dock_builder_split_node) {
     ImGuiID node_id = YYGetUint32(arg, 0);
     int split_dir = (int)YYGetReal(arg, 1);
     ImGuiDir final_split_dir = (ImGuiDir)split_dir;
     float size_ratio_for_node_at_dir = static_cast<float>(YYGetReal(arg, 2));
-    GMRETURN(Array<ImGuiID>);
+    GMRETURNS(Array<ImGuiID>);
 
     ImGuiID out_id_at_dir;
     ImGuiID out_id_at_opposite_dir;
@@ -196,7 +199,7 @@ GMFUNC(__imgui_dockbuilder_split_node) {
     YYSetArray(&Result, output_ids, 3);
 }
 
-GMFUNC(__imgui_dockbuilder_copy_dock_space) {
+GMFUNC(__imgui_dock_builder_copy_dock_space) {
     GMOVERRIDE(DockBuilderCopyDockSpace);
     ImGuiID src_dockspace_id = YYGetUint32(arg, 0);
     ImGuiID dst_dockspace_id = YYGetUint32(arg, 1);
@@ -215,7 +218,7 @@ GMFUNC(__imgui_dockbuilder_copy_dock_space) {
     Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_dockbuilder_copy_node) {
+GMFUNC(__imgui_dock_builder_copy_node) {
     GMOVERRIDE(DockBuilderCopyNode);
     ImGuiID src_node_id = YYGetUint32(arg, 0);
     ImGuiID dst_node_id = YYGetUint32(arg, 1);
@@ -233,7 +236,7 @@ GMFUNC(__imgui_dockbuilder_copy_node) {
     ImGui::DockBuilderCopyNode(src_node_id, dst_node_id, out_node_remap_pairs);
 }
 
-GMFUNC(__imgui_dockbuilder_copy_window_settings) {
+GMFUNC(__imgui_dock_builder_copy_window_settings) {
     const char* src_name = YYGetString(arg, 0);
     const char* dst_name = YYGetString(arg, 1);
 
@@ -241,7 +244,7 @@ GMFUNC(__imgui_dockbuilder_copy_window_settings) {
     Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_dockbuilder_finish) {
+GMFUNC(__imgui_dock_builder_finish) {
     ImGuiID node_id = YYGetUint32(arg, 0);
 
     ImGui::DockBuilderFinish(node_id);

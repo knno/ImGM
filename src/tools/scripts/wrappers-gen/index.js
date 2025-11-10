@@ -118,15 +118,21 @@ async function main() {
 			const totalTime = (totalEndTime - totalStartTime) / 1000
 
 			// Tokenize result stuffs back
-			let createToken = (t) => {
-				let newTok = new CppToken({
+			let createToken = (t, parentSource = undefined) => {
+				const source = t.source ?? parentSource
+
+				const children = (t.children || []).map((ct) =>
+					createToken(ct, source)
+				)
+
+				const newTok = new CppToken({
 					type: t.type,
 					value: t.value,
 					line: t.line,
 					col: t.col,
-					children: (t.children || []).map(createToken), // recursive
+					children,
 				})
-				newTok.source ??= t.source
+				newTok.source ??= source
 				newTok._extra ??= t._extra
 				return newTok
 			}
@@ -140,7 +146,7 @@ async function main() {
 					api.tokens = tokens
 					return tokens
 				})
-				.map(createToken)
+				.map((t) => createToken(t))
 
 			for (const api of apis) {
 				const rawEnums = JSON.parse(api.enums) || []
@@ -189,6 +195,19 @@ async function main() {
 			// Analyze wrappers
 			let wrapperAnalyzer = getWrappers(apis.tokens, undefined, apis)
 
+			// Log tokens sources recusrively
+			apis.tokens = apis.tokens.flatMap((t) => {
+				let logSources = (token) => {
+					let tokens;
+					if (!token.children || token.children.length === 0) {
+						tokens = [token]
+					} else {
+						tokens = token.children.flatMap(logSources)
+					}
+				}
+				return logSources(t)
+			})
+
 			const fullApi = {
 				tokens: apis.tokens,
 				enums: apis.flatMap((api) => api.enums || []),
@@ -202,8 +221,7 @@ async function main() {
 			)
 			injectWrappers(fullApi.wrappers, extFile)
 
-			// TODO: Here we should update the .gml files in gm/scripts/..... for namespaces (e.g. ImGui, and ImExt<ExtensionName>)
-			// from the enums and wrappers above. with jsdocs (from config as a reference)
+			updateGmlScripts(fullApi, Config);
 
 			Logger.info(`${"─".repeat(10)} Total Stats ${"─".repeat(10)}`)
 			Logger.info(

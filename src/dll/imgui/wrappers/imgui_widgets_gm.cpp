@@ -37,8 +37,9 @@ GMFUNC(__imgui_invisible_button) {
 
 GMFUNC(__imgui_arrow_button) {
 	const char* str_id = YYGetString(arg, 0);
-	ImGuiDir dir = (ImGuiDir)(YYGetInt64(arg, 1));
-	
+	int64 _dir = YYGetInt64(arg, 1);
+	ImGuiDir dir = (ImGuiDir)(_dir);
+
 	Result.kind = VALUE_BOOL;
 	Result.val = ImGui::ArrowButton(str_id, dir);
 }
@@ -64,7 +65,7 @@ GMFUNC(__imgui_image) {
 	delete[]uv;
 }
 
-GMFUNC(__imgui_image_button) { 
+GMFUNC(__imgui_image_button) {
 	const char* str_id = YYGetString(arg, 0);
 	double sprite = YYGetReal(arg, 1);
 	double subimg = YYGetReal(arg, 2);
@@ -143,7 +144,7 @@ GMFUNC(__imgui_progressbar) {
 	GMDEFAULT(0);
 	const char* overlay = YYGetString(arg, 3);
 	GMDEFAULT("");
-	
+
 	ImGui::ProgressBar(frac, ImVec2(width, height), (overlay == "" ? NULL : overlay));
 	Result.kind = VALUE_UNDEFINED;
 }

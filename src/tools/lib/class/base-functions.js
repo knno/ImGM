@@ -43,7 +43,7 @@ export class BaseFunctionArgument {
 	} = {}) {
 		this.oldName = name instanceof Name ? name._name : name
 		this.name = this.constructor.getName(
-			new Name(this.oldName, "snake_case", "")
+			new Name(this.oldName, "snake_case", "_")
 		)
 		if (this.name._name == this.oldName) {
 			this.oldName = undefined
