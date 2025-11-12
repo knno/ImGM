@@ -25,6 +25,28 @@ function my_custom_function_name(_label, title, _data_array, enabled=true) {
 
 #endregion
 
+#region UI
+
+/**
+ * @function is_window_in_gm_window
+ * @description Returns true if the ImGui window is docked inside the main GM window.
+ * @param {String} window_name The name of the ImGui window to check.
+ * @return {bool}
+ *
+ */
+function is_window_in_gm_window(window_name) {
+    var viewport = ImGui.GetWindowViewport(window_name);
+    if (viewport == undefined || viewport == -1) return false;
+
+    var main_viewport = ImGui.GetMainViewport();
+    if (main_viewport == undefined || main_viewport == -1) return false;
+
+    return (viewport == main_viewport);
+}
+
+
+#endregion
+
 #region Graphics
 
 /**

@@ -17,10 +17,6 @@ This is the controller GameMaker object which does the following:
 
 imgm = __ImGM();
 
-////TODO: REMOVE:
-/// Optional: Set up the extension before initialization.
-/// ImGui.__GFlags &= ~ImGuiGFlags.GM; // Uncomment to use DX11 renderer. (enables multi viewports)
-
 /// Optional: Define common config flags
 var _imgui_config_flags = ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable;
 

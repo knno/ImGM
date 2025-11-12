@@ -16,7 +16,7 @@
   "exportToGame":true,
   "extensionVersion":"0.0.1",
   "files":[
-    {"$GMExtensionFile":"","%Name":"","constants":[
+    {"$GMExtensionFile":"v1","%Name":"","constants":[
         {"$GMExtensionConstant":"","%Name":"IMGM_VERSION","hidden":false,"name":"IMGM_VERSION","resourceType":"GMExtensionConstant","resourceVersion":"2.0","value":"\"0.0.2\"",},
       ],"copyToTargets":-1,"filename":"imgm.dll","final":"","functions":[
         {"$GMExtensionFunction":"","%Name":"__imgui_initialize","argCount":0,"args":[],"documentation":"/// @function __imgui_initialize(info)\r\n/// @argument {ds_map} info - Operating system info","externalName":"__imgui_initialize","help":"","hidden":false,"kind":1,"name":"__imgui_initialize","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
@@ -461,18 +461,7 @@
         {"$GMExtensionFunction":"","%Name":"__imgui_input_text_with_hint","argCount":0,"args":[],"documentation":"","externalName":"__imgui_input_text_with_hint","help":"","hidden":true,"kind":1,"name":"__imgui_input_text_with_hint","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
         {"$GMExtensionFunction":"","%Name":"__imgui_get_window_draw_list","argCount":0,"args":[],"documentation":"","externalName":"__imgui_get_window_draw_list","help":"","hidden":true,"kind":1,"name":"__imgui_get_window_draw_list","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
         {"$GMExtensionFunction":"","%Name":"__imgui_new_line","argCount":0,"args":[],"documentation":"","externalName":"__imgui_new_line","help":"","hidden":true,"kind":1,"name":"__imgui_new_line","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
-      ],"init":"","kind":1,"name":"","order":[
-        {"name":"__imgui_render","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_draw","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_mouse","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_key","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_input","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_mouse_wheel","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_mouse_cursor","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_begin","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_end","path":"extensions/ImGM/ImGM.yy",},
-        {"name":"__imgui_initialize","path":"extensions/ImGM/ImGM.yy",},
-      ],"origname":"","ProxyFiles":[],"resourceType":"GMExtensionFile","resourceVersion":"2.0","uncompress":false,"usesRunnerInterface":true,},
+      ],"init":"","kind":1,"name":"","origname":"","ProxyFiles":[],"resourceType":"GMExtensionFile","resourceVersion":"2.0","uncompress":false,"usesRunnerInterface":true,},
   ],
   "gradleinject":"",
   "hasConvertedCodeInjection":true,

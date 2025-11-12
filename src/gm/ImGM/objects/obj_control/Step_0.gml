@@ -20,20 +20,17 @@ if (global.use_imgui_input) {
     if keyboard_check_direct(vk_control) {
         if keyboard_check_pressed(ord("N")) {
             if room_exists(room_next(room)) room_goto_next();
-            keyboard_clear(vk_control);
             keyboard_clear(ord("N"));
         }
         if keyboard_check_pressed(ord("P")) {
             if room_exists(room_previous(room)) room_goto_previous();
-            keyboard_clear(vk_control);
-            keyboard_clear(ord("N"));
+            keyboard_clear(ord("P"));
         }
         if keyboard_check_pressed(ord("D")) {
             stats_on = !stats_on;
             if stats_on {
                 if stats_ui_kind == "IMGUI" reset_stats_graph();
             }
-            keyboard_clear(vk_control);
             keyboard_clear(ord("D"));
         }
     }    
