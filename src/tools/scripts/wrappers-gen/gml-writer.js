@@ -27,7 +27,7 @@ export function generateGMLScript({ namespace, enums, wrappers, cfg }) {
 	lines = [];
 
 	for (const fn of wrappers) {
-		lines.push(fn.toJsdoc(enums));
+		lines.push(fn.toJsdoc(enums, namespace, 1));
 		lines.push(fn.toGML(1, false));
 	}
 
