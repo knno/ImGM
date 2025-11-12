@@ -888,7 +888,7 @@ export class BaseParser {
 					change: parser.change.bind(parser),
 				}
 			)
-			fn.apply(self, [token])
+			fn.apply(self, [token, undefined, this.opts.module?.name.get()])
 			if (
 				this.opts.recursive &&
 				token.children &&

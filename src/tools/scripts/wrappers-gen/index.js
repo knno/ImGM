@@ -187,7 +187,7 @@ async function main() {
 						source: f.source,
 						sourceToken,
 						namespace: f.namespace,
-						comment: f.comment ?? "",
+						comment: f.comment,
 					})
 				})
 			}

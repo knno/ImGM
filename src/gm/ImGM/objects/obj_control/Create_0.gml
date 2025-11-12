@@ -58,7 +58,7 @@ global.accent_color = #00A1ff;
 
 /// ImGui specific
 global.font_default = ImGui.AddFontDefault();
-global.font_roboto = ImGui.AddFontFromFile("fonts/Roboto-Regular.ttf", 24);
+global.font_roboto = ImGui.AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 24);
 global.enable_docking = false;
 
 /// Window classes

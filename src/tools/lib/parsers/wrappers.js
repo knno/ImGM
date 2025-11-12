@@ -221,7 +221,7 @@ export class ApiAnalyzer extends BaseParser {
 			// Optional comment detection
 			let comment
 			let i = 1
-			let after = nav.peek()
+			let after = nav.peek(3)
 			while (
 				after &&
 				!after.matchesType(TokenType.COMMENT) &&
@@ -253,7 +253,7 @@ export class ApiAnalyzer extends BaseParser {
 				sourceToken: func,
 				source: this.opts.source ?? func.source,
 				namespace: ns,
-				comment: comment ? comment.value : "",
+				comment: comment ? stripLineCommentPrefix(comment.value) : "",
 			})
 
 			this.functions.push(_func)
@@ -827,7 +827,7 @@ export class WrapperFunction extends BaseFunction {
 		}
 	}
 
-	toJsdoc(enums, spacing = 1) {
+	toJsdoc(enums, context, spacing = 1, extras=[]) {
 		const jsdocConfig = Config.jsdoc
 		const indent = Config.style.spacing.repeat(spacing)
 		const fnName = this.name
@@ -837,11 +837,6 @@ export class WrapperFunction extends BaseFunction {
 		// Description block
 		if (jsdocConfig.docletCommentType === "multi") {
 			lines.push(indent + "/**")
-			if (jsdocConfig.setDescriptions && this.comment) {
-				lines.push(
-					`${indent} * ${jsdocConfig.descriptionTag} ${this.comment}`
-				)
-			}
 			// Function tag
 			let fnLine = `${indent} * ${jsdocConfig.functionTag} ${fnName}`
 			if (jsdocConfig.functionWriteArgs && visibleArgs.length > 0) {
@@ -849,6 +844,12 @@ export class WrapperFunction extends BaseFunction {
 				fnLine += `(${argList})`
 			}
 			lines.push(fnLine)
+
+			if (jsdocConfig.setDescriptions && this.comment) {
+				lines.push(
+					`${indent} * ${jsdocConfig.descriptionTag} ${this.comment.replace(/\n/g, `\n${indent} * `)}`
+				)
+			}
 
 			// Argument tags
 			for (const arg of visibleArgs) {
@@ -879,24 +880,25 @@ export class WrapperFunction extends BaseFunction {
 			}
 
 			// Context
-			lines.push(`${indent} * ${jsdocConfig.contextTag} ImGui`)
+			lines.push(`${indent} * ${jsdocConfig.contextTag} ${context}`)
 
 			// Return tag
 			lines.push(`${indent} * ${jsdocConfig.returnTag} {${this.returnType}}`)
 			lines.push(indent + " */")
 		} else {
 			// Single-line comment style
-			if (jsdocConfig.setDescriptions && this.comment) {
-				lines.push(
-					`${indent}/// ${jsdocConfig.descriptionTag} ${this.comment}`
-				)
-			}
 			let fnLine = `${indent}/// ${jsdocConfig.functionTag} ${fnName}`
 			if (jsdocConfig.functionWriteArgs && visibleArgs.length > 0) {
 				const argList = visibleArgs.map((arg) => arg.name._name).join(", ")
 				fnLine += `(${argList})`
 			}
 			lines.push(fnLine)
+
+			if (jsdocConfig.setDescriptions && this.comment) {
+				lines.push(
+					`${indent}/// ${jsdocConfig.descriptionTag} ${this.comment.replace(/\n/g, `\n${indent}/// `)}`
+				)
+			}
 
 			for (const arg of visibleArgs) {
 				let type = arg.type
@@ -924,7 +926,7 @@ export class WrapperFunction extends BaseFunction {
 				lines.push(argLine)
 			}
 
-			lines.push(`${indent}/// ${jsdocConfig.contextTag} ImGui`)
+			lines.push(`${indent}/// ${jsdocConfig.contextTag} ${context}`)
 			lines.push(`${indent}/// ${jsdocConfig.returnTag} {${this.Return}}`)
 		}
 
@@ -1042,6 +1044,23 @@ export class WrapperFunction extends BaseFunction {
 				arg.defaultValue = def
 			}
 		}
+
+		let _targetFuncComment = this._targetFuncComment;
+		let _targetFuncNamespace = this.namespace;
+		let comment = undefined;
+
+		if (comment) {
+			comment = stripLineCommentPrefix(comment) + (_targetFuncComment ? `\n\n${_targetFuncComment}` : ``);
+		} else {
+			if (_targetFuncNamespace == undefined) {
+				// Custom wrapper
+				comment = `A custom wrapper.`;
+			} else {
+				comment = `${_targetFuncNamespace} function wrapper.` + (_targetFuncComment ? `\n\n${_targetFuncComment}` : ``);
+			}
+		}
+		this.comment = comment;
+
 		return this
 	}
 
@@ -1055,9 +1074,10 @@ export class WrapperAnalyzer extends BaseParser {
 		opts.recursive = true
 		super(tokens, opts)
 		this.wrappers = []
+		this._allFuncs = this.opts.apis.map(a => a.functions).flat();
 	}
 
-	_wrapper_func(token, nav) {
+	_wrapper_func(token, nav, ns) {
 		token.source ??= this.opts.source
 		if (
 			!token ||
@@ -1067,6 +1087,37 @@ export class WrapperAnalyzer extends BaseParser {
 			return
 
 		if (token.value !== "GMFUNC" && token.value !== `${GMMOD}FUNC`) return
+
+		let cmt =
+			this.opts.addNewline == true
+				? nav.peek(-1)
+				: nav.peek(-2)
+		let comment = undefined
+		if (
+			cmt.type == TokenType.COMMENT ||
+			cmt.type == TokenType.COMMENT_MULTILINE
+		) {
+			comment = cmt.value
+			let _f = 0
+			for (
+				let i = -4;
+				nav.peek(i).type == TokenType.COMMENT ||
+				nav.peek(i).type ==
+				TokenType.COMMENT_MULTILINE ||
+				nav.peek(i).type == TokenType.NEWLINE;
+				i--
+			) {
+				if (nav.peek(i).type == TokenType.NEWLINE) {
+					if (_f >= 2) {
+						break
+					}
+					_f++
+					continue
+				}
+				_f--
+				comment = nav.peek(i).value + "\n" + comment
+			}
+		}
 
 		const next = nav.advance()
 		if (!next || next.type !== TokenType.PAREN_PAIR || !next.children[0])
@@ -1079,9 +1130,9 @@ export class WrapperAnalyzer extends BaseParser {
 		if (!contentToken || !contentToken.children) return
 
 		// Remove ImguiAddFont to become AddFont only
-		let wrapname = new Name(funcName.slice("__imgui_".length), "PascalCase", "").toSnakeCase();
+		let wrapperName = new Name(funcName.slice("__imgui_".length), "PascalCase", "");
+		let wrapname = wrapperName.toSnakeCase();
 
-		// new Name(funcName, "PascalCase", "").toPascalCase();
 		const wr = new WrapperFunction({
 			name: wrapname,
 			source: this.opts.source ?? next.source,
@@ -1291,13 +1342,17 @@ export class WrapperAnalyzer extends BaseParser {
 			}
 		}
 
+		let _targetFunc = this._allFuncs.filter(f => f.name._name == wrapperName.get())[0];
+		wr.namespace = _targetFunc?.namespace;
+		wr._targetFuncComment = _targetFunc?.comment;
+
 		this.wrappers.push(wr.finalize?.() ?? wr)
 		return wr
 	}
 
-	p_wrapper_defs(token, nav) {
+	p_wrapper_defs(token, nav, ns) {
 		nav ??= this
-		const result = this._wrapper_func(token, nav)
+		const result = this._wrapper_func(token, nav, ns)
 		return result ? [result] : []
 	}
 

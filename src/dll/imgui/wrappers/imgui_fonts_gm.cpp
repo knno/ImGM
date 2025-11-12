@@ -22,7 +22,8 @@ GMFUNC(__imgui_pop_font) {
 	Result.kind = VALUE_UNDEFINED;
 }
 
-GMFUNC(__imgui_add_font_from_file) {
+GMFUNC(__imgui_add_font_from_file_TTF) {
+	GMOVERRIDE(AddFontFromFileTTF);
 	const char* file = YYGetString(arg, 0);
 	double size = YYGetReal(arg, 1);
 
@@ -34,7 +35,6 @@ GMFUNC(__imgui_add_font_from_file) {
 		Result.ptr = font;
 	}
 
-	GMOVERRIDE(AddFontFromFile);
 	GMRETURNS(Pointer|Undefined);
 }
 

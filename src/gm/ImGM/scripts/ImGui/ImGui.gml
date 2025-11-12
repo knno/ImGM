@@ -13,8 +13,17 @@ function ImGui() constructor {
 
     #region Binds
 
-	/**
+	
+	
+
+
+
+
+
+
+/**
 	 * @function BeginCombo
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {String} preview
 	 * @param {Real} flags
@@ -27,6 +36,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function EndCombo
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndCombo() if BeginCombo() returns true!
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -36,6 +48,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Combo
+	 * @description ImGui function wrapper.
 	 * @context ImGui
 	 * @return {undefined}
 	 */
@@ -45,6 +58,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function MemoryEditorShowWindow
+	 * @description A custom wrapper.
 	 * @param {String} title
 	 * @param {Real} buffer
 	 * @param {Real} [offset=0]
@@ -58,6 +72,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function MemoryEditorDrawContents
+	 * @description A custom wrapper.
 	 * @param {Real} buffer
 	 * @param {Real} [offset=0]
 	 * @param {Real} [size=buffer_get_size⌊buffer⌉]
@@ -70,6 +85,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetFont
+	 * @description ImGui function wrapper.
+	 * 
+	 * get current font
 	 * @context ImGui
 	 * @return {Pointer}
 	 */
@@ -79,6 +97,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function PushFont
+	 * @description ImGui function wrapper.
+	 * 
+	 * Use NULL as a shortcut to keep current font. Use 0.0f to keep current size.
 	 * @param {Any} [_ptr=undefined]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -89,6 +110,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PopFont
+	 * @description ImGui function wrapper.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -97,18 +119,20 @@ function ImGui() constructor {
 	}
 
 	/**
-	 * @function AddFontFromFile
+	 * @function AddFontFromFileTTF
+	 * @description ImGui function wrapper.
 	 * @param {String} file
 	 * @param {Real} size
 	 * @context ImGui
 	 * @return {Pointer|Undefined}
 	 */
-	static AddFontFromFile = function(file, size) {
-		return __imgui_add_font_from_file(file, size);
+	static AddFontFromFileTTF = function(file, size) {
+		return __imgui_add_font_from_file_TTF(file, size);
 	}
 
 	/**
 	 * @function AddFontDefault
+	 * @description ImGui function wrapper.
 	 * @context ImGui
 	 * @return {undefined}
 	 */
@@ -118,6 +142,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetFontSize
+	 * @description ImGui function wrapper.
+	 * 
+	 * get current scaled font size (= height in pixels). AFTER global scale factors applied. *IMPORTANT* DO NOT PASS THIS VALUE TO PushFont()! Use ImGui::GetStyle().FontSizeBase to get value before global scale factors.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -126,77 +153,159 @@ function ImGui() constructor {
 	}
 
 	/**
-	 * @function BeginMenuBar
+	 * @function BeginTabBar
+	 * @description ImGui function wrapper.
+	 * 
+	 * create and append into a TabBar
+	 * @param {String} str_id
+	 * @param {Enum.ImGuiTabBarFlags} [flags=ImGuiTabBarFlags.None]
 	 * @context ImGui
 	 * @return {Bool}
 	 */
-	static BeginMenuBar = function() {
-		return __imgui_begin_menu_bar();
+	static BeginTabBar = function(str_id, flags=ImGuiTabBarFlags.None) {
+		return __imgui_begin_tab_bar(str_id, flags);
 	}
 
 	/**
-	 * @function EndMenuBar
+	 * @function EndTabBar
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndTabBar() if BeginTabBar() returns true!
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
-	static EndMenuBar = function() {
-		return __imgui_end_menu_bar();
+	static EndTabBar = function() {
+		return __imgui_end_tab_bar();
 	}
 
 	/**
-	 * @function BeginMainMenuBar
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static BeginMainMenuBar = function() {
-		return __imgui_begin_main_menu_bar();
-	}
-
-	/**
-	 * @function EndMainMenuBar
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static EndMainMenuBar = function() {
-		return __imgui_end_main_menu_bar();
-	}
-
-	/**
-	 * @function BeginMenu
+	 * @function BeginTabItem
+	 * @description ImGui function wrapper.
+	 * 
+	 * create a Tab. Returns true if the Tab is selected.
 	 * @param {String} label
-	 * @param {Bool} [enabled=true]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static BeginMenu = function(label, enabled=true) {
-		return __imgui_begin_menu(label, enabled);
-	}
-
-	/**
-	 * @function EndMenu
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static EndMenu = function() {
-		return __imgui_end_menu();
-	}
-
-	/**
-	 * @function MenuItem
-	 * @param {String} label
-	 * @param {String} [shortcut=]
-	 * @param {Bool} [selected=undefined]
-	 * @param {Bool} [enabled=true]
+	 * @param {Bool} [open=undefined]
+	 * @param {Enum.ImGuiTabItemFlags} [flags=ImGuiTabItemFlags.None]
 	 * @param {Enum.ImGuiReturnMask} [mask=ImGuiReturnMask.Return]
 	 * @context ImGui
 	 * @return {Real}
 	 */
-	static MenuItem = function(label, shortcut="", selected=undefined, enabled=true, mask=ImGuiReturnMask.Return) {
-		return __imgui_menu_item(label, shortcut, selected, enabled, mask);
+	static BeginTabItem = function(label, open=undefined, flags=ImGuiTabItemFlags.None, mask=ImGuiReturnMask.Return) {
+		return __imgui_begin_tab_item(label, open, flags, mask);
+	}
+
+	/**
+	 * @function EndTabItem
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndTabItem() if BeginTabItem() returns true!
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static EndTabItem = function() {
+		return __imgui_end_tab_item();
+	}
+
+	/**
+	 * @function TabItemButton
+	 * @description ImGui function wrapper.
+	 * 
+	 * create a Tab behaving like a button. return true when clicked. cannot be selected in the tab bar.
+	 * @param {String} label
+	 * @param {Enum.ImGuiTabItemFlags} [flags=ImGuiTabItemFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static TabItemButton = function(label, flags=ImGuiTabItemFlags.None) {
+		return __imgui_tab_item_button(label, flags);
+	}
+
+	/**
+	 * @function SetTabItemClosed
+	 * @description ImGui function wrapper.
+	 * 
+	 * notify TabBar or Docking system of a closed tab/window ahead (useful to reduce visual flicker on reorderable tab bars). For tab-bar: call after BeginTabBar() and before Tab submissions. Otherwise call with a window name.
+	 * @param {String} tab_or_docked_window_label
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetTabItemClosed = function(tab_or_docked_window_label) {
+		return __imgui_set_tab_item_closed(tab_or_docked_window_label);
+	}
+
+	/**
+	 * @function BeginTooltip
+	 * @description ImGui function wrapper.
+	 * 
+	 * begin/append a tooltip window.
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static BeginTooltip = function() {
+		return __imgui_begin_tooltip();
+	}
+
+	/**
+	 * @function EndTooltip
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndTooltip() if BeginTooltip()/BeginItemTooltip() returns true!
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static EndTooltip = function() {
+		return __imgui_end_tooltip();
+	}
+
+	/**
+	 * @function SetTooltip
+	 * @description ImGui function wrapper.
+	 * @param {String} val
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetTooltip = function(val) {
+		return __imgui_set_tooltip(val);
+	}
+
+	/**
+	 * @function BeginListbox
+	 * @description A custom wrapper.
+	 * @param {String} label
+	 * @param {Real} [width=0]
+	 * @param {Real} [height=0]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static BeginListbox = function(label, width=0, height=0) {
+		return __imgui_begin_listbox(label, width, height);
+	}
+
+	/**
+	 * @function EndListbox
+	 * @description A custom wrapper.
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static EndListbox = function() {
+		return __imgui_end_listbox();
+	}
+
+	/**
+	 * @function ListBox
+	 * @description A custom wrapper.
+	 * @context ImGui
+	 * @return {undefined}
+	 */
+	static ListBox = function() {
+		return __imgui_listbox();
 	}
 
 	/**
 	 * @function TextUnformatted
+	 * @description ImGui function wrapper.
+	 * 
+	 * raw text without formatting. Roughly equivalent to Text("%s", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for long chunks of text.
 	 * @param {String} text
 	 * @context ImGui
 	 * @return {Undefined}
@@ -207,6 +316,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Text
+	 * @description ImGui function wrapper.
 	 * @param {String} val
 	 * @context ImGui
 	 * @return {Undefined}
@@ -217,6 +327,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function TextColored
+	 * @description ImGui function wrapper.
 	 * @param {String} val
 	 * @param {Real} color
 	 * @param {Real} [alpha=1]
@@ -229,6 +340,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function TextDisabled
+	 * @description ImGui function wrapper.
 	 * @param {String} val
 	 * @context ImGui
 	 * @return {Undefined}
@@ -239,6 +351,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function TextWrapped
+	 * @description ImGui function wrapper.
 	 * @param {String} val
 	 * @context ImGui
 	 * @return {Undefined}
@@ -249,6 +362,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function LabelText
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {String} val
 	 * @context ImGui
@@ -260,6 +374,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function BulletText
+	 * @description ImGui function wrapper.
 	 * @param {String} val
 	 * @context ImGui
 	 * @return {Undefined}
@@ -270,6 +385,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Value
+	 * @description ImGui function wrapper.
 	 * @context ImGui
 	 * @return {undefined}
 	 */
@@ -279,6 +395,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PlotLines
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} values
 	 * @param {Real} [values_offset=0]
@@ -296,6 +413,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PlotHistogram
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} values
 	 * @param {Real} [values_offset=0]
@@ -312,85 +430,101 @@ function ImGui() constructor {
 	}
 
 	/**
-	 * @function BeginDragDropSource
-	 * @param {Enum.ImGuiDragDropFlags} [flags=ImGuiDragDropFlags.None]
+	 * @function BeginMenuBar
+	 * @description ImGui function wrapper.
+	 * 
+	 * append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window).
 	 * @context ImGui
 	 * @return {Bool}
 	 */
-	static BeginDragDropSource = function(flags=ImGuiDragDropFlags.None) {
-		return __imgui_begin_drag_drop_source(flags);
+	static BeginMenuBar = function() {
+		return __imgui_begin_menu_bar();
 	}
 
 	/**
-	 * @function EndDragDropSource
+	 * @function EndMenuBar
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndMenuBar() if BeginMenuBar() returns true!
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
-	static EndDragDropSource = function() {
-		return __imgui_end_drag_drop_source();
+	static EndMenuBar = function() {
+		return __imgui_end_menu_bar();
 	}
 
 	/**
-	 * @function BeginDragDropTarget
+	 * @function BeginMainMenuBar
+	 * @description ImGui function wrapper.
+	 * 
+	 * create and append to a full screen menu-bar.
 	 * @context ImGui
 	 * @return {Bool}
 	 */
-	static BeginDragDropTarget = function() {
-		return __imgui_begin_drag_drop_target();
+	static BeginMainMenuBar = function() {
+		return __imgui_begin_main_menu_bar();
 	}
 
 	/**
-	 * @function EndDragDropTarget
+	 * @function EndMainMenuBar
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndMainMenuBar() if BeginMainMenuBar() returns true!
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
-	static EndDragDropTarget = function() {
-		return __imgui_end_drag_drop_target();
+	static EndMainMenuBar = function() {
+		return __imgui_end_main_menu_bar();
 	}
 
 	/**
-	 * @function SetDragDropPayload
-	 * @param {String} type
-	 * @param {Any} data
-	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @function BeginMenu
+	 * @description ImGui function wrapper.
+	 * 
+	 * create a sub-menu entry. only call EndMenu() if this returns true!
+	 * @param {String} label
+	 * @param {Bool} [enabled=true]
 	 * @context ImGui
 	 * @return {Bool}
 	 */
-	static SetDragDropPayload = function(type, data, cond=ImGuiCond.None) {
-		return __imgui_set_drag_drop_payload(type, data, cond);
+	static BeginMenu = function(label, enabled=true) {
+		return __imgui_begin_menu(label, enabled);
 	}
 
 	/**
-	 * @function AcceptDragDropPayload
-	 * @param {String} type
-	 * @param {Enum.ImGuiDragDropFlags} [flags=ImGuiDragDropFlags.None]
+	 * @function EndMenu
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndMenu() if BeginMenu() returns true!
 	 * @context ImGui
-	 * @return {Any|Undefined}
+	 * @return {Undefined}
 	 */
-	static AcceptDragDropPayload = function(type, flags=ImGuiDragDropFlags.None) {
-		return __imgui_accept_drag_drop_payload(type, flags);
+	static EndMenu = function() {
+		return __imgui_end_menu();
 	}
 
 	/**
-	 * @function GetDragDropPayload
+	 * @function MenuItem
+	 * @description ImGui function wrapper.
+	 * 
+	 * return true when activated.
+	 * @param {String} label
+	 * @param {String} [shortcut=]
+	 * @param {Bool} [selected=undefined]
+	 * @param {Bool} [enabled=true]
+	 * @param {Enum.ImGuiReturnMask} [mask=ImGuiReturnMask.Return]
 	 * @context ImGui
-	 * @return {Any|Undefined}
+	 * @return {Real}
 	 */
-	static GetDragDropPayload = function() {
-		return __imgui_get_drag_drop_payload();
-	}
-
-	/**
-	 * @function GetDragDropPayloadType
-	 * @context ImGui
-	 * @return {String|Undefined}
-	 */
-	static GetDragDropPayloadType = function() {
-		return __imgui_get_payload_type();
+	static MenuItem = function(label, shortcut="", selected=undefined, enabled=true, mask=ImGuiReturnMask.Return) {
+		return __imgui_menu_item(label, shortcut, selected, enabled, mask);
 	}
 
 	/**
 	 * @function BeginPopup
+	 * @description ImGui function wrapper.
+	 * 
+	 * return true if the popup is open, and you can start outputting to it.
 	 * @param {String} str_id
 	 * @param {Enum.ImGuiWindowFlags} [flags=ImGuiWindowFlags.None]
 	 * @context ImGui
@@ -402,6 +536,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function BeginPopupModal
+	 * @description ImGui function wrapper.
+	 * 
+	 * return true if the modal is open, and you can start outputting to it.
 	 * @param {String} name
 	 * @param {Bool} [open=undefined]
 	 * @param {Enum.ImGuiWindowFlags} [flags=ImGuiWindowFlags.None]
@@ -415,6 +552,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function EndPopup
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndPopup() if BeginPopupXXX() returns true!
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -424,6 +564,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function OpenPopup
+	 * @description ImGui function wrapper.
+	 * 
+	 * call to mark popup as open (don't call every frame!).
 	 * @param {String} str_id
 	 * @param {Enum.ImGuiPopupFlags} [flags=ImGuiPopupFlags.None]
 	 * @context ImGui
@@ -435,6 +578,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function OpenPopupOnItemClick
+	 * @description ImGui function wrapper.
+	 * 
+	 * helper to open popup when clicked on last item. Default to ImGuiPopupFlags_MouseButtonRight == 1. (note: actually triggers on the mouse _released_ event to be consistent with popup behaviors)
 	 * @param {String} [str_id=undefined]
 	 * @param {Enum.ImGuiPopupFlags} [flags=ImGuiPopupFlags.MouseButtonRight]
 	 * @context ImGui
@@ -446,6 +592,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function CloseCurrentPopup
+	 * @description ImGui function wrapper.
+	 * 
+	 * manually close the popup we have begin-ed into.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -455,6 +604,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function BeginPopupContextItem
+	 * @description ImGui function wrapper.
+	 * 
+	 * open+begin popup when clicked on last item. Use str_id==NULL to associate the popup to previous item. If you want to use that on a non-interactive item such as Text() you need to pass in an explicit ID here. read comments in .cpp!
 	 * @param {String} [str_id=undefined]
 	 * @param {Enum.ImGuiPopupFlags} [flags=ImGuiPopupFlags.MouseButtonRight]
 	 * @context ImGui
@@ -466,6 +618,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function BeginPopupContextWindow
+	 * @description ImGui function wrapper.
+	 * 
+	 * open+begin popup when clicked on current window.
 	 * @param {String} [str_id=undefined]
 	 * @param {Enum.ImGuiPopupFlags} [flags=ImGuiPopupFlags.MouseButtonRight]
 	 * @context ImGui
@@ -477,6 +632,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function BeginPopupContextVoid
+	 * @description ImGui function wrapper.
+	 * 
+	 * open+begin popup when clicked in void (where there are no windows).
 	 * @param {String} [str_id=undefined]
 	 * @param {Enum.ImGuiPopupFlags} [flags=ImGuiPopupFlags.MouseButtonRight]
 	 * @context ImGui
@@ -488,6 +646,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsPopupOpen
+	 * @description ImGui function wrapper.
+	 * 
+	 * return true if the popup is open.
 	 * @param {String} str_id
 	 * @param {Enum.ImGuiPopupFlags} [flags=ImGuiPopupFlags.None]
 	 * @context ImGui
@@ -498,100 +659,274 @@ function ImGui() constructor {
 	}
 
 	/**
-	 * @function BeginTabBar
-	 * @param {String} str_id
-	 * @param {Enum.ImGuiTabBarFlags} [flags=ImGuiTabBarFlags.None]
+	 * @function BeginDragDropSource
+	 * @description ImGui function wrapper.
+	 * 
+	 * call after submitting an item which may be dragged. when this return true, you can call SetDragDropPayload() + EndDragDropSource()
+	 * @param {Enum.ImGuiDragDropFlags} [flags=ImGuiDragDropFlags.None]
 	 * @context ImGui
 	 * @return {Bool}
 	 */
-	static BeginTabBar = function(str_id, flags=ImGuiTabBarFlags.None) {
-		return __imgui_begin_tab_bar(str_id, flags);
+	static BeginDragDropSource = function(flags=ImGuiDragDropFlags.None) {
+		return __imgui_begin_drag_drop_source(flags);
 	}
 
 	/**
-	 * @function EndTabBar
+	 * @function EndDragDropSource
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndDragDropSource() if BeginDragDropSource() returns true!
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
-	static EndTabBar = function() {
-		return __imgui_end_tab_bar();
+	static EndDragDropSource = function() {
+		return __imgui_end_drag_drop_source();
 	}
 
 	/**
-	 * @function BeginTabItem
-	 * @param {String} label
-	 * @param {Bool} [open=undefined]
-	 * @param {Enum.ImGuiTabItemFlags} [flags=ImGuiTabItemFlags.None]
-	 * @param {Enum.ImGuiReturnMask} [mask=ImGuiReturnMask.Return]
+	 * @function BeginDragDropTarget
+	 * @description ImGui function wrapper.
+	 * 
+	 * call after submitting an item that may receive a payload. If this returns true, you can call AcceptDragDropPayload() + EndDragDropTarget()
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static BeginDragDropTarget = function() {
+		return __imgui_begin_drag_drop_target();
+	}
+
+	/**
+	 * @function EndDragDropTarget
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndDragDropTarget() if BeginDragDropTarget() returns true!
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static EndDragDropTarget = function() {
+		return __imgui_end_drag_drop_target();
+	}
+
+	/**
+	 * @function SetDragDropPayload
+	 * @description ImGui function wrapper.
+	 * 
+	 * type is a user defined string of maximum 32 characters. Strings starting with '_' are reserved for dear imgui internal types. Data is copied and held by imgui. Return true when payload has been accepted.
+	 * @param {String} type
+	 * @param {Any} data
+	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static SetDragDropPayload = function(type, data, cond=ImGuiCond.None) {
+		return __imgui_set_drag_drop_payload(type, data, cond);
+	}
+
+	/**
+	 * @function AcceptDragDropPayload
+	 * @description ImGui function wrapper.
+	 * 
+	 * accept contents of a given type. If ImGuiDragDropFlags_AcceptBeforeDelivery is set you can peek into the payload before the mouse button is released.
+	 * @param {String} type
+	 * @param {Enum.ImGuiDragDropFlags} [flags=ImGuiDragDropFlags.None]
+	 * @context ImGui
+	 * @return {Any|Undefined}
+	 */
+	static AcceptDragDropPayload = function(type, flags=ImGuiDragDropFlags.None) {
+		return __imgui_accept_drag_drop_payload(type, flags);
+	}
+
+	/**
+	 * @function GetDragDropPayload
+	 * @description ImGui function wrapper.
+	 * 
+	 * peek directly into the current payload from anywhere. returns NULL when drag and drop is finished or inactive. use ImGuiPayload::IsDataType() to test for the payload type.
+	 * @context ImGui
+	 * @return {Any|Undefined}
+	 */
+	static GetDragDropPayload = function() {
+		return __imgui_get_drag_drop_payload();
+	}
+
+	/**
+	 * @function GetDragDropPayloadType
+	 * @description A custom wrapper.
+	 * @context ImGui
+	 * @return {String|Undefined}
+	 */
+	static GetDragDropPayloadType = function() {
+		return __imgui_get_payload_type();
+	}
+
+	/**
+	 * @function StyleColorsDark
+	 * @description ImGui function wrapper.
+	 * 
+	 * new, recommended style (default)
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static StyleColorsDark = function() {
+		return __imgui_style_colors_dark();
+	}
+
+	/**
+	 * @function StyleColorsLight
+	 * @description ImGui function wrapper.
+	 * 
+	 * best used with borders and a custom, thicker font
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static StyleColorsLight = function() {
+		return __imgui_style_colors_light();
+	}
+
+	/**
+	 * @function StyleColorsClassic
+	 * @description ImGui function wrapper.
+	 * 
+	 * classic imgui style
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static StyleColorsClassic = function() {
+		return __imgui_style_colors_classic();
+	}
+
+	/**
+	 * @function PushStyleColor
+	 * @description ImGui function wrapper.
+	 * 
+	 * modify a style color. always use this if you modify the style after NewFrame().
+	 * @param {Real} idx
+	 * @param {Real} col
+	 * @param {Real} alpha
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static PushStyleColor = function(idx, col, alpha) {
+		return __imgui_push_style_color(idx, col, alpha);
+	}
+
+	/**
+	 * @function PopStyleColor
+	 * @description ImGui function wrapper.
+	 * @param {Real} [count=1]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static PopStyleColor = function(count=1) {
+		return __imgui_pop_style_color(count);
+	}
+
+	/**
+	 * @function PushStyleVar
+	 * @description ImGui function wrapper.
+	 * 
+	 * modify a style float variable. always use this if you modify the style after NewFrame()!
+	 * @param {Real} idx
+	 * @param {Real} val
+	 * @param {Any} [val2=undefined]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static PushStyleVar = function(idx, val, val2=undefined) {
+		return __imgui_push_style_var(idx, val, val2);
+	}
+
+	/**
+	 * @function PushStyleVarX
+	 * @description ImGui function wrapper.
+	 * 
+	 * modify X component of a style ImVec2 variable. "
+	 * @param {Real} idx
+	 * @param {Real} val_x
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static PushStyleVarX = function(idx, val_x) {
+		return __imgui_push_style_var_x(idx, val_x);
+	}
+
+	/**
+	 * @function PushStyleVarY
+	 * @description ImGui function wrapper.
+	 * 
+	 * modify Y component of a style ImVec2 variable. "
+	 * @param {Real} idx
+	 * @param {Real} val_y
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static PushStyleVarY = function(idx, val_y) {
+		return __imgui_push_style_var_y(idx, val_y);
+	}
+
+	/**
+	 * @function PopStyleVar
+	 * @description ImGui function wrapper.
+	 * @param {Real} [count=1]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static PopStyleVar = function(count=1) {
+		return __imgui_pop_style_var(count);
+	}
+
+	/**
+	 * @function GetStyleColor
+	 * @description A custom wrapper.
+	 * @param {Real} idx
 	 * @context ImGui
 	 * @return {Real}
 	 */
-	static BeginTabItem = function(label, open=undefined, flags=ImGuiTabItemFlags.None, mask=ImGuiReturnMask.Return) {
-		return __imgui_begin_tab_item(label, open, flags, mask);
+	static GetStyleColor = function(idx) {
+		return __imgui_get_style_color(idx);
 	}
 
 	/**
-	 * @function EndTabItem
+	 * @function GetStyleColorName
+	 * @description ImGui function wrapper.
+	 * 
+	 * get a string corresponding to the enum value (for display, saving, etc.).
+	 * @param {Real} idx
+	 * @context ImGui
+	 * @return {String}
+	 */
+	static GetStyleColorName = function(idx) {
+		return __imgui_get_style_color_name(idx);
+	}
+
+	/**
+	 * @function SetStyleColor
+	 * @description A custom wrapper.
+	 * @param {Real} idx
+	 * @param {Real} col
+	 * @param {Real} alpha
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
-	static EndTabItem = function() {
-		return __imgui_end_tab_item();
+	static SetStyleColor = function(idx, col, alpha) {
+		return __imgui_set_style_color(idx, col, alpha);
 	}
 
 	/**
-	 * @function TabItemButton
-	 * @param {String} label
-	 * @param {Enum.ImGuiTabItemFlags} [flags=ImGuiTabItemFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static TabItemButton = function(label, flags=ImGuiTabItemFlags.None) {
-		return __imgui_tab_item_button(label, flags);
-	}
-
-	/**
-	 * @function SetTabItemClosed
-	 * @param {String} tab_or_docked_window_label
+	 * @function SetStyleVar
+	 * @description A custom wrapper.
+	 * @param {Real} idx
+	 * @param {Any} val
+	 * @param {Any} [val2=undefined]
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
-	static SetTabItemClosed = function(tab_or_docked_window_label) {
-		return __imgui_set_tab_item_closed(tab_or_docked_window_label);
-	}
-
-	/**
-	 * @function BeginListbox
-	 * @param {String} label
-	 * @param {Real} [width=0]
-	 * @param {Real} [height=0]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static BeginListbox = function(label, width=0, height=0) {
-		return __imgui_begin_listbox(label, width, height);
-	}
-
-	/**
-	 * @function EndListbox
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static EndListbox = function() {
-		return __imgui_end_listbox();
-	}
-
-	/**
-	 * @function ListBox
-	 * @context ImGui
-	 * @return {undefined}
-	 */
-	static ListBox = function() {
-		return __imgui_listbox();
+	static SetStyleVar = function(idx, val, val2=undefined) {
+		return __imgui_set_style_var(idx, val, val2);
 	}
 
 	/**
 	 * @function ColorEdit3
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Real} col
 	 * @param {Enum.ImGuiCol} [flags=ImGuiColorEditFlags.None]
@@ -604,6 +939,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ColorPicker3
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Real} col
 	 * @param {Enum.ImGuiCol} [flags=ImGuiColorEditFlags.None]
@@ -616,6 +952,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ColorEdit4
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {ImColor} col
 	 * @param {Enum.ImGuiCol} [flags=ImGuiColorEditFlags.None]
@@ -628,6 +965,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ColorPicker4
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {ImColor} col
 	 * @param {Enum.ImGuiCol} [flags=ImGuiColorEditFlags.None]
@@ -640,6 +978,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ColorButton
+	 * @description ImGui function wrapper.
+	 * 
+	 * display a color square/button, hover for details, return true when pressed.
 	 * @param {String} desc_id
 	 * @param {Real} color
 	 * @param {Real} [alpha=1]
@@ -655,6 +996,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetColorEditOptions
+	 * @description ImGui function wrapper.
+	 * 
+	 * initialize current options (generally on application startup) if you want to select a default format, picker type, etc. User will be able to change many settings, unless you pass the _NoOptions flag to your calls.
 	 * @param {Enum.ImGuiCol} [flags=ImGuiColorEditFlags.None]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -664,245 +1008,8 @@ function ImGui() constructor {
 	}
 
 	/**
-	 * @function BeginTooltip
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static BeginTooltip = function() {
-		return __imgui_begin_tooltip();
-	}
-
-	/**
-	 * @function EndTooltip
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static EndTooltip = function() {
-		return __imgui_end_tooltip();
-	}
-
-	/**
-	 * @function SetTooltip
-	 * @param {String} val
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetTooltip = function(val) {
-		return __imgui_set_tooltip(val);
-	}
-
-	/**
-	 * @function StyleColorsDark
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static StyleColorsDark = function() {
-		return __imgui_style_colors_dark();
-	}
-
-	/**
-	 * @function StyleColorsLight
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static StyleColorsLight = function() {
-		return __imgui_style_colors_light();
-	}
-
-	/**
-	 * @function StyleColorsClassic
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static StyleColorsClassic = function() {
-		return __imgui_style_colors_classic();
-	}
-
-	/**
-	 * @function PushStyleColor
-	 * @param {Real} idx
-	 * @param {Real} col
-	 * @param {Real} alpha
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static PushStyleColor = function(idx, col, alpha) {
-		return __imgui_push_style_color(idx, col, alpha);
-	}
-
-	/**
-	 * @function PopStyleColor
-	 * @param {Real} [count=1]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static PopStyleColor = function(count=1) {
-		return __imgui_pop_style_color(count);
-	}
-
-	/**
-	 * @function PushStyleVar
-	 * @param {Real} idx
-	 * @param {Real} val
-	 * @param {Any} [val2=undefined]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static PushStyleVar = function(idx, val, val2=undefined) {
-		return __imgui_push_style_var(idx, val, val2);
-	}
-
-	/**
-	 * @function PushStyleVarX
-	 * @param {Real} idx
-	 * @param {Real} val_x
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static PushStyleVarX = function(idx, val_x) {
-		return __imgui_push_style_var_x(idx, val_x);
-	}
-
-	/**
-	 * @function PushStyleVarY
-	 * @param {Real} idx
-	 * @param {Real} val_y
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static PushStyleVarY = function(idx, val_y) {
-		return __imgui_push_style_var_y(idx, val_y);
-	}
-
-	/**
-	 * @function PopStyleVar
-	 * @param {Real} [count=1]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static PopStyleVar = function(count=1) {
-		return __imgui_pop_style_var(count);
-	}
-
-	/**
-	 * @function GetStyleColor
-	 * @param {Real} idx
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetStyleColor = function(idx) {
-		return __imgui_get_style_color(idx);
-	}
-
-	/**
-	 * @function GetStyleColorName
-	 * @param {Real} idx
-	 * @context ImGui
-	 * @return {String}
-	 */
-	static GetStyleColorName = function(idx) {
-		return __imgui_get_style_color_name(idx);
-	}
-
-	/**
-	 * @function SetStyleColor
-	 * @param {Real} idx
-	 * @param {Real} col
-	 * @param {Real} alpha
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetStyleColor = function(idx, col, alpha) {
-		return __imgui_set_style_color(idx, col, alpha);
-	}
-
-	/**
-	 * @function SetStyleVar
-	 * @param {Real} idx
-	 * @param {Any} val
-	 * @param {Any} [val2=undefined]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetStyleVar = function(idx, val, val2=undefined) {
-		return __imgui_set_style_var(idx, val, val2);
-	}
-
-	/**
-	 * @function TreeNode
-	 * @param {String} label
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static TreeNode = function(label) {
-		return __imgui_tree_node(label);
-	}
-
-	/**
-	 * @function TreeNodeEx
-	 * @param {String} label
-	 * @param {Enum.ImGuiTreeNodeFlags} [flags=ImGuiTreeNodeFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static TreeNodeEx = function(label, flags=ImGuiTreeNodeFlags.None) {
-		return __imgui_tree_node_ex(label, flags);
-	}
-
-	/**
-	 * @function TreePush
-	 * @param {String} str_id
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static TreePush = function(str_id) {
-		return __imgui_tree_push(str_id);
-	}
-
-	/**
-	 * @function TreePop
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static TreePop = function() {
-		return __imgui_tree_pop();
-	}
-
-	/**
-	 * @function GetTreeNodeToLabelSpacing
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetTreeNodeToLabelSpacing = function() {
-		return __imgui_get_tree_node_to_label_spacing();
-	}
-
-	/**
-	 * @function SetNextItemOpen
-	 * @param {Bool} is_open
-	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextItemOpen = function(is_open, cond=ImGuiCond.None) {
-		return __imgui_set_next_item_open(is_open, cond);
-	}
-
-	/**
-	 * @function CollapsingHeader
-	 * @param {String} label
-	 * @param {Bool} [_visible=undefined]
-	 * @param {Enum.ImGuiTreeNodeFlags} [flags=ImGuiTreeNodeFlags.None]
-	 * @param {Enum.ImGuiReturnMask} [mask=ImGuiReturnMask.Return]
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static CollapsingHeader = function(label, _visible=undefined, flags=ImGuiTreeNodeFlags.None, mask=ImGuiReturnMask.Return) {
-		return __imgui_collapsing_header(label, _visible, flags, mask);
-	}
-
-	/**
 	 * @function BeginTable
+	 * @description ImGui function wrapper.
 	 * @param {String} str_id
 	 * @param {Real} column
 	 * @param {Enum.ImGuiTableFlags} [flags=ImGuiTableFlags.None]
@@ -918,6 +1025,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function EndTable
+	 * @description ImGui function wrapper.
+	 * 
+	 * only call EndTable() if BeginTable() returns true!
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -927,6 +1037,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableNextRow
+	 * @description ImGui function wrapper.
+	 * 
+	 * append into the first cell of a new row.
 	 * @param {Enum.ImGuiTableRowFlags} [row_flags=ImGuiTableRowFlags.None]
 	 * @param {Real} [min_row_height=0]
 	 * @context ImGui
@@ -938,6 +1051,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableNextColumn
+	 * @description ImGui function wrapper.
+	 * 
+	 * append into the next column (or first column of next row if currently in last column). Return true when column is visible.
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -947,6 +1063,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableSetColumnIndex
+	 * @description ImGui function wrapper.
+	 * 
+	 * append into the specified column. Return true when column is visible.
 	 * @param {Real} column_n
 	 * @context ImGui
 	 * @return {Bool}
@@ -957,6 +1076,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableSetupColumn
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Enum.ImGuiTableColumnFlags} [flags=ImGuiTableColumnFlags.None]
 	 * @param {Real} [user_id=0]
@@ -969,6 +1089,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableSetupScrollFreeze
+	 * @description ImGui function wrapper.
+	 * 
+	 * lock columns/rows so they stay visible when scrolled.
 	 * @param {Real} cols
 	 * @param {Real} rows
 	 * @context ImGui
@@ -980,6 +1103,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableHeadersRow
+	 * @description ImGui function wrapper.
+	 * 
+	 * submit a row with headers cells based on data provided to TableSetupColumn() + submit context menu
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -989,6 +1115,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableAngledHeadersRow
+	 * @description ImGui function wrapper.
+	 * 
+	 * submit a row with angled headers for every column with the ImGuiTableColumnFlags_AngledHeader flag. MUST BE FIRST ROW.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -998,6 +1127,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableHeader
+	 * @description ImGui function wrapper.
+	 * 
+	 * submit one header cell manually (rarely used)
 	 * @param {String} label
 	 * @context ImGui
 	 * @return {Undefined}
@@ -1008,6 +1140,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableGetHoveredColumn
+	 * @description ImGui function wrapper.
+	 * 
+	 * return hovered column. return -1 when table is not hovered. return columns_count if the unused space at the right of visible columns is hovered. Can also use (TableGetColumnFlags() & ImGuiTableColumnFlags_IsHovered) instead.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -1017,6 +1152,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableGetColumnCount
+	 * @description ImGui function wrapper.
+	 * 
+	 * return number of columns (value passed to BeginTable)
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -1026,6 +1164,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableGetColumnIndex
+	 * @description ImGui function wrapper.
+	 * 
+	 * return current column index.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -1035,6 +1176,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableGetColumnName
+	 * @description ImGui function wrapper.
+	 * 
+	 * return "" if column didn't have a name declared by TableSetupColumn(). Pass -1 to use current column.
 	 * @param {Real} [column_n=-1]
 	 * @context ImGui
 	 * @return {String}
@@ -1045,6 +1189,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableGetColumnFlags
+	 * @description ImGui function wrapper.
+	 * 
+	 * return column flags so you can query their Enabled/Visible/Sorted/Hovered status flags. Pass -1 to use current column.
 	 * @param {Real} [column_n=-1]
 	 * @context ImGui
 	 * @return {Real}
@@ -1055,6 +1202,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableGetRowIndex
+	 * @description ImGui function wrapper.
+	 * 
+	 * return current row index (header rows are accounted for)
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -1064,6 +1214,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableSetColumnEnabled
+	 * @description ImGui function wrapper.
+	 * 
+	 * change user accessible enabled/disabled state of a column. Set to false to hide the column. User can use the context menu to change this themselves (right-click in headers, or right-click in columns body with ImGuiTableFlags_ContextMenuInBody)
 	 * @param {Real} column_n
 	 * @param {Bool} v
 	 * @context ImGui
@@ -1075,6 +1228,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TableSetBgColor
+	 * @description ImGui function wrapper.
+	 * 
+	 * change the color of a cell, row, or column. See ImGuiTableBgTarget_ flags for details.
 	 * @param {Real} target
 	 * @param {Real} col
 	 * @param {Real} [column_n=-1]
@@ -1087,6 +1243,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Columns
+	 * @description ImGui function wrapper.
 	 * @param {Real} [count=1]
 	 * @param {String} [_id=]
 	 * @param {Bool} [border=true]
@@ -1099,6 +1256,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function NextColumn
+	 * @description ImGui function wrapper.
+	 * 
+	 * next column, defaults to current row or next row if the current row is finished
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -1108,6 +1268,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetColumnIndex
+	 * @description ImGui function wrapper.
+	 * 
+	 * get current column index
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -1117,6 +1280,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetColumnWidth
+	 * @description ImGui function wrapper.
+	 * 
+	 * get column width (in pixels). pass -1 to use current column
 	 * @param {Real} [column_index=-1]
 	 * @context ImGui
 	 * @return {Real}
@@ -1127,6 +1293,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetColumnWidth
+	 * @description ImGui function wrapper.
+	 * 
+	 * set column width (in pixels). pass -1 to use current column
 	 * @param {Real} column_index
 	 * @param {Real} width
 	 * @context ImGui
@@ -1138,6 +1307,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetColumnOffset
+	 * @description ImGui function wrapper.
+	 * 
+	 * get position of column line (in pixels, from the left side of the contents region). pass -1 to use current column, otherwise 0..GetColumnsCount() inclusive. column 0 is typically 0.0f
 	 * @param {Real} [column_index=-1]
 	 * @context ImGui
 	 * @return {Real}
@@ -1148,6 +1320,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetColumnOffset
+	 * @description ImGui function wrapper.
+	 * 
+	 * set position of column line (in pixels, from the left side of the contents region). pass -1 to use current column
 	 * @param {Real} column_index
 	 * @param {Real} offset_x
 	 * @context ImGui
@@ -1159,6 +1334,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetColumnsCount
+	 * @description ImGui function wrapper.
+	 * 
+	 * Tab Bars, Tabs
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -1168,6 +1346,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockSpace
+	 * @description ImGui function wrapper.
 	 * @param {Real} _id
 	 * @param {Real} [width=0]
 	 * @param {Real} [height=0]
@@ -1182,6 +1361,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function FindViewportByID
+	 * @description A custom wrapper.
 	 * @param {Real} _id
 	 * @context ImGui
 	 * @return {ImGuiViewport}
@@ -1192,6 +1372,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function FindViewportByPlatformHandle
+	 * @description ImGui function wrapper.
+	 * 
+	 * this is a helper for backends. the type platform_handle is decided by the backend (e.g. HWND, MyWindow*, GLFWwindow* etc.)
 	 * @param {HWND} platform_handle
 	 * @context ImGui
 	 * @return {ImGuiViewport}
@@ -1202,6 +1385,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockSpaceOverViewport
+	 * @description ImGui function wrapper.
 	 * @param {Any} [dockspace_id=0]
 	 * @param {Real} [viewport_id=0]
 	 * @param {Enum.ImGuiDockNodeFlags} [flags=ImGuiDockNodeFlags.None]
@@ -1215,6 +1399,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetNextWindowDockID
+	 * @description A custom wrapper.
 	 * @param {Real} dock_id
 	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
 	 * @context ImGui
@@ -1226,6 +1411,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetNextWindowClass
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window class (control docking compatibility + provide hints to platform backend via custom viewport flags and platform parent/child relationship)
 	 * @param {ImGuiWindowClass} window_class
 	 * @context ImGui
 	 * @return {Undefined}
@@ -1236,6 +1424,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetWindowDockID
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -1245,6 +1434,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsWindowDocked
+	 * @description ImGui function wrapper.
+	 * 
+	 * is current window docked into another window?
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -1254,6 +1446,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderDockWindow
+	 * @description A custom wrapper.
 	 * @param {String} window_name
 	 * @param {Real} node_id
 	 * @context ImGui
@@ -1265,6 +1458,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderGetNode
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @context ImGui
 	 * @return {Pointer}
@@ -1275,6 +1469,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderGetCentralNode
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @context ImGui
 	 * @return {Pointer}
@@ -1285,6 +1480,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderAddNode
+	 * @description A custom wrapper.
 	 * @param {Real} [node_id=0]
 	 * @param {Enum.ImGuiDockNodeFlags} [flags=ImGuiDockNodeFlags.None]
 	 * @context ImGui
@@ -1296,6 +1492,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderRemoveNode
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @context ImGui
 	 * @return {Undefined}
@@ -1306,6 +1503,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderRemoveNodeDockedWindows
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @param {Bool} [clear_settings_refs=true]
 	 * @context ImGui
@@ -1317,6 +1515,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderRemoveNodeChildNodes
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @context ImGui
 	 * @return {Undefined}
@@ -1327,6 +1526,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderSetNodePos
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -1339,6 +1539,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderSetNodeSize
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @param {Real} width
 	 * @param {Real} height
@@ -1351,6 +1552,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderSplitNode
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @param {Real} split_dir
 	 * @param {Real} size_ratio_for_node_at_dir
@@ -1363,6 +1565,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderCopyDockSpace
+	 * @description A custom wrapper.
 	 * @param {Real} src_dockspace_id
 	 * @param {Real} dst_dockspace_id
 	 * @param {Any} window_remap_pairs
@@ -1375,6 +1578,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderCopyNode
+	 * @description A custom wrapper.
 	 * @param {Real} src_node_id
 	 * @param {Real} dst_node_id
 	 * @param {Any} node_remap_pairs
@@ -1387,6 +1591,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderCopyWindowSettings
+	 * @description A custom wrapper.
 	 * @param {String} src_name
 	 * @param {String} dst_name
 	 * @context ImGui
@@ -1398,6 +1603,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DockBuilderFinish
+	 * @description A custom wrapper.
 	 * @param {Real} node_id
 	 * @context ImGui
 	 * @return {Undefined}
@@ -1407,7 +1613,100 @@ function ImGui() constructor {
 	}
 
 	/**
+	 * @function TreeNode
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static TreeNode = function(label) {
+		return __imgui_tree_node(label);
+	}
+
+	/**
+	 * @function TreeNodeEx
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Enum.ImGuiTreeNodeFlags} [flags=ImGuiTreeNodeFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static TreeNodeEx = function(label, flags=ImGuiTreeNodeFlags.None) {
+		return __imgui_tree_node_ex(label, flags);
+	}
+
+	/**
+	 * @function TreePush
+	 * @description ImGui function wrapper.
+	 * 
+	 * ~ Indent()+PushID(). Already called by TreeNode() when returning true, but you can call TreePush/TreePop yourself if desired.
+	 * @param {String} str_id
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static TreePush = function(str_id) {
+		return __imgui_tree_push(str_id);
+	}
+
+	/**
+	 * @function TreePop
+	 * @description ImGui function wrapper.
+	 * 
+	 * ~ Unindent()+PopID()
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static TreePop = function() {
+		return __imgui_tree_pop();
+	}
+
+	/**
+	 * @function GetTreeNodeToLabelSpacing
+	 * @description ImGui function wrapper.
+	 * 
+	 * horizontal distance preceding label when using TreeNode*() or Bullet() == (g.FontSize + style.FramePadding.x*2) for a regular unframed TreeNode
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetTreeNodeToLabelSpacing = function() {
+		return __imgui_get_tree_node_to_label_spacing();
+	}
+
+	/**
+	 * @function SetNextItemOpen
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next TreeNode/CollapsingHeader open state.
+	 * @param {Bool} is_open
+	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextItemOpen = function(is_open, cond=ImGuiCond.None) {
+		return __imgui_set_next_item_open(is_open, cond);
+	}
+
+	/**
+	 * @function CollapsingHeader
+	 * @description ImGui function wrapper.
+	 * 
+	 * if returning 'true' the header is open. doesn't indent nor push on ID stack. user doesn't have to call TreePop().
+	 * @param {String} label
+	 * @param {Bool} [_visible=undefined]
+	 * @param {Enum.ImGuiTreeNodeFlags} [flags=ImGuiTreeNodeFlags.None]
+	 * @param {Enum.ImGuiReturnMask} [mask=ImGuiReturnMask.Return]
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static CollapsingHeader = function(label, _visible=undefined, flags=ImGuiTreeNodeFlags.None, mask=ImGuiReturnMask.Return) {
+		return __imgui_collapsing_header(label, _visible, flags, mask);
+	}
+
+	/**
 	 * @function Button
+	 * @description ImGui function wrapper.
+	 * 
+	 * button
 	 * @param {String} label
 	 * @param {Real} [width=0]
 	 * @param {Real} [height=0]
@@ -1420,6 +1719,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SmallButton
+	 * @description ImGui function wrapper.
+	 * 
+	 * button with (FramePadding.y == 0) to easily embed within text
 	 * @param {String} label
 	 * @context ImGui
 	 * @return {Bool}
@@ -1430,6 +1732,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function InvisibleButton
+	 * @description ImGui function wrapper.
+	 * 
+	 * flexible button behavior without the visuals, frequently useful to build custom behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)
 	 * @param {String} _id
 	 * @param {Real} [width=0]
 	 * @param {Real} [height=0]
@@ -1443,6 +1748,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ArrowButton
+	 * @description ImGui function wrapper.
+	 * 
+	 * square button with an arrow shape
 	 * @param {String} str_id
 	 * @param {Real} _dir
 	 * @context ImGui
@@ -1454,6 +1762,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Image
+	 * @description ImGui function wrapper.
 	 * @param {Real} sprite
 	 * @param {Real} subimg
 	 * @param {Real} [color=c_white]
@@ -1470,6 +1779,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ImageButton
+	 * @description ImGui function wrapper.
+	 * 
+	 * Widgets: Combo Box (Dropdown)
 	 * @param {String} str_id
 	 * @param {Real} sprite
 	 * @param {Real} subimg
@@ -1489,6 +1801,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Surface
+	 * @description A custom wrapper.
 	 * @param {Real} surface
 	 * @param {Real} [color=c_white]
 	 * @param {Real} [alpha=1]
@@ -1504,6 +1817,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Checkbox
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Bool} checked
 	 * @context ImGui
@@ -1515,6 +1829,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function CheckboxFlags
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Real} flags
 	 * @param {Real} flags_value
@@ -1527,6 +1842,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function RadioButton
+	 * @description ImGui function wrapper.
+	 * 
+	 * use with e.g. if (RadioButton("one", my_value==1)) { my_value = 1; }
 	 * @param {String} label
 	 * @param {Bool} active
 	 * @context ImGui
@@ -1538,6 +1856,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Progressbar
+	 * @description A custom wrapper.
 	 * @param {Real} _frac
 	 * @param {Real} [width=0]
 	 * @param {Real} [height=0]
@@ -1551,6 +1870,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function Bullet
+	 * @description ImGui function wrapper.
+	 * 
+	 * draw a small circle + keep the cursor on the same line. advance cursor x position by GetTreeNodeToLabelSpacing(), same distance that TreeNode() uses
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -1560,6 +1882,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function TextLink
+	 * @description ImGui function wrapper.
+	 * 
+	 * hyperlink text button, return true when clicked
 	 * @param {String} label
 	 * @context ImGui
 	 * @return {Undefined}
@@ -1570,6 +1895,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function TextLinkOpenURL
+	 * @description A custom wrapper.
 	 * @param {String} label
 	 * @param {String} url
 	 * @context ImGui
@@ -1581,6 +1907,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputText
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {String} val
 	 * @param {Enum.ImGuiInputTextFlags} [flags=ImGuiInputTextFlags.None]
@@ -1593,6 +1920,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputTextMultiline
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {String} val
 	 * @param {Real} [width=0]
@@ -1607,6 +1935,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputTextWithHint
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {String} hint
 	 * @param {String} val
@@ -1620,6 +1949,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputFloat
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Real} v
 	 * @param {Real} [step=0.1]
@@ -1635,6 +1965,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputFloat2
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [step=0.1]
@@ -1650,6 +1981,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputFloat3
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [step=0.1]
@@ -1665,6 +1997,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputFloat4
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [step=0.1]
@@ -1680,6 +2013,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputFloatN
+	 * @description A custom wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} len
@@ -1695,6 +2029,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputInt
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Real} v
 	 * @param {Real} [step=1]
@@ -1709,6 +2044,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputInt2
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Enum.ImGuiInputTextFlags} [flags=ImGuiInputTextFlags.None]
@@ -1721,6 +2057,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputInt3
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Enum.ImGuiInputTextFlags} [flags=ImGuiInputTextFlags.None]
@@ -1733,6 +2070,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputInt4
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Enum.ImGuiInputTextFlags} [flags=ImGuiInputTextFlags.None]
@@ -1745,6 +2083,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputIntN
+	 * @description A custom wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Enum.ImGuiInputTextFlags} [flags=ImGuiInputTextFlags.None]
@@ -1757,6 +2096,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function InputDouble
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Real} v
 	 * @param {Real} [step=1]
@@ -1771,530 +2111,10 @@ function ImGui() constructor {
 	}
 
 	/**
-	 * @function Begin
-	 * @param {String} name
-	 * @param {Bool} [open=undefined]
-	 * @param {Enum.ImGuiWindowFlags} [flags=ImGuiWindowFlags.None]
-	 * @param {Enum.ImGuiReturnMask} [mask=ImGuiReturnMask.Return]
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static Begin = function(name, open=undefined, flags=ImGuiWindowFlags.None, mask=ImGuiReturnMask.Return) {
-		return __imgui_begin(name, open, flags, mask);
-	}
-
-	/**
-	 * @function End
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static End = function() {
-		return __imgui_end();
-	}
-
-	/**
-	 * @function BeginChild
-	 * @param {String} str_id
-	 * @param {Real} [width=0]
-	 * @param {Real} [height=0]
-	 * @param {Enum.ImGuiChildFlags} [child_flags=ImGuiChildFlags.None]
-	 * @param {Enum.ImGuiWindowFlags} [window_flags=ImGuiWindowFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static BeginChild = function(str_id, width=0, height=0, child_flags=ImGuiChildFlags.None, window_flags=ImGuiWindowFlags.None) {
-		return __imgui_begin_child(str_id, width, height, child_flags, window_flags);
-	}
-
-	/**
-	 * @function EndChild
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static EndChild = function() {
-		return __imgui_end_child();
-	}
-
-	/**
-	 * @function BeginChildFrame
-	 * @param {Real} _id
-	 * @param {Real} [width=0]
-	 * @param {Real} [height=0]
-	 * @param {Enum.ImGuiWindowFlags} [flags=ImGuiWindowFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static BeginChildFrame = function(_id, width=0, height=0, flags=ImGuiWindowFlags.None) {
-		return __imgui_begin_child_frame(_id, width, height, flags);
-	}
-
-	/**
-	 * @function EndChildFrame
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static EndChildFrame = function() {
-		return __imgui_end_child_frame();
-	}
-
-	/**
-	 * @function IsWindowAppearing
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static IsWindowAppearing = function() {
-		return __imgui_is_window_appearing();
-	}
-
-	/**
-	 * @function IsWindowCollapsed
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static IsWindowCollapsed = function() {
-		return __imgui_is_window_collapsed();
-	}
-
-	/**
-	 * @function IsWindowFocused
-	 * @param {Enum.ImGuiFocusedFlags} [flags=ImGuiFocusedFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static IsWindowFocused = function(flags=ImGuiFocusedFlags.None) {
-		return __imgui_is_window_focused(flags);
-	}
-
-	/**
-	 * @function IsWindowHovered
-	 * @param {Enum.ImGuiHoveredFlags} [flags=ImGuiHoveredFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static IsWindowHovered = function(flags=ImGuiHoveredFlags.None) {
-		return __imgui_is_window_hovered(flags);
-	}
-
-	/**
-	 * @function GetWindowDpiScale
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetWindowDpiScale = function() {
-		return __imgui_get_window_dpi_scale();
-	}
-
-	/**
-	 * @function GetWindowPosX
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetWindowPosX = function() {
-		return __imgui_get_window_x();
-	}
-
-	/**
-	 * @function GetWindowPosY
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetWindowPosY = function() {
-		return __imgui_get_window_y();
-	}
-
-	/**
-	 * @function GetWindowWidth
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetWindowWidth = function() {
-		return __imgui_get_window_width();
-	}
-
-	/**
-	 * @function GetWindowHeight
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetWindowHeight = function() {
-		return __imgui_get_window_height();
-	}
-
-	/**
-	 * @function GetWindowViewport
-	 * @context ImGui
-	 * @return {Pointer}
-	 */
-	static GetWindowViewport = function() {
-		return __imgui_get_window_viewport();
-	}
-
-	/**
-	 * @function SetWindowFontScale
-	 * @param {Real} scale
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetWindowFontScale = function(scale) {
-		return __imgui_set_window_font_scale(scale);
-	}
-
-	/**
-	 * @function SetNextWindowViewport
-	 * @param {Real} _id
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowViewport = function(_id) {
-		return __imgui_set_next_window_viewport(_id);
-	}
-
-	/**
-	 * @function SetNextWindowPos
-	 * @param {Real} _x
-	 * @param {Real} _y
-	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
-	 * @param {Real} [pivot_x=0]
-	 * @param {Real} [pivot_y=0]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowPos = function(_x, _y, cond=ImGuiCond.None, pivot_x=0, pivot_y=0) {
-		return __imgui_set_next_window_pos(_x, _y, cond, pivot_x, pivot_y);
-	}
-
-	/**
-	 * @function SetNextWindowSize
-	 * @param {Real} width
-	 * @param {Real} height
-	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowSize = function(width, height, cond=ImGuiCond.None) {
-		return __imgui_set_next_window_size(width, height, cond);
-	}
-
-	/**
-	 * @function SetNextWindowSizeConstraints
-	 * @param {Real} min_width
-	 * @param {Real} min_height
-	 * @param {Real} max_width
-	 * @param {Real} max_height
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowSizeConstraints = function(min_width, min_height, max_width, max_height) {
-		return __imgui_set_next_window_size_constraints(min_width, min_height, max_width, max_height);
-	}
-
-	/**
-	 * @function SetNextWindowContentSize
-	 * @param {Real} width
-	 * @param {Real} height
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowContentSize = function(width, height) {
-		return __imgui_set_next_window_content_size(width, height);
-	}
-
-	/**
-	 * @function SetNextWindowCollapsed
-	 * @param {Bool} collapsed
-	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowCollapsed = function(collapsed, cond=ImGuiCond.None) {
-		return __imgui_set_next_window_collapsed(collapsed, cond);
-	}
-
-	/**
-	 * @function SetNextWindowFocus
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowFocus = function() {
-		return __imgui_set_next_window_focus();
-	}
-
-	/**
-	 * @function SetNextWindowScroll
-	 * @param {Real} scroll_x
-	 * @param {Real} scroll_y
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowScroll = function(scroll_x, scroll_y) {
-		return __imgui_set_next_window_scroll(scroll_x, scroll_y);
-	}
-
-	/**
-	 * @function SetNextWindowBgalpha
-	 * @param {Real} alpha
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetNextWindowBgalpha = function(alpha) {
-		return __imgui_set_next_window_bgalpha(alpha);
-	}
-
-	/**
-	 * @function GetScrollX
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetScrollX = function() {
-		return __imgui_get_scroll_x();
-	}
-
-	/**
-	 * @function GetScrollY
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetScrollY = function() {
-		return __imgui_get_scroll_y();
-	}
-
-	/**
-	 * @function SetScrollX
-	 * @param {Real} scroll_x
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetScrollX = function(scroll_x) {
-		return __imgui_set_scroll_x(scroll_x);
-	}
-
-	/**
-	 * @function SetScrollY
-	 * @param {Real} scroll_y
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetScrollY = function(scroll_y) {
-		return __imgui_set_scroll_y(scroll_y);
-	}
-
-	/**
-	 * @function GetScrollMaxX
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetScrollMaxX = function() {
-		return __imgui_get_scroll_max_x();
-	}
-
-	/**
-	 * @function GetScrollMaxY
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static GetScrollMaxY = function() {
-		return __imgui_get_scroll_max_y();
-	}
-
-	/**
-	 * @function SetScrollHereX
-	 * @param {Real} [center_x_ratio=0.5]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetScrollHereX = function(center_x_ratio=0.5) {
-		return __imgui_set_scroll_here_x(center_x_ratio);
-	}
-
-	/**
-	 * @function SetScrollHereY
-	 * @param {Real} [center_y_ratio=0.5]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetScrollHereY = function(center_y_ratio=0.5) {
-		return __imgui_set_scroll_here_y(center_y_ratio);
-	}
-
-	/**
-	 * @function SetScrollFromPosX
-	 * @param {Real} local_x
-	 * @param {Real} [center_x_ratio=0.5]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetScrollFromPosX = function(local_x, center_x_ratio=0.5) {
-		return __imgui_set_scroll_from_pos_x(local_x, center_x_ratio);
-	}
-
-	/**
-	 * @function SetScrollFromPosY
-	 * @param {Real} local_y
-	 * @param {Real} [center_y_ratio=0.5]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetScrollFromPosY = function(local_y, center_y_ratio=0.5) {
-		return __imgui_set_scroll_from_pos_y(local_y, center_y_ratio);
-	}
-
-	/**
-	 * @function SetWindowPos
-	 * @param {String} [name=]
-	 * @param {Real} _x
-	 * @param {Real} _y
-	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetWindowPos = function(name="", _x, _y, cond=ImGuiCond.None) {
-		return __imgui_set_window_pos(name, _x, _y, cond);
-	}
-
-	/**
-	 * @function SetWindowSize
-	 * @param {String} [name=]
-	 * @param {Real} width
-	 * @param {Real} height
-	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetWindowSize = function(name="", width, height, cond=ImGuiCond.None) {
-		return __imgui_set_window_size(name, width, height, cond);
-	}
-
-	/**
-	 * @function SetWindowCollapsed
-	 * @param {String} [name=]
-	 * @param {Bool} collapsed
-	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetWindowCollapsed = function(name="", collapsed, cond=ImGuiCond.None) {
-		return __imgui_set_window_collapsed(name, collapsed, cond);
-	}
-
-	/**
-	 * @function SetWindowFocus
-	 * @param {String} [name=]
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SetWindowFocus = function(name="") {
-		return __imgui_set_window_focus(name);
-	}
-
-	/**
-	 * @function Selectable
-	 * @param {String} label
-	 * @param {Bool} [selected=false]
-	 * @param {Enum.ImGuiSelectableFlags} [flags=ImGuiSelectableFlags.None]
-	 * @param {Real} [width=0]
-	 * @param {Real} [height=0]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static Selectable = function(label, selected=false, flags=ImGuiSelectableFlags.None, width=0, height=0) {
-		return __imgui_selectable(label, selected, flags, width, height);
-	}
-
-	/**
-	 * @function IsItemToggledSelection
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static IsItemToggledSelection = function() {
-		return __imgui_is_item_toggled_selection();
-	}
-
-	/**
-	 * @function CreateMultiSelectBasicStorage
-	 * @param {Struct} yystruct
-	 * @context ImGui
-	 * @return {Pointer}
-	 */
-	static CreateMultiSelectBasicStorage = function(yystruct) {
-		return __imgui_create_multi_select_basic_storage(yystruct);
-	}
-
-	/**
-	 * @function DestroyMultiSelectBasicStorage
-	 * @param {Pointer} storage_ptr
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static DestroyMultiSelectBasicStorage = function(storage_ptr) {
-		return __imgui_destroy_multi_select_basic_storage(storage_ptr);
-	}
-
-	/**
-	 * @function BeginMultiSelect
-	 * @param {ImGuiMultiSelectFlags} flags
-	 * @param {Real} size
-	 * @param {Real} items_count
-	 * @context ImGui
-	 * @return {ImGuiMultiSelectIO}
-	 */
-	static BeginMultiSelect = function(flags, size, items_count) {
-		return __imgui_begin_multi_select(flags, size, items_count);
-	}
-
-	/**
-	 * @function SelectionStorageApplyRequests
-	 * @param {ImGuiSelectionBasicStorage} selection
-	 * @param {ImGuiMultiSelectIO} ms_io
-	 * @context ImGui
-	 * @return {Undefined}
-	 */
-	static SelectionStorageApplyRequests = function(selection, ms_io) {
-		return __imgui_selection_storage_apply_requests(selection, ms_io);
-	}
-
-	/**
-	 * @function EndMultiSelect
-	 * @context ImGui
-	 * @return {ImGuiMultiSelectIO}
-	 */
-	static EndMultiSelect = function() {
-		return __imgui_end_multi_select();
-	}
-
-	/**
-	 * @function SetNextItemSelectionUserData
-	 * @param {Real} idx
-	 * @context ImGui
-	 * @return {undefined}
-	 */
-	static SetNextItemSelectionUserData = function(idx) {
-		return __imgui_set_next_item_selection_user_data(idx);
-	}
-
-	/**
-	 * @function SelectionStorageContains
-	 * @param {ImGuiSelectionBasicStorage} selection
-	 * @param {Real} idx
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static SelectionStorageContains = function(selection, idx) {
-		return __imgui_selection_storage_contains(selection, idx);
-	}
-
-	/**
-	 * @function SelectionStorageSize
-	 * @param {ImGuiSelectionBasicStorage} selection
-	 * @param {Any} [value=undefined]
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static SelectionStorageSize = function(selection, value=undefined) {
-		return __imgui_selection_storage_size(selection, value);
-	}
-
-	/**
 	 * @function IsKeyDown
+	 * @description ImGui function wrapper.
+	 * 
+	 * is key being held.
 	 * @param {ImGuiKey} key
 	 * @param {ImGuiID} [owner_id=undefined]
 	 * @context ImGui
@@ -2306,6 +2126,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsKeyPressed
+	 * @description ImGui function wrapper.
+	 * 
+	 * was key pressed (went from !Down to Down)? if repeat=true, uses io.KeyRepeatDelay / KeyRepeatRate
 	 * @param {ImGuiKey} key
 	 * @param {Bool} [_repeat=undefined]
 	 * @context ImGui
@@ -2317,6 +2140,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsKeyReleased
+	 * @description ImGui function wrapper.
+	 * 
+	 * was key released (went from Down to !Down)?
 	 * @param {ImGuiKey} key
 	 * @param {ImGuiID} [owner_id=undefined]
 	 * @context ImGui
@@ -2328,6 +2154,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsKeyChordPressed
+	 * @description ImGui function wrapper.
+	 * 
+	 * was key chord (mods + key) pressed, e.g. you can pass 'ImGuiMod_Ctrl | ImGuiKey_S' as a key-chord. This doesn't do any routing or focus check, please consider using Shortcut() function instead.
 	 * @param {ImGuiKeyChord} key_chord
 	 * @param {ImGuiInputFlags} [flags=undefined]
 	 * @param {ImGuiID} [owner_id=undefined]
@@ -2340,6 +2169,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetKeyPressedAmount
+	 * @description ImGui function wrapper.
+	 * 
+	 * uses provided repeat rate/delay. return a count, most often 0 or 1 but might be >1 if RepeatRate is small enough that DeltaTime > RepeatRate
 	 * @param {ImGuiKey} key
 	 * @param {Float} repeat_delay
 	 * @param {Float} rate
@@ -2352,6 +2184,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetKeyName
+	 * @description ImGui function wrapper.
+	 * 
+	 * [DEBUG] returns English name of the key. Those names are provided for debugging purpose and are not meant to be saved persistently nor compared.
 	 * @param {ImGuiKey} key
 	 * @context ImGui
 	 * @return {String}
@@ -2362,6 +2197,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetKeyChordName
+	 * @description A custom wrapper.
 	 * @param {ImGuiKeyChord} key_chord
 	 * @context ImGui
 	 * @return {String}
@@ -2372,6 +2208,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsMouseDown
+	 * @description ImGui function wrapper.
+	 * 
+	 * is mouse button held?
 	 * @param {ImGuiMouseButton} button
 	 * @param {ImGuiID} [owner_id=undefined]
 	 * @context ImGui
@@ -2383,6 +2222,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsMouseClicked
+	 * @description ImGui function wrapper.
+	 * 
+	 * did mouse button clicked? (went from !Down to Down). Same as GetMouseClickedCount() == 1.
 	 * @param {ImGuiMouseButton} button
 	 * @param {Bool|ImGuiInputFlags} [repeat_or_flags=undefined]
 	 * @param {ImGuiID} [owner_id=undefined]
@@ -2395,6 +2237,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsMouseReleased
+	 * @description ImGui function wrapper.
+	 * 
+	 * did mouse button released? (went from Down to !Down)
 	 * @param {ImGuiMouseButton} button
 	 * @param {ImGuiID} [owner_id=undefined]
 	 * @context ImGui
@@ -2406,6 +2251,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsMouseDoubleClicked
+	 * @description ImGui function wrapper.
+	 * 
+	 * did mouse button double-clicked? Same as GetMouseClickedCount() == 2. (note that a double-click will also report IsMouseClicked() == true)
 	 * @param {ImGuiMouseButton} button
 	 * @param {ImGuiID} [owner_id=undefined]
 	 * @context ImGui
@@ -2417,6 +2265,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetMouseClickedCount
+	 * @description ImGui function wrapper.
+	 * 
+	 * return the number of successive mouse-clicks at the time where a click happen (otherwise 0).
 	 * @param {ImGuiMouseButton} button
 	 * @context ImGui
 	 * @return {Real}
@@ -2427,6 +2278,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsMouseHoveringRect
+	 * @description ImGui function wrapper.
+	 * 
+	 * is mouse hovering given bounding rect (in screen space). clipped by current clipping settings, but disregarding of other consideration of focus/window ordering/popup-block.
 	 * @param {Real} min_x
 	 * @param {Real} min_y
 	 * @param {Real} max_x
@@ -2441,6 +2295,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsMousePosValid
+	 * @description ImGui function wrapper.
+	 * 
+	 * by convention we use (-FLT_MAX,-FLT_MAX) to denote that there is no mouse available
 	 * @param {Real} mouse_x
 	 * @param {Real} mouse_y
 	 * @context ImGui
@@ -2452,6 +2309,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsAnyMouseDown
+	 * @description ImGui function wrapper.
+	 * 
+	 * [WILL OBSOLETE] is any mouse button held? This was designed for backends, but prefer having backend maintain a mask of held mouse buttons, because upcoming input queue system will make this invalid.
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -2461,6 +2321,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsMouseDragging
+	 * @description ImGui function wrapper.
+	 * 
+	 * is mouse dragging? (uses io.MouseDraggingThreshold if lock_threshold < 0.0f)
 	 * @param {ImGuiMouseButton} button
 	 * @param {Float} [lock_threshold=-1]
 	 * @context ImGui
@@ -2472,6 +2335,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetMousePosX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2481,6 +2345,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetMousePosY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2490,6 +2355,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetMousePosOnOpeningCurrentPopupX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2499,6 +2365,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetMousePosOnOpeningCurrentPopupY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2508,6 +2375,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetMouseDragDeltaX
+	 * @description A custom wrapper.
 	 * @param {ImGuiMouseButton} button
 	 * @param {Float} [lock_threshold=-1]
 	 * @context ImGui
@@ -2519,6 +2387,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetMouseDragDeltaY
+	 * @description A custom wrapper.
 	 * @param {ImGuiMouseButton} button
 	 * @param {Float} [lock_threshold=-1]
 	 * @context ImGui
@@ -2530,6 +2399,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ResetMouseDragDelta
+	 * @description ImGui function wrapper.
 	 * @param {ImGuiMouseButton} button
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2540,6 +2410,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function Shortcut
+	 * @description ImGui function wrapper.
 	 * @param {ImGuiKeyChord} key_chord
 	 * @param {ImGuiInputFlags} flags
 	 * @param {ImGuiID} [owner_id=undefined]
@@ -2552,6 +2423,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetNextItemShortcut
+	 * @description ImGui function wrapper.
+	 * 
+	 * Inputs Utilities: Key/Input Ownership [BETA]
 	 * @param {ImGuiKeyChord} key_chord
 	 * @param {ImGuiInputFlags} flags
 	 * @context ImGui
@@ -2563,6 +2437,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetItemKeyOwner
+	 * @description ImGui function wrapper.
+	 * 
+	 * Set key owner to last item ID if it is hovered or active. Equivalent to 'if (IsItemHovered() || IsItemActive()) { SetKeyOwner(key, GetItemID());'.
 	 * @param {ImGuiKey} key
 	 * @param {ImGuiInputFlags} [flags=undefined]
 	 * @context ImGui
@@ -2573,7 +2450,649 @@ function ImGui() constructor {
 	}
 
 	/**
+	 * @function Selectable
+	 * @description ImGui function wrapper.
+	 * 
+	 * "bool selected" carry the selection state (read-only). Selectable() is clicked is returns true so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height
+	 * @param {String} label
+	 * @param {Bool} [selected=false]
+	 * @param {Enum.ImGuiSelectableFlags} [flags=ImGuiSelectableFlags.None]
+	 * @param {Real} [width=0]
+	 * @param {Real} [height=0]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static Selectable = function(label, selected=false, flags=ImGuiSelectableFlags.None, width=0, height=0) {
+		return __imgui_selectable(label, selected, flags, width, height);
+	}
+
+	/**
+	 * @function IsItemToggledSelection
+	 * @description ImGui function wrapper.
+	 * 
+	 * Was the last item selection state toggled? Useful if you need the per-item information _before_ reaching EndMultiSelect(). We only returns toggle _event_ in order to handle clipping correctly.
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static IsItemToggledSelection = function() {
+		return __imgui_is_item_toggled_selection();
+	}
+
+	/**
+	 * @function CreateMultiSelectBasicStorage
+	 * @description A custom wrapper.
+	 * @param {Struct} yystruct
+	 * @context ImGui
+	 * @return {Pointer}
+	 */
+	static CreateMultiSelectBasicStorage = function(yystruct) {
+		return __imgui_create_multi_select_basic_storage(yystruct);
+	}
+
+	/**
+	 * @function DestroyMultiSelectBasicStorage
+	 * @description A custom wrapper.
+	 * @param {Pointer} storage_ptr
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static DestroyMultiSelectBasicStorage = function(storage_ptr) {
+		return __imgui_destroy_multi_select_basic_storage(storage_ptr);
+	}
+
+	/**
+	 * @function BeginMultiSelect
+	 * @description ImGui function wrapper.
+	 * @param {ImGuiMultiSelectFlags} flags
+	 * @param {Real} size
+	 * @param {Real} items_count
+	 * @context ImGui
+	 * @return {ImGuiMultiSelectIO}
+	 */
+	static BeginMultiSelect = function(flags, size, items_count) {
+		return __imgui_begin_multi_select(flags, size, items_count);
+	}
+
+	/**
+	 * @function SelectionStorageApplyRequests
+	 * @description A custom wrapper.
+	 * @param {ImGuiSelectionBasicStorage} selection
+	 * @param {ImGuiMultiSelectIO} ms_io
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SelectionStorageApplyRequests = function(selection, ms_io) {
+		return __imgui_selection_storage_apply_requests(selection, ms_io);
+	}
+
+	/**
+	 * @function EndMultiSelect
+	 * @description ImGui function wrapper.
+	 * @context ImGui
+	 * @return {ImGuiMultiSelectIO}
+	 */
+	static EndMultiSelect = function() {
+		return __imgui_end_multi_select();
+	}
+
+	/**
+	 * @function SetNextItemSelectionUserData
+	 * @description ImGui function wrapper.
+	 * @param {Real} idx
+	 * @context ImGui
+	 * @return {undefined}
+	 */
+	static SetNextItemSelectionUserData = function(idx) {
+		return __imgui_set_next_item_selection_user_data(idx);
+	}
+
+	/**
+	 * @function SelectionStorageContains
+	 * @description A custom wrapper.
+	 * @param {ImGuiSelectionBasicStorage} selection
+	 * @param {Real} idx
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static SelectionStorageContains = function(selection, idx) {
+		return __imgui_selection_storage_contains(selection, idx);
+	}
+
+	/**
+	 * @function SelectionStorageSize
+	 * @description A custom wrapper.
+	 * @param {ImGuiSelectionBasicStorage} selection
+	 * @param {Any} [value=undefined]
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static SelectionStorageSize = function(selection, value=undefined) {
+		return __imgui_selection_storage_size(selection, value);
+	}
+
+	/**
+	 * @function Begin
+	 * @description ImGui function wrapper.
+	 * @param {String} name
+	 * @param {Bool} [open=undefined]
+	 * @param {Enum.ImGuiWindowFlags} [flags=ImGuiWindowFlags.None]
+	 * @param {Enum.ImGuiReturnMask} [mask=ImGuiReturnMask.Return]
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static Begin = function(name, open=undefined, flags=ImGuiWindowFlags.None, mask=ImGuiReturnMask.Return) {
+		return __imgui_begin(name, open, flags, mask);
+	}
+
+	/**
+	 * @function End
+	 * @description ImGui function wrapper.
+	 * 
+	 * Child Windows
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static End = function() {
+		return __imgui_end();
+	}
+
+	/**
+	 * @function BeginChild
+	 * @description ImGui function wrapper.
+	 * @param {String} str_id
+	 * @param {Real} [width=0]
+	 * @param {Real} [height=0]
+	 * @param {Enum.ImGuiChildFlags} [child_flags=ImGuiChildFlags.None]
+	 * @param {Enum.ImGuiWindowFlags} [window_flags=ImGuiWindowFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static BeginChild = function(str_id, width=0, height=0, child_flags=ImGuiChildFlags.None, window_flags=ImGuiWindowFlags.None) {
+		return __imgui_begin_child(str_id, width, height, child_flags, window_flags);
+	}
+
+	/**
+	 * @function EndChild
+	 * @description ImGui function wrapper.
+	 * 
+	 * Windows Utilities
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static EndChild = function() {
+		return __imgui_end_child();
+	}
+
+	/**
+	 * @function BeginChildFrame
+	 * @description A custom wrapper.
+	 * @param {Real} _id
+	 * @param {Real} [width=0]
+	 * @param {Real} [height=0]
+	 * @param {Enum.ImGuiWindowFlags} [flags=ImGuiWindowFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static BeginChildFrame = function(_id, width=0, height=0, flags=ImGuiWindowFlags.None) {
+		return __imgui_begin_child_frame(_id, width, height, flags);
+	}
+
+	/**
+	 * @function EndChildFrame
+	 * @description A custom wrapper.
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static EndChildFrame = function() {
+		return __imgui_end_child_frame();
+	}
+
+	/**
+	 * @function IsWindowAppearing
+	 * @description ImGui function wrapper.
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static IsWindowAppearing = function() {
+		return __imgui_is_window_appearing();
+	}
+
+	/**
+	 * @function IsWindowCollapsed
+	 * @description ImGui function wrapper.
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static IsWindowCollapsed = function() {
+		return __imgui_is_window_collapsed();
+	}
+
+	/**
+	 * @function IsWindowFocused
+	 * @description ImGui function wrapper.
+	 * 
+	 * is current window focused? or its root/child, depending on flags. see flags for options.
+	 * @param {Enum.ImGuiFocusedFlags} [flags=ImGuiFocusedFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static IsWindowFocused = function(flags=ImGuiFocusedFlags.None) {
+		return __imgui_is_window_focused(flags);
+	}
+
+	/**
+	 * @function IsWindowHovered
+	 * @description ImGui function wrapper.
+	 * 
+	 * is current window hovered and hoverable (e.g. not blocked by a popup/modal)? See ImGuiHoveredFlags_ for options. IMPORTANT: If you are trying to check whether your mouse should be dispatched to Dear ImGui or to your underlying app, you should not use this function! Use the 'io.WantCaptureMouse' boolean for that! Refer to FAQ entry "How can I tell whether to dispatch mouse/keyboard to Dear ImGui or my application?" for details.
+	 * @param {Enum.ImGuiHoveredFlags} [flags=ImGuiHoveredFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static IsWindowHovered = function(flags=ImGuiHoveredFlags.None) {
+		return __imgui_is_window_hovered(flags);
+	}
+
+	/**
+	 * @function GetWindowDpiScale
+	 * @description ImGui function wrapper.
+	 * 
+	 * get DPI scale currently associated to the current window's viewport.
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetWindowDpiScale = function() {
+		return __imgui_get_window_dpi_scale();
+	}
+
+	/**
+	 * @function GetWindowPosX
+	 * @description A custom wrapper.
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetWindowPosX = function() {
+		return __imgui_get_window_x();
+	}
+
+	/**
+	 * @function GetWindowPosY
+	 * @description A custom wrapper.
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetWindowPosY = function() {
+		return __imgui_get_window_y();
+	}
+
+	/**
+	 * @function GetWindowWidth
+	 * @description ImGui function wrapper.
+	 * 
+	 * get current window width (IT IS UNLIKELY YOU EVER NEED TO USE THIS). Shortcut for GetWindowSize().x.
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetWindowWidth = function() {
+		return __imgui_get_window_width();
+	}
+
+	/**
+	 * @function GetWindowHeight
+	 * @description ImGui function wrapper.
+	 * 
+	 * get current window height (IT IS UNLIKELY YOU EVER NEED TO USE THIS). Shortcut for GetWindowSize().y.
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetWindowHeight = function() {
+		return __imgui_get_window_height();
+	}
+
+	/**
+	 * @function GetWindowViewport
+	 * @description ImGui function wrapper.
+	 * 
+	 * get viewport currently associated to the current window.
+	 * @context ImGui
+	 * @return {Pointer}
+	 */
+	static GetWindowViewport = function() {
+		return __imgui_get_window_viewport();
+	}
+
+	/**
+	 * @function SetWindowFontScale
+	 * @description ImGui function wrapper.
+	 * 
+	 * Set font scale factor for current window. Prefer using PushFont(NULL, style.FontSizeBase * factor) or use style.FontScaleMain to scale all windows.
+	 * @param {Real} scale
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetWindowFontScale = function(scale) {
+		return __imgui_set_window_font_scale(scale);
+	}
+
+	/**
+	 * @function SetNextWindowViewport
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window viewport
+	 * @param {Real} _id
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowViewport = function(_id) {
+		return __imgui_set_next_window_viewport(_id);
+	}
+
+	/**
+	 * @function SetNextWindowPos
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window position. call before Begin(). use pivot=(0.5f,0.5f) to center on given point, etc.
+	 * @param {Real} _x
+	 * @param {Real} _y
+	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @param {Real} [pivot_x=0]
+	 * @param {Real} [pivot_y=0]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowPos = function(_x, _y, cond=ImGuiCond.None, pivot_x=0, pivot_y=0) {
+		return __imgui_set_next_window_pos(_x, _y, cond, pivot_x, pivot_y);
+	}
+
+	/**
+	 * @function SetNextWindowSize
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window size. set axis to 0.0f to force an auto-fit on this axis. call before Begin()
+	 * @param {Real} width
+	 * @param {Real} height
+	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowSize = function(width, height, cond=ImGuiCond.None) {
+		return __imgui_set_next_window_size(width, height, cond);
+	}
+
+	/**
+	 * @function SetNextWindowSizeConstraints
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window size limits. use 0.0f or FLT_MAX if you don't want limits. Use -1 for both min and max of same axis to preserve current size (which itself is a constraint). Use callback to apply non-trivial programmatic constraints.
+	 * @param {Real} min_width
+	 * @param {Real} min_height
+	 * @param {Real} max_width
+	 * @param {Real} max_height
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowSizeConstraints = function(min_width, min_height, max_width, max_height) {
+		return __imgui_set_next_window_size_constraints(min_width, min_height, max_width, max_height);
+	}
+
+	/**
+	 * @function SetNextWindowContentSize
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window content size (~ scrollable client area, which enforce the range of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor WindowPadding. set an axis to 0.0f to leave it automatic. call before Begin()
+	 * @param {Real} width
+	 * @param {Real} height
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowContentSize = function(width, height) {
+		return __imgui_set_next_window_content_size(width, height);
+	}
+
+	/**
+	 * @function SetNextWindowCollapsed
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window collapsed state. call before Begin()
+	 * @param {Bool} collapsed
+	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowCollapsed = function(collapsed, cond=ImGuiCond.None) {
+		return __imgui_set_next_window_collapsed(collapsed, cond);
+	}
+
+	/**
+	 * @function SetNextWindowFocus
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window to be focused / top-most. call before Begin()
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowFocus = function() {
+		return __imgui_set_next_window_focus();
+	}
+
+	/**
+	 * @function SetNextWindowScroll
+	 * @description ImGui function wrapper.
+	 * 
+	 * set next window scrolling value (use < 0.0f to not affect a given axis).
+	 * @param {Real} scroll_x
+	 * @param {Real} scroll_y
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowScroll = function(scroll_x, scroll_y) {
+		return __imgui_set_next_window_scroll(scroll_x, scroll_y);
+	}
+
+	/**
+	 * @function SetNextWindowBgalpha
+	 * @description A custom wrapper.
+	 * @param {Real} alpha
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetNextWindowBgalpha = function(alpha) {
+		return __imgui_set_next_window_bgalpha(alpha);
+	}
+
+	/**
+	 * @function GetScrollX
+	 * @description ImGui function wrapper.
+	 * 
+	 * get scrolling amount [0 .. GetScrollMaxX()]
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetScrollX = function() {
+		return __imgui_get_scroll_x();
+	}
+
+	/**
+	 * @function GetScrollY
+	 * @description ImGui function wrapper.
+	 * 
+	 * get scrolling amount [0 .. GetScrollMaxY()]
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetScrollY = function() {
+		return __imgui_get_scroll_y();
+	}
+
+	/**
+	 * @function SetScrollX
+	 * @description ImGui function wrapper.
+	 * 
+	 * set scrolling amount [0 .. GetScrollMaxX()]
+	 * @param {Real} scroll_x
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetScrollX = function(scroll_x) {
+		return __imgui_set_scroll_x(scroll_x);
+	}
+
+	/**
+	 * @function SetScrollY
+	 * @description ImGui function wrapper.
+	 * 
+	 * set scrolling amount [0 .. GetScrollMaxY()]
+	 * @param {Real} scroll_y
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetScrollY = function(scroll_y) {
+		return __imgui_set_scroll_y(scroll_y);
+	}
+
+	/**
+	 * @function GetScrollMaxX
+	 * @description ImGui function wrapper.
+	 * 
+	 * get maximum scrolling amount ~~ ContentSize.x - WindowSize.x - DecorationsSize.x
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetScrollMaxX = function() {
+		return __imgui_get_scroll_max_x();
+	}
+
+	/**
+	 * @function GetScrollMaxY
+	 * @description ImGui function wrapper.
+	 * 
+	 * get maximum scrolling amount ~~ ContentSize.y - WindowSize.y - DecorationsSize.y
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static GetScrollMaxY = function() {
+		return __imgui_get_scroll_max_y();
+	}
+
+	/**
+	 * @function SetScrollHereX
+	 * @description ImGui function wrapper.
+	 * 
+	 * adjust scrolling amount to make current cursor position visible. center_x_ratio=0.0: left, 0.5: center, 1.0: right. When using to make a "default/current item" visible, consider using SetItemDefaultFocus() instead.
+	 * @param {Real} [center_x_ratio=0.5]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetScrollHereX = function(center_x_ratio=0.5) {
+		return __imgui_set_scroll_here_x(center_x_ratio);
+	}
+
+	/**
+	 * @function SetScrollHereY
+	 * @description ImGui function wrapper.
+	 * 
+	 * adjust scrolling amount to make current cursor position visible. center_y_ratio=0.0: top, 0.5: center, 1.0: bottom. When using to make a "default/current item" visible, consider using SetItemDefaultFocus() instead.
+	 * @param {Real} [center_y_ratio=0.5]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetScrollHereY = function(center_y_ratio=0.5) {
+		return __imgui_set_scroll_here_y(center_y_ratio);
+	}
+
+	/**
+	 * @function SetScrollFromPosX
+	 * @description ImGui function wrapper.
+	 * 
+	 * adjust scrolling amount to make given position visible. Generally GetCursorStartPos() + offset to compute a valid position.
+	 * @param {Real} local_x
+	 * @param {Real} [center_x_ratio=0.5]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetScrollFromPosX = function(local_x, center_x_ratio=0.5) {
+		return __imgui_set_scroll_from_pos_x(local_x, center_x_ratio);
+	}
+
+	/**
+	 * @function SetScrollFromPosY
+	 * @description ImGui function wrapper.
+	 * 
+	 * adjust scrolling amount to make given position visible. Generally GetCursorStartPos() + offset to compute a valid position.
+	 * @param {Real} local_y
+	 * @param {Real} [center_y_ratio=0.5]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetScrollFromPosY = function(local_y, center_y_ratio=0.5) {
+		return __imgui_set_scroll_from_pos_y(local_y, center_y_ratio);
+	}
+
+	/**
+	 * @function SetWindowPos
+	 * @description ImGui function wrapper.
+	 * 
+	 * (not recommended) set current window position - call within Begin()/End(). prefer using SetNextWindowPos(), as this may incur tearing and side-effects.
+	 * @param {String} [name=]
+	 * @param {Real} _x
+	 * @param {Real} _y
+	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetWindowPos = function(name="", _x, _y, cond=ImGuiCond.None) {
+		return __imgui_set_window_pos(name, _x, _y, cond);
+	}
+
+	/**
+	 * @function SetWindowSize
+	 * @description ImGui function wrapper.
+	 * 
+	 * (not recommended) set current window size - call within Begin()/End(). set to ImVec2(0, 0) to force an auto-fit. prefer using SetNextWindowSize(), as this may incur tearing and minor side-effects.
+	 * @param {String} [name=]
+	 * @param {Real} width
+	 * @param {Real} height
+	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetWindowSize = function(name="", width, height, cond=ImGuiCond.None) {
+		return __imgui_set_window_size(name, width, height, cond);
+	}
+
+	/**
+	 * @function SetWindowCollapsed
+	 * @description ImGui function wrapper.
+	 * 
+	 * (not recommended) set current window collapsed state. prefer using SetNextWindowCollapsed().
+	 * @param {String} [name=]
+	 * @param {Bool} collapsed
+	 * @param {Enum.ImGuiCond} [cond=ImGuiCond.None]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetWindowCollapsed = function(name="", collapsed, cond=ImGuiCond.None) {
+		return __imgui_set_window_collapsed(name, collapsed, cond);
+	}
+
+	/**
+	 * @function SetWindowFocus
+	 * @description ImGui function wrapper.
+	 * 
+	 * (not recommended) set current window to be focused / top-most. prefer using SetNextWindowFocus().
+	 * @param {String} [name=]
+	 * @context ImGui
+	 * @return {Undefined}
+	 */
+	static SetWindowFocus = function(name="") {
+		return __imgui_set_window_focus(name);
+	}
+
+	/**
 	 * @function Spacing
+	 * @description ImGui function wrapper.
+	 * 
+	 * add vertical spacing.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2583,6 +3102,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function Dummy
+	 * @description ImGui function wrapper.
+	 * 
+	 * add a dummy item of given size. unlike InvisibleButton(), Dummy() won't take the mouse click or be navigable into.
 	 * @param {Real} width
 	 * @param {Real} height
 	 * @context ImGui
@@ -2594,6 +3116,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function NewLine
+	 * @description ImGui function wrapper.
+	 * 
+	 * undo a SameLine() or force a new line when in a horizontal-layout context.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2603,6 +3128,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function AlignTextToFramePadding
+	 * @description ImGui function wrapper.
+	 * 
+	 * vertically align upcoming text baseline to FramePadding.y so that it will align properly to regularly framed items (call if you have text on a line before a framed item)
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2612,6 +3140,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function Separator
+	 * @description ImGui function wrapper.
+	 * 
+	 * separator, generally horizontal. inside a menu bar or in horizontal layout mode, this becomes a vertical separator.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2621,6 +3152,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SeparatorText
+	 * @description ImGui function wrapper.
+	 * 
+	 * currently: formatted text with a horizontal line
 	 * @param {String} label
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2631,6 +3165,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function Indent
+	 * @description ImGui function wrapper.
+	 * 
+	 * move content position toward the right, by indent_w, or style.IndentSpacing if indent_w <= 0
 	 * @param {Real} [indent_w=0]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2641,6 +3178,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function Unindent
+	 * @description ImGui function wrapper.
+	 * 
+	 * move content position back to the left, by indent_w, or style.IndentSpacing if indent_w <= 0
 	 * @param {Real} [indent_w=0]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2651,6 +3191,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SameLine
+	 * @description ImGui function wrapper.
+	 * 
+	 * call between widgets or groups to layout them horizontally. X position given in window coordinates.
 	 * @param {Real} [offset_from_start_x=0]
 	 * @param {Real} [spacing=-1]
 	 * @context ImGui
@@ -2662,6 +3205,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function BeginGroup
+	 * @description ImGui function wrapper.
+	 * 
+	 * lock horizontal starting position
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2671,6 +3217,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function EndGroup
+	 * @description ImGui function wrapper.
+	 * 
+	 * unlock horizontal starting position + capture the whole group bounding box into one "item" (so you can use IsItemHovered() or layout primitives such as SameLine() on whole group, etc.)
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2680,6 +3229,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetCursorPosX
+	 * @description ImGui function wrapper.
+	 * 
+	 * [window-local] "
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2689,6 +3241,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetCursorPosY
+	 * @description ImGui function wrapper.
+	 * 
+	 * [window-local] "
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2698,6 +3253,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetCursorStartPosX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2707,6 +3263,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetCursorStartPosY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2716,6 +3273,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetCursorScreenPosX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2725,6 +3283,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetCursorScreenPosY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2734,6 +3293,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetCursorScreenPos
+	 * @description ImGui function wrapper.
+	 * 
+	 * cursor position, absolute coordinates. THIS IS YOUR BEST FRIEND.
 	 * @param {Real} _x
 	 * @param {Real} _y
 	 * @context ImGui
@@ -2745,6 +3307,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetCursorPos
+	 * @description ImGui function wrapper.
+	 * 
+	 * [window-local] "
 	 * @param {Real} local_x
 	 * @param {Real} local_y
 	 * @context ImGui
@@ -2756,6 +3321,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetCursorPosX
+	 * @description ImGui function wrapper.
+	 * 
+	 * [window-local] "
 	 * @param {Real} local_x
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2766,6 +3334,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetCursorPosY
+	 * @description ImGui function wrapper.
+	 * 
+	 * [window-local] "
 	 * @param {Real} local_y
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2776,6 +3347,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetTextLineHeight
+	 * @description ImGui function wrapper.
+	 * 
+	 * ~ FontSize
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2785,6 +3359,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetTextLineHeightWithSpacing
+	 * @description ImGui function wrapper.
+	 * 
+	 * ~ FontSize + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of text)
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2794,6 +3371,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetFrameHeight
+	 * @description ImGui function wrapper.
+	 * 
+	 * ~ FontSize + style.FramePadding.y * 2
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2803,6 +3383,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetFrameHeightWithSpacing
+	 * @description ImGui function wrapper.
+	 * 
+	 * ~ FontSize + style.FramePadding.y * 2 + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of framed widgets)
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2812,6 +3395,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetContentRegionAvailX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2821,6 +3405,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetContentRegionAvailY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2830,6 +3415,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetContentRegionMaxX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2839,6 +3425,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetContentRegionMaxY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2848,6 +3435,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetWindowContentRegionMinX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2857,6 +3445,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetWindowContentRegionMinY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2866,6 +3455,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetWindowContentRegionMaxX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2875,6 +3465,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetWindowContentRegionMaxY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2884,6 +3475,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function PushItemWidth
+	 * @description ImGui function wrapper.
+	 * 
+	 * push width of items for common large "item+label" widgets. >0.0f: width in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN always align width to the right side).
 	 * @param {Real} item_width
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2894,6 +3488,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PopItemWidth
+	 * @description ImGui function wrapper.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2903,6 +3498,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetNextItemWidth
+	 * @description ImGui function wrapper.
+	 * 
+	 * set width of the _next_ common large "item+label" widget. >0.0f: width in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN always align width to the right side)
 	 * @param {Real} item_width
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2913,6 +3511,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function CalcItemWidth
+	 * @description ImGui function wrapper.
+	 * 
+	 * width of item given pushed settings and current cursor position. NOT necessarily the width of last item unlike most 'Item' functions.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -2922,6 +3523,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function PushTextWrapPos
+	 * @description ImGui function wrapper.
+	 * 
+	 * push word-wrapping position for Text*() commands. < 0.0f: no wrapping; 0.0f: wrap to end of window (or column); > 0.0f: wrap at 'wrap_pos_x' position in window local space
 	 * @param {Real} [wrap_local_pos_x=0]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -2932,6 +3536,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function PopTextWrapPos
+	 * @description ImGui function wrapper.
+	 * 
+	 * Style read access
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2941,6 +3548,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PushClipRect
+	 * @description ImGui function wrapper.
 	 * @param {Real} clip_min_x
 	 * @param {Real} clip_min_y
 	 * @param {Real} clip_max_x
@@ -2955,6 +3563,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function PopClipRect
+	 * @description ImGui function wrapper.
+	 * 
+	 * Focus, Activation
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -2963,201 +3574,10 @@ function ImGui() constructor {
 	}
 
 	/**
-	 * @function DragFloat
-	 * @param {String} label
-	 * @param {Real} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%.3f]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static DragFloat = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_float(label, v, v_speed, v_min, v_max, format, flags);
-	}
-
-	/**
-	 * @function DragFloat2
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%.3f]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragFloat2 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_float2(label, v, v_speed, v_min, v_max, format, flags);
-	}
-
-	/**
-	 * @function DragFloat3
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%.3f]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragFloat3 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_float3(label, v, v_speed, v_min, v_max, format, flags);
-	}
-
-	/**
-	 * @function DragFloat4
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%.3f]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragFloat4 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_float4(label, v, v_speed, v_min, v_max, format, flags);
-	}
-
-	/**
-	 * @function DragFloatN
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%.3f]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragFloatN = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_floatn(label, v, v_speed, v_min, v_max, format, flags, array_length(v));
-	}
-
-	/**
-	 * @function DragFloatRange2
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format_min=%.3f]
-	 * @param {String} [format_max=%.3f]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragFloatRange2 = function(label, v, v_speed=1, v_min=0, v_max=0, format_min="%.3f", format_max="%.3f", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_float_range2(label, v, v_speed, v_min, v_max, format_min, format_max, flags);
-	}
-
-	/**
-	 * @function DragInt
-	 * @param {String} label
-	 * @param {Real} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%d]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Real}
-	 */
-	static DragInt = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_int(label, v, v_speed, v_min, v_max, format, flags);
-	}
-
-	/**
-	 * @function DragInt2
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%d]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragInt2 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_int2(label, v, v_speed, v_min, v_max, format, flags);
-	}
-
-	/**
-	 * @function DragInt3
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%d]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragInt3 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_int3(label, v, v_speed, v_min, v_max, format, flags);
-	}
-
-	/**
-	 * @function DragInt4
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%d]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragInt4 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_int4(label, v, v_speed, v_min, v_max, format, flags);
-	}
-
-	/**
-	 * @function DragIntN
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format=%d]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragIntN = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_intn(label, v, v_speed, v_min, v_max, format, flags, array_length(v));
-	}
-
-	/**
-	 * @function DragIntRange2
-	 * @param {String} label
-	 * @param {Array} v
-	 * @param {Real} v_current_max
-	 * @param {Real} [v_speed=1]
-	 * @param {Real} [v_min=0]
-	 * @param {Real} [v_max=0]
-	 * @param {String} [format_max=%d]
-	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
-	 * @context ImGui
-	 * @return {Bool}
-	 */
-	static DragIntRange2 = function(label, v, v_current_max, v_speed=1, v_min=0, v_max=0, format_max="%d", flags=ImGuiSliderFlags.None) {
-		return __imgui_drag_int_range2(label, v, v_current_max, v_speed, v_min, v_max, format_max, flags);
-	}
-
-	/**
 	 * @function SliderFloat
+	 * @description ImGui function wrapper.
+	 * 
+	 * adjust format to decorate the value with a prefix or a suffix for in-slider labels or unit display.
 	 * @param {String} label
 	 * @param {Real} v
 	 * @param {Real} [v_min=0]
@@ -3173,6 +3593,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderFloat2
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [v_min=0]
@@ -3188,6 +3609,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderFloat3
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [v_min=0]
@@ -3203,6 +3625,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderFloat4
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [v_min=0]
@@ -3218,6 +3641,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderFloatN
+	 * @description A custom wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [v_speed=1]
@@ -3234,6 +3658,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderInt
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Real} v
 	 * @param {Real} [v_min=0]
@@ -3249,6 +3674,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderInt2
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [v_min=0]
@@ -3264,6 +3690,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderInt3
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [v_min=0]
@@ -3279,6 +3706,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderInt4
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [v_min=0]
@@ -3294,6 +3722,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderIntN
+	 * @description A custom wrapper.
 	 * @param {String} label
 	 * @param {Array} v
 	 * @param {Real} [v_min=0]
@@ -3309,6 +3738,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function VsliderFloat
+	 * @description A custom wrapper.
 	 * @param {String} label
 	 * @param {Real} width
 	 * @param {Real} height
@@ -3326,6 +3756,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function VsliderInt
+	 * @description A custom wrapper.
 	 * @param {String} label
 	 * @param {Real} width
 	 * @param {Real} height
@@ -3343,6 +3774,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SliderAngle
+	 * @description ImGui function wrapper.
 	 * @param {String} label
 	 * @param {Real} v_rad
 	 * @param {Real} [v_degrees_min=0]
@@ -3358,6 +3790,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function CreateContext
+	 * @description ImGui function wrapper.
 	 * @context ImGui
 	 * @return {Pointer}
 	 */
@@ -3367,6 +3800,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function DestroyContext
+	 * @description ImGui function wrapper.
+	 * 
+	 * NULL = destroy current context
 	 * @param {Pointer} ctx
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3377,6 +3813,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetCurrentContext
+	 * @description ImGui function wrapper.
 	 * @context ImGui
 	 * @return {Pointer}
 	 */
@@ -3386,6 +3823,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetCurrentContext
+	 * @description ImGui function wrapper.
+	 * 
+	 * Main
 	 * @param {Pointer} ctx
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3396,6 +3836,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowDemoWindow
+	 * @description ImGui function wrapper.
+	 * 
+	 * create Demo window. demonstrate most ImGui features. call this to learn about the library! try to make it always available in your application!
 	 * @param {Bool} [open=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -3406,6 +3849,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowMetricsWindow
+	 * @description ImGui function wrapper.
+	 * 
+	 * create Metrics/Debugger window. display Dear ImGui internals: windows, draw commands, various internal state, etc.
 	 * @param {Bool} [open=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -3416,6 +3862,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowDebugLogWindow
+	 * @description ImGui function wrapper.
+	 * 
+	 * create Debug Log window. display a simplified log of important dear imgui events.
 	 * @param {Bool} [open=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -3426,6 +3875,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowIDStackToolWindow
+	 * @description A custom wrapper.
 	 * @param {Bool} [open=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -3436,6 +3886,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowAboutWindow
+	 * @description ImGui function wrapper.
+	 * 
+	 * create About window. display Dear ImGui version, credits and build/system information.
 	 * @param {Bool} [open=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -3446,6 +3899,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowStyleEditor
+	 * @description ImGui function wrapper.
+	 * 
+	 * add style editor block (not a window). you can pass in a reference ImGuiStyle structure to compare to, revert to and save to (else it uses the default style)
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3455,6 +3911,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowStyleSelector
+	 * @description ImGui function wrapper.
+	 * 
+	 * add style selector block (not a window), essentially a combo listing the default styles.
 	 * @param {String} label
 	 * @context ImGui
 	 * @return {Bool}
@@ -3465,6 +3924,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowFontSelector
+	 * @description ImGui function wrapper.
+	 * 
+	 * add font selector block (not a window), essentially a combo listing the loaded fonts.
 	 * @param {String} label
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3475,6 +3937,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function ShowUserGuide
+	 * @description ImGui function wrapper.
+	 * 
+	 * add basic help/info block (not a window): how to manipulate ImGui as an end-user (mouse/keyboard controls).
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3484,6 +3949,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetVersion
+	 * @description ImGui function wrapper.
+	 * 
+	 * get the compiled version string e.g. "1.80 WIP" (essentially the value for IMGUI_VERSION from the compiled version of imgui.cpp)
 	 * @context ImGui
 	 * @return {String}
 	 */
@@ -3493,6 +3961,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PushID
+	 * @description A custom wrapper.
 	 * @param {String|Real} _id
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3503,6 +3972,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PopID
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3512,6 +3982,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetID
+	 * @description A custom wrapper.
 	 * @param {String} str_id
 	 * @context ImGui
 	 * @return {Real}
@@ -3522,6 +3993,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function PushItemFlag
+	 * @description ImGui function wrapper.
+	 * 
+	 * modify specified shared item flag, e.g. PushItemFlag(ImGuiItemFlags_NoTabStop, true)
 	 * @param {ImGuiItemFlags} item_flag
 	 * @param {Bool} enabled
 	 * @context ImGui
@@ -3533,6 +4007,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function PopItemFlag
+	 * @description ImGui function wrapper.
+	 * 
+	 * Parameters stacks (current window)
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3542,6 +4019,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function BeginDisabled
+	 * @description ImGui function wrapper.
 	 * @param {Bool} [disabled=true]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3552,6 +4030,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function EndDisabled
+	 * @description ImGui function wrapper.
+	 * 
+	 * Clipping
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3561,6 +4042,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemHovered
+	 * @description ImGui function wrapper.
+	 * 
+	 * is the last item hovered? (and usable, aka not blocked by a popup, etc.). See ImGuiHoveredFlags for more options.
 	 * @param {Enum.ImGuiHoveredFlags} [flags=ImGuiHoveredFlags.None]
 	 * @context ImGui
 	 * @return {Bool}
@@ -3571,6 +4055,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemActive
+	 * @description ImGui function wrapper.
+	 * 
+	 * is the last item active? (e.g. button being held, text field being edited. This will continuously return true while holding mouse button on an item. Items that don't interact will always return false)
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3580,6 +4067,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemFocused
+	 * @description ImGui function wrapper.
+	 * 
+	 * is the last item focused for keyboard/gamepad navigation?
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3589,6 +4079,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemClicked
+	 * @description ImGui function wrapper.
+	 * 
+	 * is the last item hovered and mouse clicked on? (**)  == IsMouseClicked(mouse_button) && IsItemHovered()Important. (**) this is NOT equivalent to the behavior of e.g. Button(). Read comments in function definition.
 	 * @param {Enum.ImGuiMouseButton} [mouse_button=ImGuiMouseButton.Left]
 	 * @context ImGui
 	 * @return {Bool}
@@ -3599,6 +4092,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemVisible
+	 * @description ImGui function wrapper.
+	 * 
+	 * is the last item visible? (items may be out of sight because of clipping/scrolling)
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3608,6 +4104,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemEdited
+	 * @description ImGui function wrapper.
+	 * 
+	 * did the last item modify its underlying value this frame? or was pressed? This is generally the same as the "bool" return value of many widgets.
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3617,6 +4116,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemActivated
+	 * @description ImGui function wrapper.
+	 * 
+	 * was the last item just made active (item was previously inactive).
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3626,6 +4128,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemDeactivated
+	 * @description ImGui function wrapper.
+	 * 
+	 * was the last item just made inactive (item was previously active). Useful for Undo/Redo patterns with widgets that require continuous editing.
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3635,6 +4140,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemDeactivatedAfterEdit
+	 * @description ImGui function wrapper.
+	 * 
+	 * was the last item just made inactive and made a value change when it was active? (e.g. Slider/Drag moved). Useful for Undo/Redo patterns with widgets that require continuous editing. Note that you may get false positives (some widgets such as Combo()/ListBox()/Selectable() will return true even when clicking an already selected item).
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3644,6 +4152,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsItemToggledOpen
+	 * @description ImGui function wrapper.
+	 * 
+	 * was the last item open state toggled? set by TreeNode().
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3653,6 +4164,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsAnyItemHovered
+	 * @description ImGui function wrapper.
+	 * 
+	 * is any item hovered?
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3662,6 +4176,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsAnyItemActive
+	 * @description ImGui function wrapper.
+	 * 
+	 * is any item active?
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3671,6 +4188,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsAnyItemFocused
+	 * @description ImGui function wrapper.
+	 * 
+	 * is any item focused?
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3680,6 +4200,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetItemID
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3689,6 +4210,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetItemRectMinX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3698,6 +4220,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetItemRectMinY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3707,6 +4230,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetItemRectMaxX
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3716,6 +4240,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetItemRectMaxY
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3725,6 +4250,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetItemRectSizeWidth
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3734,6 +4260,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetItemRectSizeHeight
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3743,6 +4270,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetNextItemAllowOverlap
+	 * @description ImGui function wrapper.
+	 * 
+	 * allow next item to be overlapped by a subsequent item. Useful with invisible buttons, selectable, treenode covering an area where subsequent items may need to be added. Note that both Selectable() and TreeNode() have dedicated flags doing this.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3752,6 +4282,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function BeginItemTooltip
+	 * @description ImGui function wrapper.
+	 * 
+	 * begin/append a tooltip window if preceding item was hovered.
 	 * @context ImGui
 	 * @return {Bool}
 	 */
@@ -3761,6 +4294,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetItemTooltip
+	 * @description ImGui function wrapper.
 	 * @param {String} text
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3771,6 +4305,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function IsRectVisible
+	 * @description ImGui function wrapper.
+	 * 
+	 * test if rectangle (of given size, starting from cursor position) is visible / not clipped.
 	 * @param {Real} x1
 	 * @param {Real} y1
 	 * @param {Real} x2
@@ -3784,6 +4321,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetTime
+	 * @description ImGui function wrapper.
+	 * 
+	 * get global imgui time. incremented by io.DeltaTime every frame.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3793,6 +4333,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetFrameCount
+	 * @description ImGui function wrapper.
+	 * 
+	 * get global imgui frame count. incremented by 1 every frame.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3802,6 +4345,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function CalcTextWidth
+	 * @description A custom wrapper.
 	 * @param {String} text
 	 * @param {Bool} [hide_text_after_double_hash=false]
 	 * @param {Real} [wrap_width=-1]
@@ -3814,6 +4358,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function CalcTextHeight
+	 * @description A custom wrapper.
 	 * @param {String} text
 	 * @param {Bool} [hide_text_after_double_hash=false]
 	 * @param {Real} [wrap_width=-1]
@@ -3826,6 +4371,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PushAllowKeyboardFocus
+	 * @description A custom wrapper.
 	 * @param {Bool} allow_keyboard_focus
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3836,6 +4382,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PopAllowKeyboardFocus
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3845,6 +4392,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetKeyboardFocusHere
+	 * @description ImGui function wrapper.
+	 * 
+	 * focus keyboard on the next widget. Use positive 'offset' to access sub components of a multiple component widget. Use -1 to access previous widget.
 	 * @param {Real} [offset=0]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3855,6 +4405,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PushButtonRepeat
+	 * @description A custom wrapper.
 	 * @param {Bool} _repeat
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3865,6 +4416,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function PopButtonRepeat
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3874,6 +4426,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetItemDefaultFocus
+	 * @description ImGui function wrapper.
+	 * 
+	 * make last item the default focused item of a newly appearing window.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3883,6 +4438,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ConfigFlagsGet
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Real}
 	 */
@@ -3892,6 +4448,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function IniFilename
+	 * @description A custom wrapper.
 	 * @param {String} [val=undefined]
 	 * @context ImGui
 	 * @return {String}
@@ -3902,6 +4459,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function WantSaveIniSettings
+	 * @description A custom wrapper.
 	 * @param {Bool} [val=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -3912,6 +4470,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function LoadIniSettingsFromDisk
+	 * @description ImGui function wrapper.
+	 * 
+	 * call after CreateContext() and before the first call to NewFrame(). NewFrame() automatically calls LoadIniSettingsFromDisk(io.IniFilename).
 	 * @param {String} [ini_filename=undefined]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3922,6 +4483,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function LoadIniSettingsFromMemory
+	 * @description ImGui function wrapper.
+	 * 
+	 * call after CreateContext() and before the first call to NewFrame() to provide .ini data from your own data source.
 	 * @param {String} [ini_data=undefined]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3932,6 +4496,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SaveIniSettingsToDisk
+	 * @description ImGui function wrapper.
+	 * 
+	 * this is automatically called (if io.IniFilename is not empty) a few seconds after any modification that should be reflected in the .ini file (and also by DestroyContext).
 	 * @param {String} [ini_filename=undefined]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -3942,6 +4509,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SaveIniSettingsToMemory
+	 * @description ImGui function wrapper.
+	 * 
+	 * return a zero-terminated string with the .ini data which you can save by your own mean. call when io.WantSaveIniSettings is set, then save data by your own mean and clear io.WantSaveIniSettings.
 	 * @context ImGui
 	 * @return {String}
 	 */
@@ -3951,6 +4521,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ClearIniSettings
+	 * @description A custom wrapper.
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -3960,6 +4531,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ConfigFlagsSet
+	 * @description A custom wrapper.
 	 * @param {Real} flags
 	 * @context ImGui
 	 * @return {undefined}
@@ -3970,6 +4542,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function ConfigFlagToggle
+	 * @description A custom wrapper.
 	 * @param {Real} flag
 	 * @context ImGui
 	 * @return {Bool}
@@ -3980,6 +4553,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetMainViewport
+	 * @description ImGui function wrapper.
+	 * 
+	 * return primary/default viewport. This can never be NULL.
 	 * @context ImGui
 	 * @return {Pointer}
 	 */
@@ -3989,6 +4565,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetViewportID
+	 * @description A custom wrapper.
 	 * @param {ImGuiViewport} vp
 	 * @context ImGui
 	 * @return {ImGuiID}
@@ -3999,6 +4576,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function LogText
+	 * @description ImGui function wrapper.
 	 * @param {String} text
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4009,6 +4587,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function LogToClipboard
+	 * @description ImGui function wrapper.
+	 * 
+	 * start logging to OS clipboard
 	 * @param {Real} [auto_open_depth=-1]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4019,6 +4600,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function LogToTTY
+	 * @description A custom wrapper.
 	 * @param {Real} [auto_open_depth=-1]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4029,6 +4611,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function LogFinish
+	 * @description ImGui function wrapper.
+	 * 
+	 * stop logging (close file, etc.)
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -4038,6 +4623,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function LogButtons
+	 * @description ImGui function wrapper.
+	 * 
+	 * helper to display buttons for logging to tty/file/clipboard
 	 * @context ImGui
 	 * @return {Undefined}
 	 */
@@ -4047,6 +4635,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function LogToFile
+	 * @description ImGui function wrapper.
+	 * 
+	 * start logging to file
 	 * @param {Real} [auto_open_depth=-1]
 	 * @param {Any} [filename=undefined]
 	 * @context ImGui
@@ -4058,6 +4649,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetNextFrameWantCaptureKeyboard
+	 * @description ImGui function wrapper.
+	 * 
+	 * Override io.WantCaptureKeyboard flag next frame (said flag is left for your application to handle, typically when true it instructs your app to ignore inputs). e.g. force capture keyboard when your widget is being hovered. This is equivalent to setting "io.WantCaptureKeyboard = want_capture_keyboard"; after the next NewFrame() call.
 	 * @param {Bool} [val=undefined]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4068,6 +4662,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function SetNextFrameWantCaptureMouse
+	 * @description ImGui function wrapper.
+	 * 
+	 * Override io.WantCaptureMouse flag next frame (said flag is left for your application to handle, typical when true it instructs your app to ignore inputs). This is equivalent to setting "io.WantCaptureMouse = want_capture_mouse;" after the next NewFrame() call.
 	 * @param {Bool} [val=undefined]
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4078,6 +4675,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function WantKeyboardCapture
+	 * @description A custom wrapper.
 	 * @param {Bool} [val=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -4088,6 +4686,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function WantMouseCapture
+	 * @description A custom wrapper.
 	 * @param {Bool} [val=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -4098,6 +4697,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function WantTextInput
+	 * @description A custom wrapper.
 	 * @param {Bool} [val=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -4108,6 +4708,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function WantMouseCaptureUnlessPopupClose
+	 * @description A custom wrapper.
 	 * @param {Bool} [val=undefined]
 	 * @context ImGui
 	 * @return {Bool}
@@ -4117,7 +4718,218 @@ function ImGui() constructor {
 	}
 
 	/**
+	 * @function DragFloat
+	 * @description ImGui function wrapper.
+	 * 
+	 * If v_min >= v_max we have no bound
+	 * @param {String} label
+	 * @param {Real} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%.3f]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static DragFloat = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_float(label, v, v_speed, v_min, v_max, format, flags);
+	}
+
+	/**
+	 * @function DragFloat2
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%.3f]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragFloat2 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_float2(label, v, v_speed, v_min, v_max, format, flags);
+	}
+
+	/**
+	 * @function DragFloat3
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%.3f]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragFloat3 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_float3(label, v, v_speed, v_min, v_max, format, flags);
+	}
+
+	/**
+	 * @function DragFloat4
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%.3f]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragFloat4 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_float4(label, v, v_speed, v_min, v_max, format, flags);
+	}
+
+	/**
+	 * @function DragFloatN
+	 * @description A custom wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%.3f]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragFloatN = function(label, v, v_speed=1, v_min=0, v_max=0, format="%.3f", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_floatn(label, v, v_speed, v_min, v_max, format, flags, array_length(v));
+	}
+
+	/**
+	 * @function DragFloatRange2
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format_min=%.3f]
+	 * @param {String} [format_max=%.3f]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragFloatRange2 = function(label, v, v_speed=1, v_min=0, v_max=0, format_min="%.3f", format_max="%.3f", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_float_range2(label, v, v_speed, v_min, v_max, format_min, format_max, flags);
+	}
+
+	/**
+	 * @function DragInt
+	 * @description ImGui function wrapper.
+	 * 
+	 * If v_min >= v_max we have no bound
+	 * @param {String} label
+	 * @param {Real} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%d]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Real}
+	 */
+	static DragInt = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_int(label, v, v_speed, v_min, v_max, format, flags);
+	}
+
+	/**
+	 * @function DragInt2
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%d]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragInt2 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_int2(label, v, v_speed, v_min, v_max, format, flags);
+	}
+
+	/**
+	 * @function DragInt3
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%d]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragInt3 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_int3(label, v, v_speed, v_min, v_max, format, flags);
+	}
+
+	/**
+	 * @function DragInt4
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%d]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragInt4 = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_int4(label, v, v_speed, v_min, v_max, format, flags);
+	}
+
+	/**
+	 * @function DragIntN
+	 * @description A custom wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format=%d]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragIntN = function(label, v, v_speed=1, v_min=0, v_max=0, format="%d", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_intn(label, v, v_speed, v_min, v_max, format, flags, array_length(v));
+	}
+
+	/**
+	 * @function DragIntRange2
+	 * @description ImGui function wrapper.
+	 * @param {String} label
+	 * @param {Array} v
+	 * @param {Real} v_current_max
+	 * @param {Real} [v_speed=1]
+	 * @param {Real} [v_min=0]
+	 * @param {Real} [v_max=0]
+	 * @param {String} [format_max=%d]
+	 * @param {Enum.ImGuiSliderFlags} [flags=ImGuiSliderFlags.None]
+	 * @context ImGui
+	 * @return {Bool}
+	 */
+	static DragIntRange2 = function(label, v, v_current_max, v_speed=1, v_min=0, v_max=0, format_max="%d", flags=ImGuiSliderFlags.None) {
+		return __imgui_drag_int_range2(label, v, v_current_max, v_speed, v_min, v_max, format_max, flags);
+	}
+
+	/**
 	 * @function GetBackgroundDrawlist
+	 * @description A custom wrapper.
 	 * @param {Pointer} [viewport=undefined]
 	 * @context ImGui
 	 * @return {Pointer}
@@ -4128,6 +4940,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetForegroundDrawlist
+	 * @description A custom wrapper.
 	 * @param {Pointer} [viewport=undefined]
 	 * @context ImGui
 	 * @return {Pointer}
@@ -4138,6 +4951,9 @@ function ImGui() constructor {
 
 	/**
 	 * @function GetWindowDrawList
+	 * @description ImGui function wrapper.
+	 * 
+	 * get draw list associated to the current window, to append your own drawing primitives
 	 * @context ImGui
 	 * @return {Pointer}
 	 */
@@ -4147,6 +4963,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddLine
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4163,6 +4980,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddRect
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4181,6 +4999,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddRectFilled
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4198,6 +5017,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddRectFilledMultiColor
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4216,6 +5036,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddQuad
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4236,6 +5057,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddQuadFilled
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4255,6 +5077,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddTriangle
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4273,6 +5096,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddTriangleFilled
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4290,6 +5114,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddCircle
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4306,6 +5131,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddCircleFilled
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4321,6 +5147,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddNgon
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4337,6 +5164,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddNgonFilled
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4352,6 +5180,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddText
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4366,6 +5195,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddTextFont
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4383,6 +5213,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddPolyline
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Array<Real>} positions
 	 * @param {Real} col
@@ -4397,6 +5228,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddConvexPolyFilled
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Array<Real>} positions
 	 * @param {Real} col
@@ -4409,6 +5241,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddBezierCubic
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4430,6 +5263,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddBezierQuadratic
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4449,6 +5283,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathFillConvex
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} col
 	 * @context ImGui
@@ -4460,6 +5295,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathStroke
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} col
 	 * @param {Enum.ImDrawFlags} [flags=ImDrawFlags.None]
@@ -4473,6 +5309,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathClear
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4483,6 +5320,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathLineTo
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4495,6 +5333,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathLineToMergeDuplicate
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4507,6 +5346,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathArcTo
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4523,6 +5363,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathArcToFast
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} _x
 	 * @param {Real} _y
@@ -4538,6 +5379,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathBezierCubicCurveTo
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x2
 	 * @param {Real} y2
@@ -4555,6 +5397,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathBezierQuadraticCurveTo
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x2
 	 * @param {Real} y2
@@ -4570,6 +5413,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPathRect
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} x1
 	 * @param {Real} y1
@@ -4586,6 +5430,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddImage
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} sprite
 	 * @param {Real} subimg
@@ -4604,6 +5449,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListAddImageRounded
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} sprite
 	 * @param {Real} subimg
@@ -4624,6 +5470,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPushClipRect
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} clip_min_x
 	 * @param {Real} clip_min_y
@@ -4639,6 +5486,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawlistPushClipRectFullscreen
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4649,6 +5497,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPopClipRect
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4659,6 +5508,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPushTextureID
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} sprite
 	 * @param {Real} subimg
@@ -4672,6 +5522,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListPopTextureID
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @context ImGui
 	 * @return {Undefined}
@@ -4682,6 +5533,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListFlagsGet
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @context ImGui
 	 * @return {Real}
@@ -4692,6 +5544,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListFlagsSet
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} flags
 	 * @context ImGui
@@ -4703,6 +5556,7 @@ function ImGui() constructor {
 
 	/**
 	 * @function DrawListFlagToggle
+	 * @description A custom wrapper.
 	 * @param {Pointer} list
 	 * @param {Real} flag
 	 * @context ImGui
@@ -4711,7 +5565,7 @@ function ImGui() constructor {
 	static DrawListFlagToggle = function(list, flag) {
 		return __imgui_drawlist_flag_toggle(list, flag);
 	}
-	#endregion
+#endregion
 
     #region Enums
 
