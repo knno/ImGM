@@ -1,78 +1,119 @@
-# ImGM
+# ImGM — ImGui for GameMaker
+![Screenshot](./.github/Screenshot%202025-03-14%20043958.png)
+![Build](https://github.com/knno/ImGM/actions/workflows/build.yml/badge.svg)
+<!-- ![coverage](https://badgen.net/https/raw.githubusercontent.com/knno/ImGM/dev/extra/badges/coverage.json?icon=awesome) -->
 
+**ImGM** is a wrapper extension that brings the power of [Dear ImGui](https://github.com/ocornut/imgui) to modern GameMaker projects. It enables immediate-mode GUI rendering with DLL integration, modular extension support, and rapid prototyping workflows.
 
-> ⚠️ Work-In-Progress!
-> This readme and the project itself is considered W.I.P.
-> Feel free to contribute
+> 🚀 Built for developers who want expressive UI, debug tools, and editor-like interfaces inside GameMaker.
 
-An ImGui wrapper for modern GameMaker.
+---
 
-[<!-- Screenshot -->](https://github.com/knno/ImGM/blob/dev/.github/Screenshot%202025-03-14%20043958.png)
-![issues](https://badgen.net/github/open-issues/knno/ImGM)
-![coverage](https://badgen.net/https/raw.githubusercontent.com/knno/ImGM/main/extra/badges/coverage.json?icon=awesome)
+## ✨ Features
 
-Check the [Wiki](https://github.com/knno/ImGM/wiki) for more info!
+- ✅ **Latest ImGui version** (auto-synced via submodule)
+- 🧩 **Modular extension system** — easily wrap new ImGui features
+- 🛠️ **DLL-backed performance** — native calls with minimal overhead
+- 📦 **Auto-generated wrappers** — build-time report generation
+- 🧪 **Example project included** — test and iterate quickly
 
-# Features
-- Latest ImGui version
-- Great workflow for development
-  - Easily write wrappers for your desired ImGui extensions.
-  - Generate reports automatically on building.
-- Example included
+---
 
-# Installation
+## 📦 Installation
 
-- Download the pre-built Windows packages for GameMaker from [Releases](https://github.com/knno/ImGM/releases).
-- Or you can [build](#building) the source code! See below.
+### For Usage
 
-# Usage (GameMaker)
+#### 1. Download the Package
 
-There are various ways to use the **ImGM** extension. Below we will see the basic and advance usage of ImGM.
+Download the GameMaker package file(s) from the latest stable release.
 
-## Prerequisites
+#### 2. Import the Package to your GameMaker project
 
-Download and import the .yymps file.
+Click `import local package` in GameMaker IDE when your project is opened. Select the downloaded .yymps file.
 
-## Basic Usage
+> When the package is imported, you will have the extension added to your GameMaker project.
 
-1. Create a persistent object and call the essential functions in their respective events.
-  - `ImGui.__Initialize()` in the create event
-  - `ImGui.__NewFrame()` in any stepping event (suggested: *Begin Step*)
-  - `ImGui.__EndFrame()` in any stepping event (suggested: *End Step* + *Room End*)
-  - `ImGui.__Render()` in any rendering event (suggested: *Draw*)
-  - `ImGui.__Draw()` in any draw event (suggested: *Draw GUI*)
-  - `ImGui.__Shutdown()` in game end event
+#### 3. Add the ImGM persistent controller object to the first room
 
-2. Write your UI code anywhere, make sure it is executed after `__NewFrame` and before `__EndFrame` calls.
-  - Using the suggested *Begin Step* and *End Step* events makes it easier for UI code to be anywhere in *Step* events of objects.
+This will enable you to call any extension function afterwards. As the object will manage the life-cycle automatically.
 
-3. Make sure you have read and understood the [Notes](#notes) section.
+### For Development
 
-# Compatibility
+#### 1. Download the repository
 
-## Platform
+> 💡 If you clone instead and encounter LFS quota errors, use:
+> ```bash
+> GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/knno/ImGM.git
+> cd ImGM
+> git submodule update --init --recursive # or just: git submodule update --init modules/imgui
+>
+> ```
+> Then manually replace for any missing or broken assets.
 
-Currently, this extension makes heavy usage of the ability to pass a device handler and context to extensions... unfortunately, this functionality **is only avaliable for [DX11 targets](https://manual.yoyogames.com/index.htm#t=GameMaker_Language%2FGML_Reference%2FOS_And_Compiler%2Fos_get_info.htm)**.
+#### 2. Build the DLL
 
-# Coverage
+Use `premake5.lua` to generate your platform-specific project:
 
-Check out [`ImGM.gml`](https://github.com/knno/ImGM/blob/main/scripts/ImGui/ImGui.gml) to view all wrapper functions.
-Check out [`COVERAGE.md`](https://github.com/knno/ImGM/blob/main/COVERAGE.md) for coverage report.
+```bash
+premake5 vs2022  # or gmake2, xcode, etc.
+```
 
-If there is anything missing, submit issues in this repository: [Click here to create an issue](https://github.com/knno/ImGM/issues).
+This compiles the DLL and places it in the GameMaker project sub-directory.
 
-# Notes
+#### 3. Build with the tools
 
-- Functions like `ImGui.Begin` may not return what you expect, see ["ImGuiReturnMask Usage"](https://github.com/knno/ImGM/wiki/ImGuiReturnMask-Usage) for more info
+The tools allow for automatic "detect and update" of wrappers for all imgui and imgui extensions into the project.
 
-- Functions that accept an **array** of items as an argument (such as `ImGui.DragInt3`, `ImGui.SliderFloat2`, etc) will ***directly modify*** the given array. Keep this in mind when using them. Analogous functions that accept single elements (such as `ImGui.DrawInt`, `ImGui.SliderFloat`) ***will not*** make any changes directly to the value, and the return value should be used.
+```bash
+source .bashrc
+# imgm wrappers:gen <namespace> <headers-and-files...>
+imgm wrappers:gen imgui src/dll/imgui/internal/imgui.h src/dll/imgui/wrappers/imgui_*_gm.cpp # generate for ImGui
+```
 
-- Like the above, `ColorEdit4` and `ColorPicker4` take the GML class `ImColor` and mutates it directly; this is worth mentioning as `ColorEdit3` returns a BGR colour
+For more information check out the ImGM docs gh-pages website.
 
-# Special Thanks
-- [Omar Cornut](https://github.com/ocornut/) for creating [Dear ImGui](https://github.com/ocornut/imgui)
-- [rousr](https://rou.sr/) for creating [ImGuiGML](https://imguigml.rou.sr/) which inspired development of this
-- [@nkrapivin](https://github.com/nkrapivin) for providing general assistance with `YYRunnerInterface` magic
-- [@kraifpatrik](https://github.com/blueburncz/GMD3D11)'s GMD3D11 for serving as reference on how to retrieve textures from GameMaker
-- [@nommiin](https://github.com/nommiin/ImGui_GM) original project as reference
-- All direct or indirect contributors
+#### 4. Add An ImGui Extension or Write Wrappers
+
+This is covered also in the ImGM docs.
+
+---
+
+## 🧪 Example Usage
+
+```gml
+ImGui.Begin("Hello");
+ImGui.Text("Welcome to ImGM!");
+ImGui.End();
+```
+
+## 📚 Documentation
+
+See the [Docs](https://knno.github.io/ImGM) for:
+
+- Full documentation of the project
+- Full guides
+- Build instructions
+- Extension writing guide
+- Explanation of tools
+- How to debug
+- Known issues ...
+
+---
+
+## 🛠️ Contributing
+
+Pull requests welcome!
+Check out the [CONTRIBUTING.md](CONTRIBUTING.md) and [Issues](https://github.com/knno/ImGM/issues/) for ideas.
+
+---
+
+## 📜 License
+
+This project is licensed under MIT — free to use, modify, and distribute.
+
+---
+
+## 💬 Credits
+
+Created by [Kenan Masri](https://github.com/knno)
+Powered by Dear ImGui and the GameMaker community.
