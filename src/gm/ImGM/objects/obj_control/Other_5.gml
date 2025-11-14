@@ -1,5 +1,5 @@
 ///
-/// Room-end Event
+/// Room End Event
 ///
 
 /// Use this code to end the frame when switching rooms.

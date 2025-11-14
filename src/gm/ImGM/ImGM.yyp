@@ -2,7 +2,7 @@
   "$GMProject":"v1",
   "%Name":"ImGM",
   "AudioGroups":[
-    {"$GMAudioGroup":"","%Name":"audiogroup_default","name":"audiogroup_default","resourceType":"GMAudioGroup","resourceVersion":"2.0","targets":-1,},
+    {"$GMAudioGroup":"v1","%Name":"audiogroup_default","exportDir":"","name":"audiogroup_default","resourceType":"GMAudioGroup","resourceVersion":"2.0","targets":-1,},
   ],
   "configs":{
     "children":[
@@ -43,6 +43,7 @@
     {"id":{"name":"fnt_consolas","path":"fonts/fnt_consolas/fnt_consolas.yy",},},
     {"id":{"name":"obj_control","path":"objects/obj_control/obj_control.yy",},},
     {"id":{"name":"obj_example","path":"objects/obj_example/obj_example.yy",},},
+    {"id":{"name":"obj_ImGM","path":"objects/obj_ImGM/obj_ImGM.yy",},},
     {"id":{"name":"obj_ktf_stepper","path":"objects/obj_ktf_stepper/obj_ktf_stepper.yy",},},
     {"id":{"name":"obj_tests","path":"objects/obj_tests/obj_tests.yy",},},
     {"id":{"name":"rm_empty","path":"rooms/rm_empty/rm_empty.yy",},},

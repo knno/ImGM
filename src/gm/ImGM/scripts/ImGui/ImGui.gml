@@ -6645,9 +6645,6 @@ function ImGui() constructor {
                 gpu_set_blendmode(bm_normal);
 
                 if _ww > 0 and _wh > 0 {
-                    display_set_gui_size(_ww, _wh);
-                    display_set_gui_maximize(__State.Display.Scale, __State.Display.Scale, 0, 0);
-
                     if (__State.Engine.Window[$ "DrawBegin"]) {
                         __State.Engine.Window.DrawBegin();
                     }
@@ -6660,9 +6657,6 @@ function ImGui() constructor {
                     if (__State.Engine.Window[$ "DrawEnd"]) {
                         __State.Engine.Window.DrawEnd();
                     }
-
-                    display_set_gui_maximize();
-                    display_set_gui_size(_w, _h);
                 }
             }
         }

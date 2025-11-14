@@ -1,5 +1,5 @@
 ///
-/// Pre-Draw Event
+/// Pre Draw Event
 ///
 
 /// Render

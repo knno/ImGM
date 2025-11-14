@@ -35,7 +35,10 @@ Click `import local package` in GameMaker IDE when your project is opened. Selec
 
 #### 3. Add the ImGM persistent controller object to the first room
 
+Just add the persistent object `obj_ImGM` to a room, preferrably the first room.
 This will enable you to call any extension function afterwards. As the object will manage the life-cycle automatically.
+
+> Now you can call ImGui functions in your own code!
 
 ### For Development
 
@@ -50,7 +53,25 @@ This will enable you to call any extension function afterwards. As the object wi
 > ```
 > Then manually replace for any missing or broken assets.
 
-#### 2. Build the DLL
+#### 2. Install npm
+
+```bash
+npm install
+```
+
+#### 3. Initialize using the Tools
+
+```bash
+source .bashrc
+# imgm modules:copy [--gm] [--imgui] [--ext <all|name>]
+GM_RUNTIME=runtime-2024.14.0.251 imgm modules:copy --gm --imgui
+```
+
+You can specify a runtime as an environment variable to copy extension interface files from it.
+
+#### 4. Build the DLL
+
+##### Regenerating the VS Project
 
 Use `premake5.lua` to generate your platform-specific project:
 
@@ -58,11 +79,14 @@ Use `premake5.lua` to generate your platform-specific project:
 premake5 vs2022  # or gmake2, xcode, etc.
 ```
 
+##### Build using VS
+
+Open dll.sln solution file in Visual Studio and build the solution.
 This compiles the DLL and places it in the GameMaker project sub-directory.
 
-#### 3. Build with the tools
+#### 5. Generate Wrappers with the Tools
 
-The tools allow for automatic "detect and update" of wrappers for all imgui and imgui extensions into the project.
+The tools allow for automatic "detection and updating" of wrappers for all imgui and imgui extensions into the project.
 
 ```bash
 source .bashrc
