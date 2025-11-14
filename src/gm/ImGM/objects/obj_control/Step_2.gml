@@ -1,5 +1,5 @@
 ///
-/// End-Step Event
+/// End Step Event
 ///
 
 /// Use this code to end the frame.
