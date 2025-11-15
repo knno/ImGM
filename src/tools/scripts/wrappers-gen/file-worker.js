@@ -31,6 +31,8 @@ const main = async () => {
 
 		result.time = (Date.now() - totalStartTime) / 1000
 		result.moduleHandle = module.handle
+		result.moduleConfig = module.sourceConfig
+		result.moduleName = module.name.get()
 		result.file = filePath
 		result.tokens = JSON.stringify(api.tokens)
 		result.enums = JSON.stringify(api.enums)

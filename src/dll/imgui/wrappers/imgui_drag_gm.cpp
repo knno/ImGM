@@ -91,7 +91,7 @@ GMFUNC(__imgui_drag_float4) {
 	delete[]v;
 }
 
-GMFUNC(__imgui_drag_floatn) {
+GMFUNC(__imgui_drag_float_n) {
 	const char* label = YYGetString(arg, 0);
 	float* v = YYGetArray<float>(arg, 1, (int)YYGetReal(arg, 7));
 	float v_speed = static_cast<float>(YYGetReal(arg, 2));
@@ -234,7 +234,7 @@ GMFUNC(__imgui_drag_int4) {
 	delete[]v;
 }
 
-GMFUNC(__imgui_drag_intn) {
+GMFUNC(__imgui_drag_int_n) {
 	const char* label = YYGetString(arg, 0);
 	int* v = YYGetArray<int>(arg, 1, YYGetReal(arg, 7));
 	int v_speed = (int)YYGetReal(arg, 2);
@@ -275,7 +275,7 @@ GMFUNC(__imgui_drag_int_range2) {
 	GMDEFAULT("%d");
 	const char* format_max = YYGetString(arg, 6);
 	GMDEFAULT("%d");
-	ImGuiSliderFlags flags = (int)YYGetReal(arg, 7); 
+	ImGuiSliderFlags flags = (int)YYGetReal(arg, 7);
 	GMDEFAULT(ImGuiSliderFlags.None);
 
 	Result.kind = VALUE_BOOL;

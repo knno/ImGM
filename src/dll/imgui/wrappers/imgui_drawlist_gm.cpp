@@ -1,7 +1,7 @@
 #include "../imgui_gm.h"
 #include <vector>
 
-GMFUNC(__imgui_get_background_drawlist) {
+GMFUNC(__imgui_get_background_draw_list) {
 	RValue* viewport = &arg[0];
 	GMDEFAULT(undefined);
 	GMHINT(Pointer);
@@ -15,7 +15,7 @@ GMFUNC(__imgui_get_background_drawlist) {
 	return;
 }
 
-GMFUNC(__imgui_get_foreground_drawlist) {
+GMFUNC(__imgui_get_foreground_draw_list) {
 	RValue* viewport = &arg[0];
 	GMDEFAULT(undefined);
 	GMHINT(Pointer);

@@ -155,6 +155,7 @@ const styleConfig = {
 export default {
 	projectRoot: projectRoot,
 	projectName: "ImGM",
+	projectLink: "https://github.com/knno/ImGM",
 	modules: modulesConfig,
 	dll: dllConfig,
 	logging: loggingConfig,

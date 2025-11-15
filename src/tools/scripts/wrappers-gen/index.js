@@ -5,7 +5,7 @@
  *
  * @author knno <github.com/knno>
  */
-import path from "path"
+import Path from "path"
 import { fileURLToPath } from "url"
 import Config from "../../config.js"
 import File from "../../lib/class/file.js"
@@ -20,9 +20,10 @@ import {
 } from "../../lib/parsers/wrappers.js"
 import { Program } from "../../lib/program.js"
 import { updateGmlScripts } from "./gml.js"
+import { generateCoverage } from "./coverage.js"
 
 const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __dirname = Path.dirname(__filename)
 const NAME = "wrappers:gen"
 const Logger = Program.Logger
 const Term = Program.terminal
@@ -48,7 +49,7 @@ async function main() {
 		process.exit(1)
 	}
 
-	const filePaths = params._args.slice(1).map((p) => path.resolve(p))
+	const filePaths = params._args.slice(1).map((p) => Path.resolve(p))
 	let apis = []
 	const totalStartTime = Date.now()
 
@@ -58,7 +59,7 @@ async function main() {
 
 	const tasks = filePaths.map((filePath) =>
 		Program.worker(
-			path.join(__dirname, "file-worker.js"),
+			Path.join(__dirname, "file-worker.js"),
 			filePath,
 			{
 				filePath,
@@ -214,14 +215,19 @@ async function main() {
 				functions: apis.flatMap((api) => api.functions || []),
 				wrappers: wrapperAnalyzer.wrappers,
 				artifacts: apis.flatMap((api) => api.artifacts || []),
+				modulesConfigs: Object.fromEntries(
+					apis.map(api => [api.moduleName, api.moduleConfig])
+				)
 			}
 
 			let extFile = new File(
-				path.join(Config.gm.projectDir, "extensions/ImGM/ImGM.yy")
+				Path.join(Config.gm.projectDir, "extensions/ImGM/ImGM.yy")
 			)
 			injectWrappers(fullApi.wrappers, extFile)
 
 			updateGmlScripts(fullApi, Config);
+
+			generateCoverage(fullApi);
 
 			Logger.info(`${"─".repeat(10)} Total Stats ${"─".repeat(10)}`)
 			Logger.info(
