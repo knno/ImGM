@@ -117,6 +117,7 @@ export class ApiAnalyzer extends BaseParser {
 
 	_api_func(first, nav, ns) {
 		let token = first
+
 		if (first.type === TokenType.FUNCTION_DEF) {
 			token = nav.advance(-1)
 		} else if (
@@ -268,24 +269,33 @@ export class ApiAnalyzer extends BaseParser {
 			const next = nav.peek(1)
 			if (next && next.type == TokenType.IDENTIFIER) {
 				nav.advance()
-				const after = nav.peek(1)
+				let i = 1;
+				let after = nav.peek(i);
+				while (
+					after &&
+					[
+						TokenType.NEWLINE,
+					].includes(after.type)
+				) {
+					after = nav.peek(i)
+					i++
+				}
 				if (after.children.length > 0) {
 					nav.advance()
 					const children = after.navigateChildren()
-					ns = ns ? `${ns}.${next.value}` : next.value
+					if (ns && next.value && ns != next.value) {
+						ns = ns ? `${ns}.${next.value}` : next.value
+					}
+					let _res;
 					while (!children.isLast()) {
 						const child = children.peek()
-						let _res
-						if (
-							token.type == TokenType.KEYWORD &&
-							token.value == "namespace"
-						) {
-							_res = this.p_ns_api_funcs(child, children, ns)
-						} else if (child.type == TokenType.IDENTIFIER) {
+						_res = undefined
+						if (child.type == TokenType.IDENTIFIER) {
 							_res = this._api_func(child, children, ns)
 							if (_res) {
 								fns.push(_res)
 							}
+							children.advance();
 							continue
 						}
 						if (_res) {
@@ -301,9 +311,7 @@ export class ApiAnalyzer extends BaseParser {
 					this.functions.push(...fns)
 					return fns
 				}
-			}
-		} else {
-			if (token.type == TokenType.KEYWORD) {
+			} else if (next && next.type == TokenType.KEYWORD) {
 				const prev = nav.peek(-1)
 				if (prev) {
 					let fn = this._api_func(prev, nav, ns)
@@ -311,12 +319,6 @@ export class ApiAnalyzer extends BaseParser {
 						this.functions.push(fn)
 						return fn
 					}
-				}
-			} else if (token.type == TokenType.IDENTIFIER) {
-				let fn = this._api_func(token, nav, ns)
-				if (fn) {
-					this.functions.push(fn)
-					return fn
 				}
 			}
 		}
@@ -847,7 +849,7 @@ export class WrapperFunction extends BaseFunction {
 
 			if (jsdocConfig.setDescriptions && this.comment) {
 				lines.push(
-					`${indent} * ${jsdocConfig.descriptionTag} ${this.comment.replace(/\n/g, `\n${indent} * `)}`
+					`${indent} * ${jsdocConfig.descriptionTag} ${this.comment.replace(/^\n$/g, `\n${indent} *`).replace(/\n/g, `\n${indent} * `)}`
 				)
 			}
 
@@ -896,7 +898,7 @@ export class WrapperFunction extends BaseFunction {
 
 			if (jsdocConfig.setDescriptions && this.comment) {
 				lines.push(
-					`${indent}/// ${jsdocConfig.descriptionTag} ${this.comment.replace(/\n/g, `\n${indent}/// `)}`
+					`${indent}/// ${jsdocConfig.descriptionTag} ${this.comment.replace(/^\n$/g, `\n${indent}///`).replace(/\n/g, `\n${indent}/// `)}`
 				)
 			}
 
@@ -1346,8 +1348,10 @@ export class WrapperAnalyzer extends BaseParser {
 		wr.namespace = _targetFunc?.namespace;
 		wr._targetFuncComment = _targetFunc?.comment;
 
-		this.wrappers.push(wr.finalize?.() ?? wr)
-		return wr
+		if (this.wrappers.findIndex(w => w.name == wr.name && w.namespace == wr.namespace) == -1) {
+			this.wrappers.push(wr.finalize?.() ?? wr)
+			return wr
+		}
 	}
 
 	p_wrapper_defs(token, nav, ns) {

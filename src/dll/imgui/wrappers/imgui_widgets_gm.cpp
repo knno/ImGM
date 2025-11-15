@@ -136,7 +136,7 @@ GMFUNC(__imgui_radio_button) {
 	Result.val = ImGui::RadioButton(label, active);
 }
 
-GMFUNC(__imgui_progressbar) {
+GMFUNC(__imgui_progress_bar) {
 	double frac = YYGetReal(arg, 0);
 	double width = YYGetReal(arg, 1);
 	GMDEFAULT(0);

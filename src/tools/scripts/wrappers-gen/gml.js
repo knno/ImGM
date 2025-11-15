@@ -1,7 +1,8 @@
-import path from "path"
+import Path from "path"
 import { Program } from "../../lib/program.js"
 import { generateGMLScript } from "./gml-writer.js" // hypothetical module
 import File from "../../lib/class/file.js"
+import Name from "../../lib/class/name.js"
 
 const Logger = Program.Logger
 
@@ -29,13 +30,20 @@ export async function updateGmlScripts(fullApi, config) {
 
 	// Write each namespace group to its own GML file
 	for (const [namespace, group] of Object.entries(namespaceGroups)) {
-		const scriptPath = path.join("src/gm/ImGM", "scripts", `${namespace}/${namespace}.gml`)
+		const scriptPath = Path.join("src/gm/ImGM", "scripts", `${namespace}/${namespace}.gml`)
 		const file = new File(scriptPath)
+
+		// Sort group.wrappers by name._name alphabetically
+		const sortedWrappers = [...group.wrappers].sort((a, b) => {
+			const nameA = a.name ? ((a.name instanceof Name) ? a.name.get() : a.name).toLowerCase() : '';
+			const nameB = b.name ? ((b.name instanceof Name) ? b.name.get() : b.name).toLowerCase() : '';
+			return nameA.localeCompare(nameB);
+		});
 
 		const contents = generateGMLScript({
 			namespace,
 			enums: group.enums,
-			wrappers: group.wrappers,
+			wrappers: sortedWrappers,
 			cfg: config,
 		})
 

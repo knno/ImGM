@@ -1,6 +1,6 @@
 #include "../imgui_gm.h"
 
-GMFUNC(__imgui_begin_listbox) {
+GMFUNC(__imgui_begin_list_box) {
 	const char* label = YYGetString(arg, 0);
 	double width = YYGetReal(arg, 1);
 	GMDEFAULT(0);
@@ -11,12 +11,12 @@ GMFUNC(__imgui_begin_listbox) {
 	Result.val = ImGui::BeginListBox(label, ImVec2(width, height));
 }
 
-GMFUNC(__imgui_end_listbox) {
+GMFUNC(__imgui_end_list_box) {
 	Result.kind = VALUE_UNDEFINED;
 	ImGui::EndListBox();
 }
 
-GMFUNC(__imgui_listbox) {
+GMFUNC(__imgui_list_box) {
 	GMOVERRIDE(ListBox);
 	ShowError("Unimplemented ImGui Function: ImGui.ListBox");
 }

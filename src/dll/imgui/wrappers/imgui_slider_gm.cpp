@@ -83,7 +83,7 @@ GMFUNC(__imgui_slider_float4) {
 	delete[]v;
 }
 
-GMFUNC(__imgui_slider_floatn) {
+GMFUNC(__imgui_slider_float_n) {
 	const char* label = YYGetString(arg, 0);
 	float* v = YYGetArray<float>(arg, 1, YYGetReal(arg, 7));
 	float v_speed = YYGetReal(arg, 2);
@@ -193,7 +193,7 @@ GMFUNC(__imgui_slider_int4) {
 	delete[]v;
 }
 
-GMFUNC(__imgui_slider_intn) {
+GMFUNC(__imgui_slider_int_n) {
 	const char* label = YYGetString(arg, 0);
 	int* v = YYGetArray<int>(arg, 1, YYGetReal(arg, 6));
 	int v_min = YYGetReal(arg, 2);
@@ -218,7 +218,7 @@ GMFUNC(__imgui_slider_intn) {
 	delete[]v;
 }
 
-GMFUNC(__imgui_vslider_float) {
+GMFUNC(__imgui_v_slider_float) {
 	const char* label = YYGetString(arg, 0);
 	double width = YYGetReal(arg, 1);
 	double height = YYGetReal(arg, 2);
@@ -237,7 +237,7 @@ GMFUNC(__imgui_vslider_float) {
 	Result.val = v;
 }
 
-GMFUNC(__imgui_vslider_int) {
+GMFUNC(__imgui_v_slider_int) {
 	const char* label = YYGetString(arg, 0);
 	double width = YYGetReal(arg, 1);
 	double height = YYGetReal(arg, 2);

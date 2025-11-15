@@ -206,7 +206,7 @@ GMFUNC(__imgui_set_next_window_scroll) {
 }
 
 
-GMFUNC(__imgui_set_next_window_bgalpha) {
+GMFUNC(__imgui_set_next_window_bg_alpha) {
 	float alpha = YYGetReal(arg, 0);
 
 	ImGui::SetNextWindowBgAlpha(alpha);
@@ -295,7 +295,7 @@ GMFUNC(__imgui_set_window_pos) {
 	} else {
 		ImGui::SetWindowPos(name, ImVec2(x, y), cond);
 	}
-	
+
 	Result.kind = VALUE_UNDEFINED;
 }
 
@@ -312,7 +312,7 @@ GMFUNC(__imgui_set_window_size) {
 	} else {
 		ImGui::SetWindowSize(name, ImVec2(width, height), cond);
 	}
-	
+
 	Result.kind = VALUE_UNDEFINED;
 }
 

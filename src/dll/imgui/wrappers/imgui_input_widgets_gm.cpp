@@ -127,7 +127,7 @@ GMFUNC(__imgui_input_float4) {
 	delete[]v;
 }
 
-GMFUNC(__imgui_input_floatn) {
+GMFUNC(__imgui_input_float_n) {
 	const char* label = YYGetString(arg, 0);
 	double len = YYGetReal(arg, 2);
 	float* v = YYGetArray<float>(arg, 1, len);
@@ -215,7 +215,7 @@ GMFUNC(__imgui_input_int4) {
 	delete[]v;
 }
 
-GMFUNC(__imgui_input_intn) {
+GMFUNC(__imgui_input_int_n) {
 	const char* label = YYGetString(arg, 0);
 	int* v = YYGetArray<int>(arg, 1, YYGetReal(arg, 3));
 	ImGuiInputTextFlags flags = YYGetInt64(arg, 2);
