@@ -258,11 +258,10 @@ GMFUNC(__imgui_v_slider_int) {
 
 GMFUNC(__imgui_slider_angle) {
 	const char* label = YYGetString(arg, 0);
-	float v_rad = YYGetReal(arg, 1);
-	float v_degrees_min = YYGetReal(arg, 2);
-	GMDEFAULT(0);
-	float v_degrees_max = YYGetReal(arg, 3);
-	GMDEFAULT(0);
+	float v_rad = YYGetFloat(arg, 1);
+	float v_degrees_min = YYGetFloat(arg, 2);
+	GMDEFAULT(0.0);
+	float v_degrees_max = YYGetFloat(arg, 3);
 	const char* format = YYGetString(arg, 4);
 	GMDEFAULT("%d");
 	ImGuiSliderFlags flags = YYGetInt64(arg, 5);

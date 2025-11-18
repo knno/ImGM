@@ -182,6 +182,19 @@ if (main_open) {
                 }
             }
         ImGui.EndChild();
+		
+		ImGui.BeginChild("Inner_Sliders", width / 2, height, ImGuiChildFlags.Borders);
+			ImGui.Text("Sliders");
+			ImGui.Separator();
+			
+			slider_int = ImGui.SliderInt("ImGui::SliderInt", slider_int, 0, 10);
+			ImGui.SliderInt2("ImGui::SliderInt2", slider_int2, 0, 10);
+			ImGui.SliderInt3("ImGui::SliderInt3", slider_int3, 0, 10);
+			ImGui.SliderInt4("ImGui::SliderInt4", slider_int4, 0, 10);
+			ImGui.SliderIntN("ImGui::SliderIntN", slider_intn, 0, 10);
+			
+			slider_float = ImGui.SliderFloat("ImGui::SliderFloat", slider_float, 0.0, 1.0);
+		ImGui.EndChild();
 
         ImGui.BeginChild("Inner_Inputs", width / 2, height, ImGuiChildFlags.Borders);
             ImGui.Text("Inputs");

@@ -54,6 +54,14 @@ input_int = irandom(255);
 input_float = random(255);
 input_float4 = [1.0, 2.0, 3.0, 4.0];
 
+slider_int = 0;
+slider_int2 = [];
+slider_int3 = [];
+slider_int4 = [];
+slider_intn = [];
+slider_float = 0.0;
+slider_angle = pi;
+
 plot_val = [];
 plot_val2 = [];
 repeat(12) {

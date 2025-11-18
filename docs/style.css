@@ -1,10 +1,7 @@
 :root {
-  --theme-color: #1f6feb; /* vibrant blue */
-}
-
-html {
+  --theme-color: #1f6feb !important;
   --accent: #1fa0eb !important;
-  --highlightColor: #2755d2;
+  --highlightColor: #83c4fd !important;
 }
 
 /* Link styles */
