@@ -27,6 +27,7 @@ async function copyModulesFiles(params) {
 				Config.modules[cfgModuleHandle].paramName,
 				cfgModuleHandle,
 			]
+
 			for (const paramName of paramNames) {
 				if (Object.keys(params).includes(paramName)) {
 					let param = params[paramName]
@@ -39,7 +40,13 @@ async function copyModulesFiles(params) {
 							paramName == cfgModuleHandle) ||
 						cfgModuleChilds.length > 0
 					) {
-						if (Array.isArray(param)) {
+						if (
+							param == true ||
+							param == "*" ||
+							param == "all"
+						) {
+							modulesToCopy = cfgModuleChilds
+						} else if (Array.isArray(param)) {
 							for (let p of param) {
 								if (typeof p == "string") {
 									p = [p]
@@ -50,12 +57,6 @@ async function copyModulesFiles(params) {
 										p.includes(c.handle)
 								)
 							}
-						} else if (
-							param == true ||
-							param == "*" ||
-							param == "all"
-						) {
-							modulesToCopy = cfgModuleChilds
 						}
 						break
 					} else {

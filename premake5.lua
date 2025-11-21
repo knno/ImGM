@@ -52,6 +52,8 @@ project(projectName)
         dllDir .. "internal",
         dllDir .. "imgui",
         dllDir .. "imgui/internal",
+        dllDir .. "imext/*",
+        dllDir .. "imext/*/internal",
     }
 
     files {
@@ -66,17 +68,16 @@ project(projectName)
         dllDir .. "imgui/**/*.inl",
         dllDir .. "imgui/internal/im*.h",
         dllDir .. "imgui/internal/im*.cpp",
-        dllDir .. "imgui/**/*.inl",
-        dllDir .. "imext/**/*.h",
-        dllDir .. "imext/**/*.cpp",
-        dllDir .. "imext/**/*.inl",
+        dllDir .. "imext/**/**/*.h",
+        dllDir .. "imext/**/**/*.cpp",
+        dllDir .. "imext/**/**/*.inl",
     }
 
     excludes {
         dllDir .. ".old.*",
         dllDir .. "**/.old.*",
-        dllDir .. "imext/**/internal/*.*",
-        dllDir .. "imext/**/internal/**/*.*",
+        -- dllDir .. "imext/**/internal/*.*",
+        -- dllDir .. "imext/**/internal/**/*.*",
     }
 
 	_vpaths = {

@@ -1,25 +1,23 @@
 #region ImGM Macros
 
+/// Current ImGM extension version
 #macro IMGM_VERSION (extension_get_version("ImGM"))
+
+/// Initial size of grow buffers (draw and font)
+#macro IMGUI_GM_BUFFER_SIZE             1024 * 8
 
 #endregion
 
 #region ImGM Functions
 
-#endregion
-
-#region ImGM Classes
-
-#endregion
-
 /**
  * @function ImGuiExtMethodCall
- * @description . TODO: Documentation
  * @context ImGM
- * @param [method_name]
- * @param [ext_name]
- * @param [_args]
- * @param [if_inited]
+ * @desc Calls a function on a specific (or all) ImGui extension(s) with optional arguments.
+ * @param [method_name] The name of the instance function in each extension class
+ * @param [ext_name] Name from ImGui.Ext.<name>, or undefined for all extensions
+ * @param [_args] Optional arguments to provide to the function
+ * @param [if_inited=true] Call only if that extension was inited
  *
  */
 function ImGuiExtMethodCall(method_name=undefined, ext_name=undefined, _args=undefined, if_inited=true) {
@@ -34,8 +32,8 @@ function ImGuiExtMethodCall(method_name=undefined, ext_name=undefined, _args=und
         if (if_inited) {
             _cond = false;
             _ext_s = static_get(_ext);
-            if (_ext_s[$ "__Initialized"] != undefined) {
-                if (_ext_s.__Initialized) {
+            if (_ext_s[$ "__initialized"] != undefined) {
+                if (_ext_s.__initialized) {
                     _cond = true;
                 }
             }
@@ -50,11 +48,19 @@ function ImGuiExtMethodCall(method_name=undefined, ext_name=undefined, _args=und
     }
 }
 
+
+#endregion
+
+#region ImGM Classes
+
+#endregion
+
 /**
  * @function ImGuiBaseMainWindow
  * @constructor
- * @description A GM-side base main viewport for use with ImGui.
  * @context ImGM
+ * @desc Creates a GM-side base main viewport for use with ImGui.
+ * Internally-managed.
  *
  */
 function ImGuiBaseMainWindow() constructor {
@@ -81,8 +87,9 @@ function ImGuiBaseMainWindow() constructor {
 /**
  * @function ImGuiState
  * @constructor
- * @description A GM-side context and variables holder for use with ImGui
  * @context ImGM
+ * @desc Creates a GM-side context and variables holder for use with ImGui
+ * Internally-managed.
  *
  */
 function ImGuiState() constructor {
@@ -108,7 +115,7 @@ function ImGuiState() constructor {
 
     var _os_info = os_get_info();
 
-    __Initialized = false;
+    __initialized = false;
 
     Display = {
         Width: 0,
@@ -140,9 +147,9 @@ function ImGuiState() constructor {
     ds_map_destroy(_os_info);
 
     static __Initialize = function(wnd_or_config_flags_1=ImGuiConfigFlags.None, config_flags_2=ImGuiConfigFlags.None) {
-        if __Initialized return;
+        if __initialized return;
 
-        var _state = ImGui.__State;
+        var _state = ImGui.__state;
 
         if self.Engine.Context == pointer_null {
             self.Engine.Context = ImGui.CreateContext();
@@ -191,13 +198,13 @@ function ImGuiState() constructor {
 
         var inited = __imgui_initialize(hwnd, context, info); // -> context
 
-        __Initialized = true;
+        __initialized = true;
         return inited;
     }
     static Initialize = __Initialize;
 
     static __Use = function(flags=StateUpdateFlags.None) {
-        ImGui.__State = self;
+        ImGui.__state = self;
         ImGui.SetCurrentContext(self.Engine.Context);
         var _data = self.GetData();
         if flags != StateUpdateFlags.None {
@@ -226,21 +233,28 @@ function ImGuiState() constructor {
         self.Renderer.CmdBuffer = -1;
         self.Renderer.FontBuffer = -1;
         self.Renderer.Surface = -1;
-        self.__Initialized = false;
+        self.__initialized = false;
     }
     static Destroy = __Destroy;
 
 }
 
-// Used by Color*4 functions, use .Color to get BGR value for GM functions
+/**
+ * @function ImColor
+ * @constructor
+ * @context ImGM
+ * @desc Creates a GM-side struct for a color to be used with ImGui color editors and pickers.
+ * It is used by Color*4 functions. Use .Color to get BGR value for GM functions
+ *
+ * @example
+ * ImColor(c_red);
+ * ImColor(c_red, 0.5);
+ * ImColor(255, 255, 255);
+ * ImColor(128, 255, 255, 0.5);
+ * ImColor(c_red | (128 << 24)); Alpha is most-significant byte, basically RGBA int
+ *
+ */
 function ImColor(red, green=undefined, blue=undefined, alpha=1) constructor {
-    /*
-        ImColor(c_red);
-        ImColor(c_red, 0.5);
-        ImColor(255, 255, 255);
-        ImColor(128, 255, 255, 0.5);
-        ImColor(c_red | (128 << 24)); Alpha is most-significant byte, basically RGBA int
-    */
     a = alpha;
     if (blue != undefined) {
         r = red;
@@ -274,8 +288,9 @@ function ImColor(red, green=undefined, blue=undefined, alpha=1) constructor {
 /**
  * @function ImGuiWindowClass
  * @constructor
- * @description Represents a window class. This is managed in your game and is sent to ImGui backend on setting the window class calls.
  * @context ImGM
+ * @desc Creates a GM-side struct for ImGui window classes
+ * It is created and sent to ImGui backend on setting the window class calls.
  *
  */
 function ImGuiWindowClass(class_id, parent_viewport_id=undefined, viewport_flags_override_set=ImGuiViewportFlags.None, viewport_flags_override_clear=ImGuiViewportFlags.None) constructor {
@@ -302,8 +317,8 @@ function ImGuiWindowClass(class_id, parent_viewport_id=undefined, viewport_flags
 /**
  * @function ImGuiSelectionBasicStorage
  * @constructor
- * @description Creates an ImGuiSelectionBasicStorage in the extension. Use Destroy() when done.
  * @context ImGM
+ * @desc Creates a GM-side struct for ImGuiSelectionBasicStorage. Use Destroy() when done.
  *
  */
 function ImGuiSelectionBasicStorage(size=0, preserve_order=undefined) constructor {
@@ -338,8 +353,15 @@ function ImGuiSelectionBasicStorage(size=0, preserve_order=undefined) constructo
     }
 }
 
-#macro IMGUI_GM_BUFFER_SIZE             1024 * 8    // size of draw command & font buffers (they're grow buffers, this is just the initial size)
+/// @section Enums
+/// Manually-updated section for specific enums
 
+/**
+ * @enum ImGuiGFlags
+ * @context ImGM
+ * @desc Flags for the initializing the extension (backend renderer, implementation...)
+ *
+ */
 enum ImGuiGFlags {
     None = 0,
     RENDERER_GM = 1 << 0,
@@ -349,15 +371,21 @@ enum ImGuiGFlags {
     GM = ImGuiGFlags.IMPL_GM | ImGuiGFlags.RENDERER_GM,
 }
 
-/// @section Enums
-/// These are manually imported and modified enums, for automatic enum exporting see the enums section of ImGui.gml
-/*
-    Used for encoding multiple returns from various wrappers (ImGui.Begin, ImGui.CollapsingHeader, etc)
-    Default is ImGuiReturnFlags.Return for all functions to make wrappers work as close to the library as possible
-    Return: The return value of the library function
-    Pointer: Any reference passed to the library function and modified (this varies per-function; hopefully it all makes sense)
-    Both: ^
-*/
+/**
+ * @enum ImGuiReturnMask
+ * @context ImGM
+ * @desc You can use this in various GML wrapper functions as an argument to specify the return value type.
+ * Or to mask the return value, if you use `ImGuiReturnMask.Both`.
+ * Defaults to ImGuiReturnMask.Return
+ *
+ * @example
+ *
+ * // Mostly used like this
+ * var ret = ImGui.Begin("ImGM Example", is_open, ImGuiWindowFlags.None, ImGuiReturnMask.Both);
+ * is_open = ret & ImGuiReturnMask.Pointer;
+ * if (ret & ImGuiReturnMask.Return) { inner ImGui code... }
+ *
+ */
 enum ImGuiReturnMask {
     None = 0,            // Should be unused
     Return = 1 << 0,
@@ -365,6 +393,11 @@ enum ImGuiReturnMask {
     Both = ImGuiReturnMask.Return | ImGuiReturnMask.Pointer
 }
 
+/**
+ * @enum ImGuiTextureType
+ * @desc This is used internally by the GM Renderer for drawing
+ *
+ */
 enum ImGuiTextureType {
     Raw = 0,
     Sprite = 1 << 0,
@@ -372,9 +405,13 @@ enum ImGuiTextureType {
     Font = 1 << 2
 }
 
-// slightly modified from imgui.h
-enum ImGuiKey
-{
+/**
+ * @enum ImGuiKey
+ * @context ImGM
+ * @desc ImGuiKey with some modifications from imgui.h
+ *
+ */
+enum ImGuiKey {
     // Keyboard
     None = 0,
     Tab = 512,             // == NamedKey_BEGIN
@@ -487,10 +524,16 @@ enum ImGuiKey
     KeysData_OFFSET        = 0,                                // First key stored in io.KeysData[0]. Accesses to io.KeysData[] must use (key - KeysData_OFFSET).
 };
 
+/// @endsection
 
+/// @section Helpers
 
-/// @section Init helpers
-
+/**
+ * @function __imgui_create_cursor_mapping
+ * @context ImGM
+ * @desc Initialize the mapping array for GM cursors <-> ImGui cursors
+ *
+ */
 function __imgui_create_cursor_mapping() {
     var arr = array_create(ImGuiMouseCursor.NotAllowed + 1, cr_none);
     arr[ImGuiMouseCursor.None + 1] = cr_none;
@@ -506,6 +549,12 @@ function __imgui_create_cursor_mapping() {
     return arr;
 }
 
+/**
+ * @function __imgui_create_input_mapping
+ * @context ImGM
+ * @desc Initialize the mapping array for GM virtual keys <-> ImGui keys
+ *
+ */
 function __imgui_create_input_mapping() {
     var arr = array_create(ImGuiKey.KeysData_SIZE, -1);
     arr[ImGuiKey.None] = vk_nokey;
@@ -597,3 +646,5 @@ function __imgui_create_input_mapping() {
     arr[ImGuiKey.GraveAccent] = 192;
     return arr;
 }
+
+/// @endsection

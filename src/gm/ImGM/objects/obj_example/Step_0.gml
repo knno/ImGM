@@ -76,7 +76,7 @@ if (main_open) {
             ImGui.TextLinkOpenURL("knno/ImGM", "https://github.com/knno/ImGM");
             ImGui.Separator();
             if (!is_undefined(_static)) {
-                _static.__State.Display.Scale = max(0.5, ImGui.InputDouble("Scale", _static.__State.Display.Scale, 0.1, 0.25));
+                _static.__state.Display.Scale = max(0.5, ImGui.InputDouble("Scale", _static.__state.Display.Scale, 0.1, 0.25));
             } else {
                 ImGui.BeginDisabled();
                 ImGui.InputDouble("ImGui.__Scale", 1);
@@ -182,17 +182,17 @@ if (main_open) {
                 }
             }
         ImGui.EndChild();
-		
+
 		ImGui.BeginChild("Inner_Sliders", width / 2, height, ImGuiChildFlags.Borders);
 			ImGui.Text("Sliders");
 			ImGui.Separator();
-			
+
 			slider_int = ImGui.SliderInt("ImGui::SliderInt", slider_int, 0, 10);
 			ImGui.SliderInt2("ImGui::SliderInt2", slider_int2, 0, 10);
 			ImGui.SliderInt3("ImGui::SliderInt3", slider_int3, 0, 10);
 			ImGui.SliderInt4("ImGui::SliderInt4", slider_int4, 0, 10);
 			ImGui.SliderIntN("ImGui::SliderIntN", slider_intn, 0, 10);
-			
+
 			slider_float = ImGui.SliderFloat("ImGui::SliderFloat", slider_float, 0.0, 1.0);
 		ImGui.EndChild();
 

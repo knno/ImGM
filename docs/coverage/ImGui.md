@@ -396,15 +396,14 @@ These are non-standard functions made specifically for ImGui.
 
 | Wrapper | Wrapper Location | Note |
 |---------|------------------|------|
-| `ImGui.MemoryEditorShowWindow` | [imgui_ext_memeditor_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_ext_memeditor_gm.cpp#L5) | - |
-| `ImGui.MemoryEditorDrawContents` | [imgui_ext_memeditor_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_ext_memeditor_gm.cpp#L18) | - |
 | `ImGui.AddFontFromFileTTF` | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L25) | - |
 | `ImGui.AddFontDefault` | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L41) | - |
-| `ImGui.GetDragDropPayloadType` | [imgui_payload_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_payload_gm.cpp#L83) | - |
+| `ImGui.MemoryEditorShowWindow` | [imgui_ext_memeditor_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_ext_memeditor_gm.cpp#L5) | - |
+| `ImGui.MemoryEditorDrawContents` | [imgui_ext_memeditor_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_ext_memeditor_gm.cpp#L18) | - |
 | `ImGui.GetStyleColor` | [imgui_style_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_style_gm.cpp#L79) | - |
 | `ImGui.SetStyleColor` | [imgui_style_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_style_gm.cpp#L94) | - |
 | `ImGui.SetStyleVar` | [imgui_style_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_style_gm.cpp#L107) | - |
-| `ImGui.Surface` | [imgui_widgets_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_widgets_gm.cpp#L90) | - |
+| `ImGui.GetDragDropPayloadType` | [imgui_payload_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_payload_gm.cpp#L83) | - |
 | `ImGui.DockBuilderDockWindow` | [imgui_docking_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_docking_gm.cpp#L115) | - |
 | `ImGui.DockBuilderGetNode` | [imgui_docking_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_docking_gm.cpp#L123) | - |
 | `ImGui.DockBuilderGetCentralNode` | [imgui_docking_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_docking_gm.cpp#L130) | - |
@@ -419,17 +418,14 @@ These are non-standard functions made specifically for ImGui.
 | `ImGui.DockBuilderCopyNode` | [imgui_docking_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_docking_gm.cpp#L221) | - |
 | `ImGui.DockBuilderCopyWindowSettings` | [imgui_docking_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_docking_gm.cpp#L239) | - |
 | `ImGui.DockBuilderFinish` | [imgui_docking_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_docking_gm.cpp#L247) | - |
-| `ImGui.InputFloatN` | [imgui_input_widgets_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_input_widgets_gm.cpp#L130) | - |
-| `ImGui.InputIntN` | [imgui_input_widgets_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_input_widgets_gm.cpp#L218) | - |
-| `ImGui.BeginChildFrame` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L49) | - |
-| `ImGui.EndChildFrame` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L62) | - |
-| `ImGui.GetWindowPosX` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L98) | - |
-| `ImGui.GetWindowPosY` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L105) | - |
+| `ImGui.Surface` | [imgui_widgets_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_widgets_gm.cpp#L90) | - |
 | `ImGui.CreateMultiSelectBasicStorage` | [imgui_selectable_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_selectable_gm.cpp#L26) | - |
 | `ImGui.DestroyMultiSelectBasicStorage` | [imgui_selectable_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_selectable_gm.cpp#L36) | - |
 | `ImGui.SelectionStorageApplyRequests` | [imgui_selectable_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_selectable_gm.cpp#L58) | - |
 | `ImGui.SelectionStorageContains` | [imgui_selectable_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_selectable_gm.cpp#L91) | - |
 | `ImGui.SelectionStorageSize` | [imgui_selectable_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_selectable_gm.cpp#L108) | - |
+| `ImGui.InputFloatN` | [imgui_input_widgets_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_input_widgets_gm.cpp#L130) | - |
+| `ImGui.InputIntN` | [imgui_input_widgets_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_input_widgets_gm.cpp#L218) | - |
 | `ImGui.GetKeyChordName` | [imgui_input_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_input_gm.cpp#L107) | - |
 | `ImGui.GetMousePosX` | [imgui_input_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_input_gm.cpp#L240) | - |
 | `ImGui.GetMousePosY` | [imgui_input_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_input_gm.cpp#L247) | - |
@@ -449,6 +445,14 @@ These are non-standard functions made specifically for ImGui.
 | `ImGui.GetWindowContentRegionMinY` | [imgui_layout_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_layout_gm.cpp#L202) | - |
 | `ImGui.GetWindowContentRegionMaxX` | [imgui_layout_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_layout_gm.cpp#L209) | - |
 | `ImGui.GetWindowContentRegionMaxY` | [imgui_layout_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_layout_gm.cpp#L216) | - |
+| `ImGui.BeginChildFrame` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L49) | - |
+| `ImGui.EndChildFrame` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L62) | - |
+| `ImGui.GetWindowPosX` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L98) | - |
+| `ImGui.GetWindowPosY` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L105) | - |
+| `ImGui.SliderFloatN` | [imgui_slider_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_slider_gm.cpp#L86) | - |
+| `ImGui.SliderIntN` | [imgui_slider_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_slider_gm.cpp#L196) | - |
+| `ImGui.DragFloatN` | [imgui_drag_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drag_gm.cpp#L94) | - |
+| `ImGui.DragIntN` | [imgui_drag_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drag_gm.cpp#L237) | - |
 | `ImGui.GetItemRectMinX` | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L278) | - |
 | `ImGui.GetItemRectMinY` | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L285) | - |
 | `ImGui.GetItemRectMaxX` | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L292) | - |
@@ -472,10 +476,6 @@ These are non-standard functions made specifically for ImGui.
 | `ImGui.WantMouseCapture` | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L627) | - |
 | `ImGui.WantTextInput` | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L642) | - |
 | `ImGui.WantMouseCaptureUnlessPopupClose` | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L657) | - |
-| `ImGui.SliderFloatN` | [imgui_slider_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_slider_gm.cpp#L86) | - |
-| `ImGui.SliderIntN` | [imgui_slider_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_slider_gm.cpp#L196) | - |
-| `ImGui.DragFloatN` | [imgui_drag_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drag_gm.cpp#L94) | - |
-| `ImGui.DragIntN` | [imgui_drag_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drag_gm.cpp#L237) | - |
 | `ImGui.DrawListAddLine` | [imgui_drawlist_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drawlist_gm.cpp#L37) | - |
 | `ImGui.DrawListAddRect` | [imgui_drawlist_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drawlist_gm.cpp#L52) | - |
 | `ImGui.DrawListAddRectFilled` | [imgui_drawlist_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drawlist_gm.cpp#L71) | - |

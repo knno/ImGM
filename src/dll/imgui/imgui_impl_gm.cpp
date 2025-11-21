@@ -2,7 +2,7 @@
 
 #include <string>
 #include <tchar.h>
-#include <imgui_gm.h>
+#include <imgm.h>
 #include <imgui_impl_gm.h>
 #include <../internal/gm.h>
 

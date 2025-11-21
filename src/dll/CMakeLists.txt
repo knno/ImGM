@@ -112,8 +112,8 @@ set(PROJECT_NAME ImGMDll)
 # Source groups
 ################################################################################
 set(no_group_source_files
-    "imgui_gm.cpp"
-    "imgui_gm.h"
+    "imgm.cpp"
+    "imgm.h"
     "main.cpp"
 )
 source_group("" FILES ${no_group_source_files})

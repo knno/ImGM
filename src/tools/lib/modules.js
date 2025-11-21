@@ -109,6 +109,8 @@ export function isSubmoduleDir(dirname) {
 	}
 	if (fs.existsSync(path.join(dir, ".git"))) {
 		return true
+	} else if (fs.existsSync(path.join(dir, ".gitignore"))) {
+		return true
 	} else {
 		for (const key in Config.modules) {
 			if (
@@ -144,7 +146,10 @@ async function _getFSChildModules(module) {
 				.filter(
 					(dir) =>
 						isPathInside(dir.name, modulePath) &&
-						fs.existsSync(path.join(modulePath, dir.name, ".git"))
+						(
+							fs.existsSync(path.join(modulePath, dir.name, ".git")) ||
+							fs.existsSync(path.join(modulePath, dir.name, ".gitignore"))
+						)
 				)
 				.map((dir) => dir.name)
 
@@ -282,7 +287,7 @@ export class Module {
 				}
 				Logger.debug(
 					"Module " +
-						`${colors.get("green", this.handle)} (${this.name}) in ${this.submoduleDir}`,
+					`${colors.get("green", this.handle)} (${this.name}) in ${this.submoduleDir}`,
 					{
 						name: NAME,
 						type: Logger.types.MODULE_DEBUG_INFO,

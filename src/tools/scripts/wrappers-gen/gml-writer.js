@@ -7,9 +7,19 @@ export function generateGMLScript({ namespace, enums, wrappers, cfg }) {
 	let lines = []
 
 	for (const en of enums) {
-		lines.push(cfg.style.spacing + `/// @enum ${en.name.toPascalCase()}`)
-		if (en.comment) {
-			lines.push(cfg.style.spacing + `/// @desc ${en.comment.split("\n")[0]}`)
+		if (cfg.jsdoc.docletCommentType === "multi") {
+			lines.push(cfg.style.spacing + "/**")
+			lines.push(`${cfg.style.spacing} * @enum ${en.name.toPascalCase()}`)
+			if (en.comment) {
+				lines.push(cfg.style.spacing + ` * ${cfg.jsdoc.descriptionTag} ${en.comment.split("\n")[0]}`)
+			}
+			lines.push(cfg.style.spacing + " *")
+			lines.push(cfg.style.spacing + " */")
+		} else {
+			lines.push(cfg.style.spacing + `/// @enum ${en.name.toPascalCase()}`)
+			if (en.comment) {
+				lines.push(cfg.style.spacing + `/// ${cfg.jsdoc.descriptionTag} ${en.comment.split("\n")[0]}`)
+			}
 		}
 		lines.push(cfg.style.spacing + `enum ${en.name.toPascalCase()} {`)
 		for (const entry of Object.keys(en.entries)) {

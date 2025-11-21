@@ -1,4 +1,4 @@
-#include <imgui_gm.h>
+#include <imgm.h>
 
 GMFUNC(__imgui_style_colors_dark) {
 	ImGui::StyleColorsDark();
@@ -27,7 +27,7 @@ GMFUNC(__imgui_push_style_color) {
 GMFUNC(__imgui_pop_style_color) {
 	double count = YYGetReal(arg, 0);
 	GMDEFAULT(1);
-	
+
 	ImGui::PopStyleColor(count);
 	Result.kind = VALUE_UNDEFINED;
 }
@@ -112,7 +112,7 @@ GMFUNC(__imgui_set_style_var) {
 	GMDEFAULT(undefined);
 
 	Result.kind = VALUE_UNDEFINED;
-	
+
 	ImGuiContext* ctx = ImGui::GetCurrentContext();
 
 	const ImGuiStyleVarInfo* var_info = ImGui::GetStyleVarInfo(idx);

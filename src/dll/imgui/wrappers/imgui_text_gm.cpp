@@ -1,4 +1,4 @@
-#include "../imgui_gm.h"
+#include "../imgm.h"
 
 GMFUNC(__imgui_text_unformatted) {
 	const char* text = YYGetString(arg, 0);

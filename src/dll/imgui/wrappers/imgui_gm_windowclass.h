@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <imgui_gm.h>
+#include <imgm.h>
 
 extern ImGuiWindowClass* g_ImGuiWindowClass;
 

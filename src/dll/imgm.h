@@ -32,8 +32,8 @@
 #define GMFUNC(name) GMEXPORT void name(RValue& Result, CInstance* selfinst, CInstance* otherinst, int argc, RValue* arg)
 
 // Interface
-#define ShowError(...) YYError("[ImGui_GM] An error has occured:\n- %s\n", __VA_ARGS__)
-#define WriteLog(...) DebugConsoleOutput("[ImGui_GM] %s\n", __VA_ARGS__)
+#define ShowError(...) YYError("[ImGM] An error has occured:\n- %s\n", __VA_ARGS__)
+#define WriteLog(...) DebugConsoleOutput("[ImGM] %s\n", __VA_ARGS__)
 
 // Helpers
 static inline ImVec4 GMCOLOR_TO(int col, float alpha) {

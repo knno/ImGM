@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string>
 #include <imgui_impl_gm.h>
-#include <imgui_gm.h>
+#include <imgm.h>
 
 static bool g_ImGuiInitialized = false;
 
@@ -77,7 +77,7 @@ GMFUNC(__imgui_initialize) {
 	io.ConfigFlags &= ~configFlagsOverrideClear;
 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	
+
 	Result.kind = VALUE_PTR;
 
 	g_UpdateFont = true;
@@ -164,7 +164,7 @@ GMFUNC(__imgui_new_frame) {
 	RValue* state = YYGetStruct(arg, 0);
 	if (state == nullptr) ShowError("Could not call new_frame function when state struct is null");
 
-	if (!g_ImGuiInitialized) ShowError("Could not call new_frame function when ImGui_GM is not initialized");
+	if (!g_ImGuiInitialized) ShowError("Could not call new_frame function when ImGM is not initialized");
 	ImGuiIO& io = ImGui::GetIO();
 
 	// Update framerate and time regardless of Impl GM.
@@ -188,7 +188,7 @@ GMFUNC(__imgui_new_frame) {
 }
 
 GMFUNC(__imgui_end_frame) {
-	if (!g_ImGuiInitialized) ShowError("Could not call end_frame function when ImGui_GM is not initialized");
+	if (!g_ImGuiInitialized) ShowError("Could not call end_frame function when ImGM is not initialized");
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::EndFrame();
@@ -197,7 +197,7 @@ GMFUNC(__imgui_end_frame) {
 }
 
 GMFUNC(__imgui_render) {
-	if (!g_ImGuiInitialized) ShowError("Could not call render function when ImGui_GM is not initialized");
+	if (!g_ImGuiInitialized) ShowError("Could not call render function when ImGM is not initialized");
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiContext* ctx = ImGui::GetCurrentContext();
@@ -210,7 +210,7 @@ GMFUNC(__imgui_draw) {
 	RValue* state = YYGetStruct(arg, 0);
 
 	if (state == nullptr) ShowError("Could not call draw function when state struct is null");
-	if (!g_ImGuiInitialized) ShowError("Could not call draw function when ImGui_GM is not initialized");
+	if (!g_ImGuiInitialized) ShowError("Could not call draw function when ImGM is not initialized");
 
 	ImGuiIO& io = ImGui::GetIO();
 

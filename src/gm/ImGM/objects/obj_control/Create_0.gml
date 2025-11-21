@@ -22,8 +22,8 @@ var _imgui_config_flags = ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.View
 
 ImGui.__Initialize(_imgui_config_flags);
 
-imgui_state = ImGui.__State; // Capture the created state.
-imgui_window = ImGui.__Window; // Capture the created gamewindow.
+imgui_state = ImGui.__state; // Capture the created state.
+imgui_window = ImGui.__window; // Capture the created gamewindow.
 
 /// Optional: Ini settings
 ini_filename = "";
@@ -61,9 +61,9 @@ global.font_default = ImGui.AddFontDefault();
 global.font_roboto = ImGui.AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 24);
 global.enable_docking = false;
 
-/// Window classes
-global.window_class_basic = new ImGuiWindowClass(1, -1);
-global.window_class_no_automerge = new ImGuiWindowClass(2, -1, ImGuiViewportFlags.NoAutoMerge);
+/// Example: Creating ImGui window classes
+// global.window_class_basic = new ImGuiWindowClass(1, -1);
+// global.window_class_no_automerge = new ImGuiWindowClass(2, -1, ImGuiViewportFlags.NoAutoMerge);
 
 /// Rooms
 var _all_room_ids = asset_get_ids(asset_room); // array of refs

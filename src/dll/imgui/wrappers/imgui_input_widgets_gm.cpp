@@ -1,4 +1,4 @@
-#include "../imgui_gm.h"
+#include "../imgm.h"
 
 GMFUNC(__imgui_input_text) {
 	const char* label = YYGetString(arg, 0);

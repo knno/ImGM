@@ -23,18 +23,23 @@ function ImExtNodeEditor() constructor {
     /// @endsection
 
     /// @section Internal
-    static __Initialized = false;
+    static __initialized = false;
 
     static Initialize = function() {
-        ImExtNodeEditor.__Initialized = true;
+        ImExtNodeEditor.__initialized = true;
     }
 
     static __NewFrame = function(state=undefined) {
     }
 
     /// autocalls
+	__ImGui_Initialize = method(self, function(state) {
+		return Initialize();
+	})
+	
     __ImGui_NewFrame = method(self, function(state) {
         return __NewFrame(state); // self
     })
-    /// @endsection
+
+	/// @endsection
 }

@@ -8,13 +8,13 @@
 /// JSDOC
  **
  * @function my_custom_function_name
- * @description Creates a foo table
+ * @context ImGM
+ * @desc Creates a foo table
  * @param {String} _label The ImGui label
  * @param {String} title
  * @param {Array<Real>} _data_array
  * @param {Bool} [enabled]
  * @return {Undefined}
- * @context ImGui
  *
 function my_custom_function_name(_label, title, _data_array, enabled=true) {
     ...
@@ -29,7 +29,8 @@ function my_custom_function_name(_label, title, _data_array, enabled=true) {
 
 /**
  * @function is_window_in_gm_window
- * @description Returns true if the ImGui window is docked inside the main GM window.
+ * @context ImGM
+ * @desc Returns true if the ImGui window is docked inside the main GM window.
  * @param {String} window_name The name of the ImGui window to check.
  * @return {bool}
  *
@@ -51,7 +52,8 @@ function is_window_in_gm_window(window_name) {
 
 /**
  * @function plot_lines_with_grid
- * @description Draws a graph (with grid background)
+ * @context ImGM
+ * @desc Draws a graph (with grid background)
  * @param {String} _label
  * @param {Array<Real>} _data_array
  * @param {Real} _offset
@@ -65,7 +67,6 @@ function is_window_in_gm_window(window_name) {
  * @return {Undefined}
  * @author knno
  * @see {ImGui.PlotLines}
- * @context ImGui
  *
  */
 function plot_lines_with_grid(_label, _data_array, _offset, _overlay, _min_val, _max_val, _width, _height, _h_lines, _v_lines=1) {

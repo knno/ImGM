@@ -1,14 +1,25 @@
-// TODO: Documentaion
+/**
+ * @function __ImGM
+ * @constructor
+ * @context ImGM
+ * @desc A static constructor for useful ImGM
+ * functions and variables you can use during runtime.
+ *
+ */
 function __ImGM(){
-    static VERSION = IMGM_VERSION;
     static base_x = 0;
     static base_y = 0;
 
     static __Utils = function __ImGM_Utils() constructor {
         /**
          * @function __imgm_update_imgui_base_pos
-         * @description
+         * @memberof __ImGM
+         * @private
+         * @desc The base position is a relative offset that you can use with ImGui functions
+         * for passing the game window coordinates. e.g. `ImGui.SetNextWindowPos`
+         * It is a relative position for the game window, so it varies depending on multi-viewports support.
          * @context ImGM
+         *
          */
         static __imgm_update_imgui_base_pos = function() {
             // Base coordinates depend on the chosen renderer:
@@ -22,6 +33,12 @@ function __ImGM(){
                 __ImGM.base_y = 0;
             }
         }
+        /**
+         * @function Update
+         * @memberof __ImGM
+         * @desc An update hook that is called automatically before every `ImGui.__NewFrame`
+         *
+         */
         static Update = function() {
             if (ImGui.__GFlags & ImGuiGFlags.GM == 0) {
                 __imgm_update_imgui_base_pos();

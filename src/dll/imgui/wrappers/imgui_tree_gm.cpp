@@ -1,4 +1,4 @@
-#include "../imgui_gm.h"
+#include "../imgm.h"
 
 GMFUNC(__imgui_tree_node) {
 	const char* label = YYGetString(arg, 0);
@@ -50,7 +50,7 @@ GMFUNC(__imgui_collapsing_header) {
 	GMDEFAULT(ImGuiTreeNodeFlags.None);
 	int64 mask = YYGetInt64(arg, 3);
 	GMDEFAULT(ImGuiReturnMask.Return);
-	
+
 	bool* p_visible = &visible;
 	if (!visible) {
 		if ((&arg[1])->kind == VALUE_UNDEFINED) {

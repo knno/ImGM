@@ -115,7 +115,7 @@ const jsdocConfig = {
 	/**
 	 * What tag to use for description
 	 */
-	descriptionTag: "@description",
+	descriptionTag: "@desc",
 	/**
 	 * What tag to use for function
 	 */
