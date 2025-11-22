@@ -136,8 +136,33 @@ export function stripLineCommentPrefix(input) {
 				? line.replace(/^\/\/\s*/, "")
 				: line
 		)
+		.filter(line => line.length > 0)
 		.join("\n")
 	return x
+}
+
+/**
+ * Strip from multiline docstring (and if there's a jsdoc tag @desc or @description remove the tag but keep its value)
+ * @param {String} input
+ * @returns {String}
+ */
+export function stripLineCommentMulti(input) {
+	return input
+		.split("\n")
+		.map(line => {
+			let trimmed = line.trimStart();
+			if (trimmed.startsWith("/**") || trimmed.startsWith("/*") || trimmed.startsWith("*/")) {
+				return "";
+			}
+			if (trimmed.startsWith("*")) {
+				trimmed = trimmed.replace(/^\*\s?/, "");
+			}
+			// Replace desc tags and keep value
+			trimmed = trimmed.replace(/^@desc(ription)?\s*/i, "");
+			return trimmed;
+		})
+		.filter(line => line.length > 0)
+		.join("\n");
 }
 
 /**

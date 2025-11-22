@@ -10,6 +10,7 @@ import { Program } from "../program.js"
 import {
 	removeTrailingCommas,
 	resolveTemplate,
+	stripLineCommentMulti,
 	stripLineCommentPrefix,
 } from "../utils/string.js"
 import { BaseParser } from "./base.js"
@@ -509,7 +510,7 @@ export class ApiAnalyzer extends BaseParser {
 						let v = def[k]
 						if (typeof v !== "string" || v === null) continue
 						def[k] = v
-							.replaceAll(name, name.slice(0,-1) + ".")
+							.replaceAll(name, name.slice(0, -1) + ".")
 							.trim()
 					}
 					let __enum = new ApiEnum({
@@ -829,7 +830,7 @@ export class WrapperFunction extends BaseFunction {
 		}
 	}
 
-	toJsdoc(enums, context, spacing = 1, extras=[]) {
+	toJsdoc(enums, context, spacing = 1, extras = []) {
 		const jsdocConfig = Config.jsdoc
 		const indent = Config.style.spacing.repeat(spacing)
 		const fnName = this.name
@@ -847,10 +848,22 @@ export class WrapperFunction extends BaseFunction {
 			}
 			lines.push(fnLine)
 
+			// Context
+			lines.push(`${indent} * ${jsdocConfig.contextTag} ${context}`)
+
 			if (jsdocConfig.setDescriptions && this.comment) {
 				lines.push(
-					`${indent} * ${jsdocConfig.descriptionTag} ${this.comment.replace(/^\n$/g, `\n${indent} *`).replace(/\n/g, `\n${indent} * `)}`
-				)
+					`${indent} * ${jsdocConfig.descriptionTag} ` +
+					this.comment
+						.split("\n")
+						.map((line, l) => {
+							if (line.trim().length === 0) {
+								return `${indent} *`;
+							}
+							return (l == 0 ? `` : `${indent} * `) + `${line}`;
+						})
+						.join("\n")
+				);
 			}
 
 			// Argument tags
@@ -881,9 +894,6 @@ export class WrapperFunction extends BaseFunction {
 				lines.push(argLine)
 			}
 
-			// Context
-			lines.push(`${indent} * ${jsdocConfig.contextTag} ${context}`)
-
 			// Return tag
 			lines.push(`${indent} * ${jsdocConfig.returnTag} {${this.returnType}}`)
 			lines.push(indent + " */")
@@ -896,10 +906,22 @@ export class WrapperFunction extends BaseFunction {
 			}
 			lines.push(fnLine)
 
+			lines.push(`${indent}/// ${jsdocConfig.contextTag} ${context}`)
+
 			if (jsdocConfig.setDescriptions && this.comment) {
 				lines.push(
-					`${indent}/// ${jsdocConfig.descriptionTag} ${this.comment.replace(/^\n$/g, `\n${indent}///`).replace(/\n/g, `\n${indent}/// `)}`
-				)
+					this.comment
+						.split("\n")
+						.map((line, l) => {
+							const trimmed = line.trim();
+							if (trimmed.length === 0) {
+								return `${indent}///`;
+							}
+							return `${indent}/// ${(l == 0 ? `@desc ` : ``)}${line}`;
+						})
+						.join("\n")
+				);
+
 			}
 
 			for (const arg of visibleArgs) {
@@ -928,7 +950,6 @@ export class WrapperFunction extends BaseFunction {
 				lines.push(argLine)
 			}
 
-			lines.push(`${indent}/// ${jsdocConfig.contextTag} ${context}`)
 			lines.push(`${indent}/// ${jsdocConfig.returnTag} {${this.Return}}`)
 		}
 
@@ -1056,9 +1077,14 @@ export class WrapperFunction extends BaseFunction {
 		} else {
 			if (_targetFuncNamespace == undefined) {
 				// Custom wrapper
-				comment = `A custom wrapper.`;
+				comment = `A custom wrapper.` + (_targetFuncComment ? `\n\n${_targetFuncComment}` : ``);
 			} else {
-				comment = `${_targetFuncNamespace} function wrapper.` + (_targetFuncComment ? `\n\n${_targetFuncComment}` : ``);
+				if (this._isCustom) {
+					comment = `${_targetFuncNamespace} custom wrapper.`
+				} else {
+					comment = `${_targetFuncNamespace} function wrapper.`
+				}
+				comment += (_targetFuncComment ? `\n\n${_targetFuncComment}` : ``);
 			}
 		}
 		this.comment = comment;
@@ -1099,10 +1125,10 @@ export class WrapperAnalyzer extends BaseParser {
 			cmt.type == TokenType.COMMENT ||
 			cmt.type == TokenType.COMMENT_MULTILINE
 		) {
-			comment = cmt.value
+			comment = stripLineCommentMulti(cmt.value)
 			let _f = 0
 			for (
-				let i = -4;
+				let i = (this.opts.addNewline ? -2 : -3);
 				nav.peek(i).type == TokenType.COMMENT ||
 				nav.peek(i).type ==
 				TokenType.COMMENT_MULTILINE ||
@@ -1116,7 +1142,7 @@ export class WrapperAnalyzer extends BaseParser {
 					_f++
 					continue
 				}
-				_f--
+				if (_f > 0) { _f--; }
 				comment = nav.peek(i).value + "\n" + comment
 			}
 		}
@@ -1344,11 +1370,23 @@ export class WrapperAnalyzer extends BaseParser {
 			}
 		}
 
-		let _targetFunc = this._allFuncs.filter(f => f.name._name == wrapperName.get())[0];
-		wr.namespace = _targetFunc?.namespace;
-		wr._targetFuncComment = _targetFunc?.comment;
+		let _targetFunc = this._allFuncs.filter(f => {
+			const fname = (f.name instanceof Name ? f.name.get() : f.name);
+			const wname = (wrapperName instanceof Name ? wrapperName.get() : wrapperName);
+			if (fname == wname) { return f };
+		})[0];
 
-		if (this.wrappers.findIndex(w => w.name == wr.name && w.namespace == wr.namespace) == -1) {
+		// Custom wrapper, placeholder apifunction
+		if (_targetFunc == undefined) {
+			wr._isCustom = true;
+			wr.namespace = this.opts.moduleName ?? ns ?? this.opts.source;
+			wr._targetFuncComment = comment ?? wr.comment;
+		} else { // native wrapper, pre-detected apifunction
+			wr._isCustom = false;
+			wr.namespace = _targetFunc?.namespace;
+			wr._targetFuncComment = _targetFunc?.comment;
+		}
+		if (this.wrappers.findIndex(w => (w.name instanceof Name ? w.name.get() : w.name) == (wr.name instanceof Name ? wr.name.get() : wr.name) && w.namespace == wr.namespace) == -1) {
 			this.wrappers.push(wr.finalize?.() ?? wr)
 			return wr
 		}
@@ -1372,11 +1410,11 @@ export class WrapperAnalyzer extends BaseParser {
  * @param {*} apis
  * @returns {WrapperAnalyzer}
  */
-export function getWrappers(tokens, source, apis) {
-	const wrapperAnalyzer = new WrapperAnalyzer(tokens, {
+export function getWrappers(tokens, source, apis, extras) {
+	const wrapperAnalyzer = new WrapperAnalyzer(tokens, Object.assign({
 		source: source,
 		apis: apis,
-	})
+	}, extras));
 	wrapperAnalyzer.main()
 	return wrapperAnalyzer
 }

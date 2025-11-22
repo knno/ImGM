@@ -194,7 +194,9 @@ async function main() {
 			}
 
 			// Analyze wrappers
-			let wrapperAnalyzer = getWrappers(apis.tokens, undefined, apis)
+			let wrapperAnalyzer = getWrappers(apis.tokens, undefined, apis, {
+				moduleName: module.name.get()
+			})
 
 			// Log tokens sources recusrively
 			apis.tokens = apis.tokens.flatMap((t) => {

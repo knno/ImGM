@@ -6,7 +6,7 @@ static ImGuiSelectionBasicStorage* CreateImGuiSelectionBasicStorageFromStruct(RV
 
     if (yystruct->kind != VALUE_UNDEFINED) {
     RValue* rvalue;
-        rvalue = YYStructGetMember(yystruct, "Size"); AssignIfDefined(rvalue, selection->Size, RConvertToReal);
+        rvalue = YYStructGetMember(yystruct, "Size"); AssignIfDefined(rvalue, selection->Size, RConvertToInt);
         rvalue = YYStructGetMember(yystruct, "PreserveOrder"); AssignIfDefined(rvalue, selection->PreserveOrder, RConvertToBool);
         // rvalue = YYStructGetMember(yystruct, "AdapterIndexToStorageId"); AssignIfDefined(rvalue, selection->AdapterIndexToStorageId, RConvertToImGuiID);
         rvalue = YYStructGetMember(yystruct, "UserData");

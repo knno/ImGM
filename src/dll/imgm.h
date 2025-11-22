@@ -85,14 +85,23 @@ static ImGuiDockNodeFlags RConvertToImGuiDockNodeFlags(RValue* rvalue) {
 static ImGuiConfigFlags RConvertToImGuiConfigFlags(RValue* rvalue) {
     return static_cast<ImGuiConfigFlags>(rvalue->asInt64());
 }
-static bool RConvertToBool(RValue* rvalue) {
-	return rvalue->asBool();
-}
-static int RConvertToReal(RValue* rvalue) {
-	return static_cast<int>(rvalue->asReal());
+static float RConvertToReal(RValue* rvalue) {
+	return rvalue->asReal();
 }
 static int64_t RConvertToInt64(RValue* rvalue) {
 	return rvalue->asInt64();
+}
+static bool RConvertToBool(RValue* rvalue) {
+	return rvalue->asBool();
+}
+static const char* RConvertToString(RValue* rvalue) {
+	return rvalue->GetString();
+}
+static int RConvertToInt(RValue* rvalue) {
+	return static_cast<int>(rvalue->asReal());
+}
+static unsigned int RConvertToUInt(RValue* rvalue) {
+	return static_cast<unsigned int>(rvalue->asReal());
 }
 
 // Classes

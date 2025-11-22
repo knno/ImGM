@@ -112,6 +112,7 @@
     <ClInclude Include="imgui\internal\imstb_rectpack.h" />
     <ClInclude Include="imgui\internal\imstb_textedit.h" />
     <ClInclude Include="imgui\internal\imstb_truetype.h" />
+    <ClInclude Include="imgui\wrappers\imgui_gm_fontconfig.h" />
     <ClInclude Include="imgui\wrappers\imgui_gm_selectionstorage.h" />
     <ClInclude Include="imgui\wrappers\imgui_gm_windowclass.h" />
     <ClInclude Include="imgui\wrappers\imgui_memory_editor.h" />

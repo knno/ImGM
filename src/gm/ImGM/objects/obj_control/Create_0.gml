@@ -58,7 +58,17 @@ global.accent_color = #00A1ff;
 
 /// ImGui specific
 global.font_default = ImGui.AddFontDefault();
-global.font_roboto = ImGui.AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 24);
+global.font_roboto = ImGui.AddFontFromFileTTF("fonts/andlso.ttf", 24, undefined, 
+	[
+		0x0020, 0x00FF, // Latin
+		0x600, 0x6FF, // Arabic U+0600-U+06FF (1536-1791)
+	    1872, 1919,   // Arabic Supplement (U+0750–U+077F)
+	    2208, 2303,   // Arabic Extended-A (U+08A0–U+08FF)
+	    64336, 65023, // Presentation Forms-A (U+FB50–U+FDFF)
+	    65136, 65279, // Presentation Forms-B (U+FE70–U+FEFF)
+		0			  // GML-optional, zero terminator for array.
+	]
+);
 global.enable_docking = false;
 
 /// Example: Creating ImGui window classes

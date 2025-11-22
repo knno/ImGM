@@ -1,4 +1,5 @@
-#include <imgm.h>
+#include "../imgm.h"
+#include "imgui_gm_fontconfig.h"
 
 GMFUNC(__imgui_get_font) {
 	Result.kind = VALUE_PTR;
@@ -22,20 +23,47 @@ GMFUNC(__imgui_pop_font) {
 	Result.kind = VALUE_UNDEFINED;
 }
 
+/**
+ * @desc glyph_ranges is a flat array of unicode start,end and a terminating zero value.
+ * e.g. For Arabic: [$0600, $06FF, $0750, $077F, 0]
+ *
+ */
 GMFUNC(__imgui_add_font_from_file_TTF) {
-	GMOVERRIDE(AddFontFromFileTTF);
-	const char* file = YYGetString(arg, 0);
-	double size = YYGetReal(arg, 1);
+    GMOVERRIDE(AddFontFromFileTTF);
+    const char* file = YYGetString(arg, 0);
+    float size = (float)YYGetReal(arg, 1);
+    RValue* font_cfg = &arg[2];
+	GMDEFAULT(undefined)
+    GMHINT(ImFontConfig);
 
-	ImGuiIO& io = ImGui::GetIO();
+    double glyph_ranges_count = YYGetReal(arg, 4);
+    GMHIDDEN();
+    GMPASSTHROUGH(array_length(#arg3));
+    RValue* glyph_ranges = &arg[3];
+    GMDEFAULT(undefined)
+    GMHINT(Array<Real>)
 
-	if (ImFont* font = io.Fonts->AddFontFromFileTTF(file, size)) {
-		g_UpdateFont = true;
-		Result.kind = VALUE_PTR;
-		Result.ptr = font;
-	}
+    ImWchar* final_glyph_ranges = nullptr;
+    if (glyph_ranges->kind != VALUE_UNDEFINED) {
+        final_glyph_ranges = YYGetArray<ImWchar>(arg, 3, glyph_ranges_count);
+    }
+    ImFontConfig* final_font_cfg = nullptr;
+    if (font_cfg->kind != VALUE_UNDEFINED) {
+        final_font_cfg = ImGuiFontConfigFromStruct(font_cfg);
+    }
 
-	GMRETURNS(Pointer|Undefined);
+    ImGuiIO& io = ImGui::GetIO();
+    ImFont* font = io.Fonts->AddFontFromFileTTF(file, size, final_font_cfg, final_glyph_ranges);
+
+    if (font) {
+        g_UpdateFont = true;
+        Result.kind = VALUE_PTR;
+        Result.ptr = font;
+    } else {
+        Result.kind = VALUE_UNDEFINED;
+    }
+
+    GMRETURNS(Pointer|Undefined);
 }
 
 GMFUNC(__imgui_add_font_default) {
@@ -45,9 +73,11 @@ GMFUNC(__imgui_add_font_default) {
 		g_UpdateFont = true;
 		Result.kind = VALUE_PTR;
 		Result.ptr = font;
+	} else {
+		Result.kind = VALUE_UNDEFINED;
 	}
 
-	GMOVERRIDE(AddFontDefault);
+	GMRETURNS(Pointer|Undefined);
 }
 
 GMFUNC(__imgui_get_font_size) {

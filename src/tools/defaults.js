@@ -137,7 +137,7 @@ const jsdocConfig = {
 	 * 'single'     /// ...
 	 * 'multi'      /**\n * ...\n...  \n *\/
 	 */
-	docletCommentType: "multi", // Unused
+	docletCommentType: "multi",
 	/**
 	 * Whether to write the arguments in the function tag line
 	 */

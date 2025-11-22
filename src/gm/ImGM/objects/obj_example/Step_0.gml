@@ -69,7 +69,7 @@ if (main_open) {
                 ImGui.TextColored(string_char_at(_str, i + 1), _c);
                 if (i < _i - 1) ImGui.SameLine(0,2);
             }
-            ImGui.TextColored("Improved by knno", #3bb1f8);
+            ImGui.TextColored("by knno", #3bb1f8);
             ImGui.Separator();
             ImGui.TextColored("Source URL: ", #3bb1f8);
             ImGui.SameLine(0,0);
@@ -359,8 +359,11 @@ if (main_open) {
         ImGui.BeginChild("Inner_Fonts", width / 2, height, ImGuiChildFlags.Borders);
             ImGui.Text("Fonts");
             ImGui.Separator();
+            ImGui.Text("Hello! " + chr(0x0647) + chr(0x0627)+ chr(0x064A) + "/هاي! привет!");
+            ImGui.Separator();
             ImGui.Text("You can load TTF/OTF font files from disk!");
             ImGui.PushFont(global.font_roboto);
+            ImGui.Text("Hello! " + chr(0x0647) + chr(0x0627)+ chr(0x064A) + "/هاي! привет!");
             ImGui.TextColored("And use them wherever!", c_aqua);
             ImGui.Text("Pretty neat, right?!");
             ImGui.PopFont();

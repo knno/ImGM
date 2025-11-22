@@ -79,6 +79,9 @@
     <ClInclude Include="imgui\internal\imstb_truetype.h">
       <Filter>ImGui\Internal</Filter>
     </ClInclude>
+    <ClInclude Include="imgui\wrappers\imgui_gm_fontconfig.h">
+      <Filter>ImGui\Wrappers</Filter>
+    </ClInclude>
     <ClInclude Include="imgui\wrappers\imgui_gm_selectionstorage.h">
       <Filter>ImGui\Wrappers</Filter>
     </ClInclude>
