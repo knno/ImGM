@@ -6372,11 +6372,19 @@ function ImGui() constructor {
         vertex_format_add_color();
         return vertex_format_end();
     }
-
+    
     static __MainWindowHandle = window_handle();
     static __MainWindow = undefined;
     static __VtxFormat = __CreateVtxFormat();
-    static __Uniform = shader_get_uniform(shdImGui, "u_ClipRect");
+    static __VtxFormatStride = vertex_format_get_info(__VtxFormat).stride;
+    static __vtxBuffer = (function()
+    {
+        var vtx_buff = vertex_create_buffer();
+        vertex_begin(vtx_buff, __VtxFormat);
+        vertex_end(vtx_buff);
+        return vtx_buff;
+    })();
+    
     static __InputMapping = __imgui_create_input_mapping();
     static __CursorMapping = __imgui_create_cursor_mapping();
     static __GFlags = IMGM_GFLAGS;
@@ -6599,18 +6607,27 @@ function ImGui() constructor {
         ImGuiExtMethodCall("__ImGui_Draw", undefined, __State, true);
 
         if (ImGui.__GFlags & ImGuiGFlags.RENDERER_GM) {
-            buffer_seek(__State.Renderer.CmdBuffer, buffer_seek_start, 0);
-            if (buffer_read(__State.Renderer.CmdBuffer, buffer_bool)) { // data->Valid
-                shader_set(shdImGui);
+            
+            var cmdBuffer = __State.Renderer.CmdBuffer;
+            buffer_seek(cmdBuffer, buffer_seek_start, 0);
+            if (buffer_read(cmdBuffer, buffer_bool)) { // data->Valid
+                
+                //Cache static values for better performance inside the loop
+                var vtx_buff = __vtxBuffer;
+                var vtx_stride = __VtxFormatStride;
+                
+                //Keep a copy of the current scissor state for later reset
+                var old_scissor = gpu_get_scissor();
+                
                 surface_set_target(__State.Renderer.Surface);
-                gpu_set_blendmode_ext(bm_one, bm_inv_src_alpha);
+                gpu_set_blendmode_ext_sepalpha(bm_src_alpha, bm_inv_src_alpha, bm_one, bm_inv_src_alpha); //Pre-multiplied alpha blend mode
                 draw_clear_alpha(0, 0);
-                var list_count = buffer_read(__State.Renderer.CmdBuffer, buffer_u32);
+                var list_count = buffer_read(cmdBuffer, buffer_u32);
                 for(var i = 0; i < list_count; i++) {
-                    var cmd_count = buffer_read(__State.Renderer.CmdBuffer, buffer_u32);
+                    var cmd_count = buffer_read(cmdBuffer, buffer_u32);
                     for(var j = 0; j < cmd_count; j++) {
-                        if (!buffer_read(__State.Renderer.CmdBuffer, buffer_bool)) { // UserCallback != nullptr
-                            var tex_data = buffer_read(__State.Renderer.CmdBuffer, buffer_u32);
+                        if (!buffer_read(cmdBuffer, buffer_bool)) { // UserCallback != nullptr
+                            var tex_data = buffer_read(cmdBuffer, buffer_u32);
                             var tex_id = -1;
                             switch (tex_data & 0xF) {
                                 case ImGuiTextureType.Surface: {
@@ -6629,22 +6646,23 @@ function ImGui() constructor {
                                 }
                             }
 
-                            var clip_x1 = buffer_read(__State.Renderer.CmdBuffer, buffer_f32);
-                            var clip_y1 = buffer_read(__State.Renderer.CmdBuffer, buffer_f32);
-                            var clip_x2 = buffer_read(__State.Renderer.CmdBuffer, buffer_f32);
-                            var clip_y2 = buffer_read(__State.Renderer.CmdBuffer, buffer_f32);
-                            shader_set_uniform_f_array(__Uniform, [clip_x1, clip_y1, clip_x2, clip_y2]);
-                            var vtx_count = buffer_read(__State.Renderer.CmdBuffer, buffer_u32);
-                            var vtx_buff = vertex_create_buffer_from_buffer_ext(__State.Renderer.CmdBuffer, ImGui.__VtxFormat, buffer_tell(__State.Renderer.CmdBuffer), vtx_count);
-                            vertex_submit(vtx_buff, pr_trianglelist, tex_id);
-                            buffer_seek(__State.Renderer.CmdBuffer, buffer_seek_relative, 20 * vtx_count);
-                            vertex_delete_buffer(vtx_buff);
+                            var clip_x1 = buffer_read(cmdBuffer, buffer_f32);
+                            var clip_y1 = buffer_read(cmdBuffer, buffer_f32);
+                            var clip_x2 = buffer_read(cmdBuffer, buffer_f32);
+                            var clip_y2 = buffer_read(cmdBuffer, buffer_f32);
+                            gpu_set_scissor(clip_x1, clip_y1, clip_x2 - clip_x1, clip_y2 - clip_y1);
+                            
+                            var vtx_count = buffer_read(cmdBuffer, buffer_u32);
+                            vertex_update_buffer_from_buffer(vtx_buff, 0, cmdBuffer, buffer_tell(cmdBuffer), vtx_stride*vtx_count);
+                            vertex_submit_ext(vtx_buff, pr_trianglelist, tex_id, 0, vtx_count)
+                            
+                            buffer_seek(cmdBuffer, buffer_seek_relative, vtx_stride*vtx_count);
                         }
                     }
                 }
                 surface_reset_target();
-                shader_reset();
                 gpu_set_blendmode(bm_normal);
+                gpu_set_scissor(old_scissor);
 
                 if _ww > 0 and _wh > 0 {
                     if (__State.Engine.Window[$ "DrawBegin"]) {
