@@ -41,7 +41,6 @@
   "name":"ImGM",
   "resources":[
     {"id":{"name":"ImGM","path":"extensions/ImGM/ImGM.yy",},},
-    {"id":{"name":"fnt_consolas","path":"fonts/fnt_consolas/fnt_consolas.yy",},},
     {"id":{"name":"obj_control","path":"objects/obj_control/obj_control.yy",},},
     {"id":{"name":"obj_example","path":"objects/obj_example/obj_example.yy",},},
     {"id":{"name":"obj_ImGM","path":"objects/obj_ImGM/obj_ImGM.yy",},},
@@ -58,8 +57,6 @@
     {"id":{"name":"ImGui","path":"scripts/ImGui/ImGui.yy",},},
     {"id":{"name":"KTF","path":"scripts/KTF/KTF.yy",},},
     {"id":{"name":"shdImGui","path":"shaders/shdImGui/shdImGui.yy",},},
-    {"id":{"name":"spr_example","path":"sprites/spr_example/spr_example.yy",},},
-    {"id":{"name":"spr_example2","path":"sprites/spr_example2/spr_example2.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
