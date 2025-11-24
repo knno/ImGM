@@ -3,6 +3,15 @@
 ![Build](https://github.com/knno/ImGM/actions/workflows/build.yml/badge.svg)
 <!-- ![coverage](https://badgen.net/https/raw.githubusercontent.com/knno/ImGM/dev/extra/badges/coverage.json?icon=awesome) -->
 
+### Background
+
+> This repository is heavily inspired and based on [Nommiin's ImGui_GM](https://github.com/nommiin/imgui_gm)
+> It was an inspiration for this to be extensible with ImGui extensions. So it needed refactoring.
+> It is basically a GitHub fork of ImGui_GM with alot of changes and updates. While mostly keeping the same concept ideas, workflows, and alot of the source code including wrappers (with a little changes).
+> Credits go to [Nommiin](https://github.com/nommiin) also for helping me out
+
+## So what is this?
+
 **ImGM** is a wrapper extension that brings the power of [Dear ImGui](https://github.com/ocornut/imgui) to modern GameMaker projects. It enables immediate-mode GUI rendering with DLL integration, modular extension support, and rapid prototyping workflows.
 
 > 🚀 Built for developers who want expressive UI, debug tools, and editor-like interfaces inside GameMaker.
@@ -140,4 +149,9 @@ This project is licensed under MIT — free to use, modify, and distribute.
 ## 💬 Credits
 
 Created by [Kenan Masri](https://github.com/knno)
+Based on [Nommiin's ImGui_GM](https://github.com/nommiin/ImGui_GM)
+Using [Omar's Dear ImGui library](https://github.com/ocornut/imgui)
+Using various ImGui extensions by their authors
 Powered by Dear ImGui and the GameMaker community.
+
+> Please see the Credits section in ImGui_GM
