@@ -47,6 +47,7 @@
     {"id":{"name":"obj_ktf_stepper","path":"objects/obj_ktf_stepper/obj_ktf_stepper.yy",},},
     {"id":{"name":"obj_tests","path":"objects/obj_tests/obj_tests.yy",},},
     {"id":{"name":"rm_empty","path":"rooms/rm_empty/rm_empty.yy",},},
+    {"id":{"name":"rm_init","path":"rooms/rm_init/rm_init.yy",},},
     {"id":{"name":"rm_main","path":"rooms/rm_main/rm_main.yy",},},
     {"id":{"name":"rm_tests","path":"rooms/rm_tests/rm_tests.yy",},},
     {"id":{"name":"__ImGM","path":"scripts/__ImGM/__ImGM.yy",},},
@@ -62,6 +63,7 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
+    {"roomId":{"name":"rm_init","path":"rooms/rm_init/rm_init.yy",},},
     {"roomId":{"name":"rm_main","path":"rooms/rm_main/rm_main.yy",},},
     {"roomId":{"name":"rm_tests","path":"rooms/rm_tests/rm_tests.yy",},},
     {"roomId":{"name":"rm_empty","path":"rooms/rm_empty/rm_empty.yy",},},

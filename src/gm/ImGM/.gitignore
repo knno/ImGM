@@ -1,4 +1,16 @@
+#region ImGM Project
+
+extensions/ImGM/*.exp
+!ImGM.dll
+
+#endregion ImGM Project
+
+#region Internal
+
 *.zip
 *.resource_order
 
-extensions/ImGM/*.exp
+#endregion Internal
+
+# ^^^Do not add patterns here^^^
+# EOF

@@ -2,7 +2,7 @@
 /// Create event
 ///
 
-imgm = obj_control.imgm;
+imgm = __ImGM();
 
 // Demos
 demo_imgui = false; // ImGui demo window

@@ -1,32 +1,16 @@
-/*
-
-This is the controller GameMaker object which does the following:
-
- - It calls ImGui events, such as __BeginFrame, __EndFrame, and __Render.
- - It handles updates to the GameMaker window and synchronizing it with the backend (ImGui)
-
-*/
 ///
 /// @description Create event
 ///
 
-
-// Test framework
-
-#region Initialize ImGui
+// This is the controller GameMaker object specifically for the example game, which demonstrates various features of ImGui.
 
 imgm = __ImGM();
 
-/// Optional: Define common config flags
-var _imgui_config_flags = ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable;
+#region Configurations
 
-ImGui.__Initialize(_imgui_config_flags);
-
-imgui_state = ImGui.__state; // Capture the created state.
-imgui_window = ImGui.__window; // Capture the created gamewindow.
-
-/// Optional: Ini settings
+/// Optional: Ini settings for ImGui
 ini_filename = "";
+// Example:
 // ini_filename = game_save_id + "imgm.ini";
 
 if ini_filename != "" {
@@ -34,29 +18,13 @@ if ini_filename != "" {
     ImGui.LoadIniSettingsFromDisk(ini_filename);
 }
 
-#region Examples (Commented)
+/// Optional: input system to use (see Step event)
+global.use_imgui_input = not (ImGui.__GFlags & ImGuiGFlags.RENDERER_GM); // Default usage. Use imgui input if renderer is not GM
 
-/// Optional: Create a new state example
-/*
-    imgui_state2 = new ImGuiState(); // Creates a Context
-    imgui_window2 = new ImGuiBaseMainWindow(window_handle()); // Creates a "Window"
-    /// imgui_state2.some_attribute = some_value;
-    imgui_state2.Initialize(imgui_window2, _configs); // This does 3 things: init and use new state, set it to window, set config flags
-    ImGui.AddFontDefault(); // Add default font to the context!
-    imgui_state.Use(); // Return back to main state.
-*/
-
-#endregion Examples (Commented)
-
-#endregion Initialize ImGui
-
-// Setup input system to use
-global.use_imgui_input = not (ImGui.__GFlags & ImGuiGFlags.RENDERER_GM); // use imgui if renderer is not GM
-
-// Accent color
+/// Accent color
 global.accent_color = #00A1ff;
 
-/// ImGui specific
+/// ImGui fonts: Add the default and a custom font with glyph ranges (Unicode)
 global.font_default = ImGui.AddFontDefault();
 global.font_roboto = ImGui.AddFontFromFileTTF("fonts/andlso.ttf", 24, undefined, 
 	[
@@ -66,14 +34,24 @@ global.font_roboto = ImGui.AddFontFromFileTTF("fonts/andlso.ttf", 24, undefined,
 	    2208, 2303,   // Arabic Extended-A (U+08A0–U+08FF)
 	    64336, 65023, // Presentation Forms-A (U+FB50–U+FDFF)
 	    65136, 65279, // Presentation Forms-B (U+FE70–U+FEFF)
-		0			  // GML-optional, zero terminator for array.
+		0			  // Optional: Provide a terminating zero for the array for ImGui backend.
 	]
 );
+
+/// Whether to enable or use ImGui.DockSpaceOverViewport
 global.enable_docking = false;
 
+#endregion Configurations
+
+
+#region Additional Examples
+
 /// Example: Creating ImGui window classes
-// global.window_class_basic = new ImGuiWindowClass(1, -1);
-// global.window_class_no_automerge = new ImGuiWindowClass(2, -1, ImGuiViewportFlags.NoAutoMerge);
+// global.window_class_basic = new ImGuiWindowClass(1, -1); // First and default
+// global.window_class_no_automerge = new ImGuiWindowClass(2, -1, ImGuiViewportFlags.NoAutoMerge); // Custom class that makes windows not dockable.
+
+#endregion Additional Examples
+
 
 /// Rooms
 var _all_room_ids = asset_get_ids(asset_room); // array of refs
@@ -88,7 +66,7 @@ operating_system = environment_get_variable("OS");
 memory_difference = 0;
 tick = 0;
 
-/// Function to draw a status bar
+/// Function to draw the status bar
 render_status_bar = function() {
     var _status_height = 30;
     var _window_width = window_get_width();
