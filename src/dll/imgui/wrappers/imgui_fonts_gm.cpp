@@ -36,12 +36,13 @@ GMFUNC(__imgui_add_font_from_file_TTF) {
 	GMDEFAULT(undefined)
     GMHINT(ImFontConfig);
 
-    double glyph_ranges_count = YYGetReal(arg, 4);
-    GMHIDDEN();
-    GMPASSTHROUGH(array_length(#arg3));
     RValue* glyph_ranges = &arg[3];
     GMDEFAULT(undefined)
     GMHINT(Array<Real>)
+
+    double glyph_ranges_count = YYGetReal(arg, 4);
+    GMHIDDEN();
+    GMPASSTHROUGH(array_length(#arg3));
 
     ImWchar* final_glyph_ranges = nullptr;
     if (glyph_ranges->kind != VALUE_UNDEFINED) {

@@ -8,6 +8,10 @@
   #endif
 #endif
 
+// The following includes are required
+// Little modifications may be necessary. They are initially copied using:
+// imgm modules:copy --gm
+
 #include <YYRunnerInterface.h>
 #include <Ref.h>
 #include <YYRValue.h>

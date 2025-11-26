@@ -46,6 +46,13 @@ export function generateCoverage(fullApi) {
         const wrappers = [];
         const extraWrappers = [];
 
+        // Sort group.wrappers by name._name alphabetically
+        const sortedGroupWrappers = [...group.wrappers].sort((a, b) => {
+            const nameA = a.name ? ((a.name instanceof Name) ? a.name.get() : a.name).toLowerCase() : '';
+            const nameB = b.name ? ((b.name instanceof Name) ? b.name.get() : b.name).toLowerCase() : '';
+            return nameA.localeCompare(nameB);
+        });
+
         const getWNote = function(wrapper, def="-") {
             const wname = (wrapper.name instanceof Name ? wrapper.name.get() : wrapper.name);
             const ws = fullApi.modulesConfigs[wrapper.namespace].wrappers
@@ -77,7 +84,7 @@ export function generateCoverage(fullApi) {
         }
 
         group.functions.map(f => {
-            const w = group.wrappers.find(wrapper => (wrapper.name instanceof Name ? wrapper.name.get() : wrapper.name) == f.name._name || wrapper.name?._name == f.name._name || wrapper.targetFunc == f.name._name);
+            const w = sortedGroupWrappers.find(wrapper => (wrapper.name instanceof Name ? wrapper.name.get() : wrapper.name) == f.name._name || wrapper.name?._name == f.name._name || wrapper.targetFunc == f.name._name);
             var covered = w != undefined;
             if (covered) {
                 coverageCount++;
@@ -91,7 +98,7 @@ export function generateCoverage(fullApi) {
             }
         });
 
-        group.wrappers.map(w => {
+        sortedGroupWrappers.map(w => {
             var isExtra = (!wrappers.includes(w));
             if (isExtra) {
                 extraWrappers.push(w);
