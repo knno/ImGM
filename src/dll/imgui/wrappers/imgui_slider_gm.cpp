@@ -1,4 +1,4 @@
-#include "../imgm.h"
+#include <imgm.h>
 
 GMFUNC(__imgui_slider_float) {
 	const char* label = YYGetString(arg, 0);

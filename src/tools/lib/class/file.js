@@ -30,8 +30,11 @@ export default class File {
 		}
 
 		this._loadContent()
-		Logger.info(
-			`Loaded "${this.name}" (${this.lines} lines, ${this.size} characters)`
+		Logger.debug(
+			Program.colors.get("gray", `Opening`) + ` ` + Program.colors.get("darkorange", this.name), {
+			type: Logger.types.FILES_UPDATE_OPENED,
+			name: "File.new"
+		}
 		)
 	}
 
@@ -69,8 +72,10 @@ export default class File {
 		this._precheck()
 		const newHash = this._hash(value)
 		if (newHash === this.hash) {
-			Logger.info(
-				`Skipping update for "${this.name}", no changes detected`
+			Logger.debug(
+				Program.colors.get("gray", `Skipping update for "${this.name}", no changes detected`), {
+				type: Logger.types.FILES_UDPATE_SKIPPED
+			}
 			)
 			return false
 		}
@@ -83,8 +88,10 @@ export default class File {
 
 	commit() {
 		if (!this.changed) {
-			Logger.info(
-				`Skipping write for "${this.name}", no changes detected`
+			Logger.debug(
+				Program.colors.get("gray", `Skipping write for "${this.name}", no changes detected`), {
+					type: Logger.types.FILES_UDPATE_SKIPPED
+				}
 			)
 			return false
 		}
@@ -106,7 +113,9 @@ export default class File {
 		const lineDiff = newLines - this.lines
 
 		Logger.info(
-			`Wrote "${this.name}" (${lineDiff >= 0 ? "+" : ""}${lineDiff} lines, ${charDiff >= 0 ? "+" : ""}${charDiff} characters)`
+			`Wrote ${Program.colors.get("orange", this.name)} (${lineDiff >= 0 ? "+" : ""}${lineDiff} lines, ${charDiff >= 0 ? "+" : ""}${charDiff} characters)`, {
+				type: Logger.types.FILES_UDPATE_WRITTEN
+			}
 		)
 
 		this.size = newSize

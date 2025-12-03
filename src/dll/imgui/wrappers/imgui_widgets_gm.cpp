@@ -1,8 +1,6 @@
 #include <imgm.h>
 
-/// <summary>
 /// General Widgets
-/// </summary>
 
 GMFUNC(__imgui_button) {
 	const char* label = YYGetString(arg, 0);

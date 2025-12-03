@@ -428,8 +428,9 @@ export class BaseTokenizer {
 	 * @memberof BaseTokenizer
 	 */
 	main() {
+		const colors = Program.colors
 		this.prepare()
-		Logger.debug(`Tokenizing text with a length of ${this.text.length}:`, {
+		Logger.debug(colors.get("gray", `Tokenizing text with a length of ${this.text.length}:`), {
 			name: this.constructor.name,
 			type: Logger.types.PARSER_DEBUG_INFO,
 		})
@@ -743,14 +744,14 @@ export class BaseParser {
 		const colors = Program.colors
 		const steps = this.steps() ?? this.fns.filter((f) => f.startsWith("p_"))
 		Logger.debug(
-			`Parsing ${this.tokens.length} tokens with ${steps.length} steps:`,
+			colors.get("gray", `Parsing ${this.tokens.length} tokens with ${steps.length} steps:`),
 			{
 				name: this.constructor.name,
 				type: Logger.types.PARSER_DEBUG_INFO,
 			}
 		)
 		for (let i = 0; i < steps.length; i++) {
-			Logger.debug(` - step ${colors.get("green", steps[i].name)}:`, {
+			Logger.debug(`${colors.get("gray", ` - step `)}${colors.get("darkgreen", steps[i].name)}:`, {
 				name: this.constructor.name,
 				type: Logger.types.PARSER_DEBUG_INFO,
 			})

@@ -1,9 +1,6 @@
-#include "../imgm.h"
+#include <imgm.h>
 
-/// <summary>
 /// General API functions
-/// </summary>
-/// <param name=""></param>
 
 GMFUNC(__imgui_create_context) {
 	Result.kind = VALUE_PTR;

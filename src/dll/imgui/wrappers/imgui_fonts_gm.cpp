@@ -1,4 +1,4 @@
-#include "../imgm.h"
+#include <imgm.h>
 #include "imgui_gm_fontconfig.h"
 
 GMFUNC(__imgui_get_font) {
@@ -24,14 +24,20 @@ GMFUNC(__imgui_pop_font) {
 }
 
 /**
- * @desc glyph_ranges is a flat array of unicode start,end and a terminating zero value.
- * e.g. For Arabic: [$0600, $06FF, $0750, $077F, 0]
+ * @desc Adds a font from a TTF file on disk.
+ *
+ * @param file The path to the TTF file.
+ * @param size_pixels The font size in pixels.
+ * @param glyph_ranges An optional flat array of unicode pairs [start,end...] ending with an optional terminating-zero element.
+ *
+ *
+ * e.g. Some characters for Arabic: [$0600, $06FF, $0750, $077F, 0]
  *
  */
 GMFUNC(__imgui_add_font_from_file_TTF) {
     GMOVERRIDE(AddFontFromFileTTF);
     const char* file = YYGetString(arg, 0);
-    float size = (float)YYGetReal(arg, 1);
+    float size_pixels = (float)YYGetReal(arg, 1);
     RValue* font_cfg = &arg[2];
 	GMDEFAULT(undefined)
     GMHINT(ImFontConfig);
@@ -54,7 +60,7 @@ GMFUNC(__imgui_add_font_from_file_TTF) {
     }
 
     ImGuiIO& io = ImGui::GetIO();
-    ImFont* font = io.Fonts->AddFontFromFileTTF(file, size, final_font_cfg, final_glyph_ranges);
+    ImFont* font = io.Fonts->AddFontFromFileTTF(file, size_pixels, final_font_cfg, final_glyph_ranges);
 
     if (font) {
         g_UpdateFont = true;

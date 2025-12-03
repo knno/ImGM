@@ -1,4 +1,4 @@
-#include "../imgm.h"
+#include <imgm.h>
 
 GMFUNC(__imgui_begin_drag_drop_source) {
 	ImGuiDragDropFlags flags = YYGetInt64(arg, 0);

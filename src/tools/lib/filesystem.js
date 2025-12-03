@@ -64,7 +64,7 @@ export function copyFiles(source, destination, patterns = undefined) {
 		} else {
 			Logger.debug(logMsg, {
 				name: NAME,
-				type: Logger.types.COPY_DEBUG_INFO,
+				type: Logger.types.FILES_COPY_DEBUG_INFO,
 			})
 		}
 
@@ -93,14 +93,14 @@ export function copyFiles(source, destination, patterns = undefined) {
 				fs.copyFileSync(srcFilePath, destFilePath)
 				Logger.debug(
 					` - Copied: "${srcFilePath}" -> "${destFilePath}"`,
-					{ name: NAME, type: Logger.types.COPY_DEBUG_INFO }
+					{ name: NAME, type: Logger.types.FILES_COPY_DEBUG_INFO }
 				)
 			}
 		}
 
 		Logger.debug(` - Copied files successfully`, {
 			name: NAME,
-			type: Logger.types.COPY_DEBUG_INFO,
+			type: Logger.types.FILES_COPY_DEBUG_INFO,
 		})
 	} catch (error) {
 		Logger.error(`${error.message}`, {

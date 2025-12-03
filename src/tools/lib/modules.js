@@ -18,18 +18,80 @@ const colors = Program.colors
  * @return {String} handle
  */
 export function toHandle(name) {
+	let nameObj = undefined;
+	let nameSnake = name;
+
 	if (typeof name == Name) {
-		name = name.toSnakeCase("-")
+		nameObj = name;
+		nameSnake = name.toSnakeCase("_").replace(/im[-_](gui|ext)[-_]/, `im$1_`);
+	} else {
+		let nameObj = new Name(name, "PascalCase", "");
+		if (name == nameObj.get()) {
+			nameSnake = nameObj.toSnakeCase("_").replace(/im[-_](gui|ext)[-_]/, `im$1_`);
+		} else {
+			nameSnake = nameObj.toSnakeCase("_").replace(/im[-_](gui|ext)[-_]/, `im$1_`);
+		}
+	}
+	if (nameSnake.startsWith('im')) {
+		// Get name without im(gui/ext) prefixes (excluding imgui and imext themselves.)
+		if (!Config.modules.hasOwnProperty(nameSnake)) {
+			nameSnake = nameSnake.replace(/(?:imgui(?:[-_])?|imext(?:[-_])?|im(?:[-_])?|imgui(?=[a-z])|imext(?=[a-z])|im(?=[a-z]))/g, "")
+		}
+	}
+	nameSnake = nameSnake.replace(/[-_]/, "-");
+
+	if (Object.keys(Config.modules).indexOf(nameSnake) > -1) {
+		return nameSnake;
+	}
+	if (Object.keys(Module._loadedModules).indexOf(nameSnake) > -1) {
+		return nameSnake;
 	}
 	for (const mh in Config.modules) {
 		if (Config.modules[mh].name == name) {
 			return mh
 		}
 	}
-	if (Object.keys(Config.modules).indexOf(name) > -1) {
-		return name
-	}
 	return undefined
+}
+
+/**
+ * Loads module definitions from Config.modules into Module._loadedModules.
+ *
+ * @param {Boolean} [recursive=false] whether to load child modules recursively.
+ *
+ */
+export async function loadModules(recursive = false) {
+	const _loadedModules = Module._loadedModules;
+	for (const mh in Config.modules) {
+		try {
+			let parentModule = await getOrCreateModule(mh);
+			if (parentModule) {
+				_loadedModules[parentModule.handle] = parentModule;
+				if (recursive) {
+					const childModules = await getChildModules(parentModule);
+					if (childModules) {
+						for (const chM of childModules) {
+							let childModule = await getOrCreateModule(chM.handle, undefined, parentModule);
+							if (childModule) {
+								_loadedModules[childModule.handle] = childModule;
+							}
+						}
+					}
+				}
+			}
+		} catch (error) {
+			Logger.error(`Error loading module from handle "${mh}"`, {
+				name: NAME,
+				error
+			});
+		}
+	}
+	// Update Module._loadedModules with new information.
+	Module._loadedModules = {
+		...Module._loadedModules,
+		..._loadedModules
+	};
+	return _loadedModules;
 }
 
 /**
@@ -54,7 +116,7 @@ export function submoduleDirToHandle(dirname) {
 }
 
 /**
- * get PascalName of a module provided a directory name if found in Config.modules and loaded modules.
+ * Get PascalName of a module provided a directory name if found in Config.modules and loaded modules.
  * Otherwise infers it from the directory name
  *
  * @param {String} dirname Directory name
@@ -70,11 +132,10 @@ export function nameFromSubmoduleDir(dirname) {
 			return Module._loadedModules[k].name.toPascalCase("")
 		}
 	}
-	/* const rePatName = (name) => `(${str.rePascalCase(name)})`*/
 	const rePatSep = `[-_\.]`
 	const rePatExtra = `(?:${rePatSep})?(?<name>.*)` // capture name
 	const reDefaultParPat = `(?:[Gg]ui)|(?:[Ee]xt)`
-	const reModule = `(?:(?:[Ii]m(?:(?:${reDefaultParPat})(?![a-z]))?))${rePatExtra}`
+	const reModule = `(?:(?:[Ii]m(?:(?:${reDefaultParPat})(?![a-z]))?)?)${rePatExtra}`
 
 	const regexes = [reModule]
 	let name = undefined
@@ -91,6 +152,32 @@ export function nameFromSubmoduleDir(dirname) {
 	}
 
 	throw new ImGMError(`Could not convert ${dirname} to a module name`)
+}
+
+export function nameFromHandle(handle) {
+	if (!handle) return undefined;
+	const preconfiguredModules = Object.keys(Config.modules);
+	var keys = [...preconfiguredModules, ...Object.keys(Module._loadedModules)] // kebab-case
+	var found = false;
+	var result = undefined;
+	var _handle = str.toKebabCase(handle, "-");
+
+	var key = keys.find((v, i) => v.toLowerCase() == _handle.toLowerCase());
+	if (key != undefined) {
+		found = true;
+	}
+
+	if (!found) {
+		key = str.toPascalCase(handle, "");
+		result = key;
+	} else {
+		if (preconfiguredModules.indexOf(key) != -1) {
+			result = Config.modules[key]?.name;
+		} else {
+			result = str.toPascalCase(key, "");
+		}
+	}
+	return new Name(result, "PascalCase", "")
 }
 
 /**
@@ -224,10 +311,10 @@ export class Module {
 	handle = undefined
 	name = undefined
 	submoduleDir = undefined
-	sourceConfig = undefined
 
-	constructor(key = undefined, parent = undefined) {
+	constructor(key = undefined, parent = undefined, config = undefined) {
 		this.parent = parent
+		let dllDir = path.join(Config.projectRoot, Config.dll.baseDir)
 
 		if (typeof key !== "undefined") {
 			if (key instanceof Name) {
@@ -243,34 +330,62 @@ export class Module {
 				this.submoduleDir =
 					key.submoduleDir ?? Config.modules[this.handle].submoduleDir
 			} else if (typeof key == "string") {
+				this.name = new Name(key, "PascalCase", "")
+				this.handle = toHandle(this.name)
 				if (this.parent) {
-					if (
-						fs.existsSync(path.join(this.parent.submoduleDir, key))
-					) {
-						this.name = new Name(
-							nameFromSubmoduleDir(key),
-							"PascalCase",
-							""
-						)
-						this.handle = this.name.toSnakeCase("-")
-						this.submoduleDir = path
-							.join(this.parent.submoduleDir, key)
-							.replace(/\\/g, "/")
-					} else {
+					this.handle = this.name.toKebabCase("-")
+					let parentHandle = toHandle(this.parent.handle);
+					this.submoduleDir = (Config.modules[
+						this.handle
+					] ?? Config.modules[parentHandle]).submoduleDir.replace(/\\/g, "/");
+
+					// Remove prefixes from base folder name: im-, im glued, imgui-, imext-, etc. Keeping bare "imgui" / "imext" unchanged.
+					let baseName = key.replace(/^(?:imgui(?:[-_]|(?=[a-z]))|imext(?:[-_]|(?=[a-z]))|im(?:[-_]|(?=[a-z])))/i, "");
+					// Now reconstruct possible folder names based on baseName.
+					let moduleKeys = Object.keys(Config.modules);
+					let folderNames = [
+						str.toSnakeCase(baseName),
+						str.toKebabCase(baseName),
+						str.toPascalCase(baseName),
+						`im_${str.toSnakeCase(baseName)}`,
+						`im-${str.toKebabCase(baseName)}`,
+						`Im${str.toPascalCase(baseName)}`,
+					];
+					for (const mk of moduleKeys) {
+						// Iterate through keys as additional prefixes other than im-, im_, Im.
+						// Mostly for extensions like imext-, imext_, Imext. Including imgui- variants as well.
+						let modName = Config.modules[mk].name;
+						folderNames.push(`${modName.toLowerCase()}_${str.toSnakeCase(baseName)}`);
+						folderNames.push(`${modName.toLowerCase()}-${str.toKebabCase(baseName)}`);
+						folderNames.push(`${modName}${str.toPascalCase(baseName)}`);
+					}
+
+					var found = false;
+					for (const fname of folderNames) {
+						const testPath = path.join(this.parent.submoduleDir, fname);
+						if (
+							fs.existsSync(testPath)
+						) {
+							this.name = new Name(
+								nameFromSubmoduleDir(key),
+								"PascalCase",
+								""
+							)
+							this.handle = this.name.toKebabCase("-")
+							found = true;
+							this.submoduleDir = path
+								.join(this.parent.submoduleDir, key)
+								.replace(/\\/g, "/")
+							break;
+						}
+					}
+					if (!found) {
 						throw new ImGMError(
-							`Cannot create non-existent module: ${this.parent.name.get()}/${key}`
+							`Cannot create non-existent module: ${key} from parent: ${this.parent.name.get()}`
 						)
 					}
 				} else {
-					if (fs.existsSync(path.join(Config.projectRoot, key))) {
-						this.name = new Name(
-							nameFromSubmoduleDir(key),
-							"PascalCase",
-							""
-						)
-						this.handle = toHandle(this.name)
-						this.submoduleDir = key.replace(/\\/g, "/")
-					} else {
+					if (fs.existsSync(path.join(dllDir, key))) {
 						this.handle = toHandle(key)
 						if (Config.modules[this.handle]) {
 							this.submoduleDir =
@@ -281,6 +396,26 @@ export class Module {
 						} else {
 							throw new ImGMError(
 								`Cannot create module with key: ${key}`
+							)
+						}
+					} else {
+						if (Object.keys(Module._loadedModules).length > 0) {
+							for (const lm in Module._loadedModules) {
+								let moduleDir = Module._loadedModules[lm].submoduleDir;
+								let submoduleDir = path.join(moduleDir, key);
+								if (fs.existsSync(submoduleDir)) {
+									this.name = new Name(
+										nameFromSubmoduleDir(key),
+										"PascalCase",
+										""
+									)
+									this.handle = toHandle(this.name)
+									this.submoduleDir = key.replace(/\\/g, "/")
+								}
+							}
+						} else {
+							throw new ImGMError(
+								`Cannot create non-existent module: \`${key}\` from \`${key},${parent}\``
 							)
 						}
 					}
@@ -295,7 +430,12 @@ export class Module {
 				)
 			}
 		}
-		Module._loadedModules[this.handle] = this
+		this.config = this.config ?? Module.getConfig(key);
+		if (this.handle != undefined) {
+			Module._loadedModules[this.handle] = this
+		} else {
+			throw new ImGMError(`Could not create module with key: ${key}`)
+		}
 	}
 
 	getSourceDir() {
@@ -318,6 +458,10 @@ export class Module {
 			parent: this.parent,
 			sourceDir: this.getSourceDir(),
 		}
+	}
+
+	static getConfig(handle) {
+		return Module._loadedModules[handle]?.config ?? {}
 	}
 }
 
@@ -394,9 +538,20 @@ export async function getOrCreateModule(
 		}
 		module = new Module(key, parent)
 	}
-	module.sourceConfig = (
-		await Import(path.join(module.getSourceDir(), "config.js"))
-	)?.default
+	if (!parent) {
+		module.parentHandle = undefined;
+		module.config = Object.assign({}, (
+			await Import(path.join(module.getSourceDir(), "config.js"))
+		)?.default, Config.modules[module.handle])
+	} else {
+		module.parentHandle = parent.handle;
+		module.config = Object.assign(module.config, (
+			await Import(path.join(module.getSourceDir(), "config.js"))
+		)?.default, {
+			hasParent: true,
+			parentHandle: parent.handle,
+		})
+	}
 	return module
 }
 

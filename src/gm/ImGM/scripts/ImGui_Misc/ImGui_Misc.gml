@@ -353,7 +353,7 @@ function ImGuiSelectionBasicStorage(size=0, preserve_order=undefined) constructo
     }
 }
 
-/// @section Enums
+#region Enums
 /// Manually-updated section for specific enums
 
 /**
@@ -524,9 +524,9 @@ enum ImGuiKey {
     KeysData_OFFSET        = 0,                                // First key stored in io.KeysData[0]. Accesses to io.KeysData[] must use (key - KeysData_OFFSET).
 };
 
-/// @endsection
+#endregion
 
-/// @section Helpers
+#region Helpers
 
 /**
  * @function __imgui_create_cursor_mapping
@@ -647,4 +647,4 @@ function __imgui_create_input_mapping() {
     return arr;
 }
 
-/// @endsection
+#endregion

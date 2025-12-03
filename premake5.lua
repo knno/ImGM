@@ -1,9 +1,6 @@
 local projectName = "ImGM"
 
-local dllDir = "src/dll/"
-local toolsDir = "src/tools/"
-local gmProjectDir = "src/gm/" .. projectName .. "/"
-local gmProjectExtDir = gmProjectDir .. "extensions/" .. projectName .. "/"
+-- #region Utils
 
 function toPascalCase(str)
     local words = string.gsub(str, "[^a-zA-Z0-9]+", " "):gmatch("%S+")
@@ -14,26 +11,102 @@ function toPascalCase(str)
     return pascalCase
 end
 
+function getEnabledExts(configFile)
+    local enabled = {}
+    local f = io.open(configFile, "r")
+    if f then
+        for line in f:lines() do
+            local ext = line:match("^%s*#define%s+IMEXT_([A-Za-z0-9_]+)")
+            if ext then
+                enabled[ext:lower()] = true
+            end
+        end
+        f:close()
+    end
+
+	local anyEnabled = false
+	for extName, _ in pairs(enabled) do
+		if (not anyEnabled) then
+			print("ImGui extensions:")
+			anyEnabled = true
+		end
+		print("  - " .. extName)
+	end
+	if (not anyEnabled) then
+		print("ImGui extensions: None")
+	end
+
+	return enabled
+end
+
+function buildExtIncludeDirs(baseDir, enabledExts)
+    local exts = os.matchdirs(baseDir .. "/*")
+    local incs = {}
+    for _, ext in ipairs(exts) do
+        local extName = string.match(ext, baseDir .. "/(.+)/?")
+        if enabledExts[extName:lower()] then
+            print("Adding include dirs for: " .. extName)
+            table.insert(incs, ext)
+            table.insert(incs, ext .. "/internal")
+        else
+            -- skipped extName
+        end
+    end
+    return incs
+end
+
+function buildExtFiles(baseDir, enabledExts)
+    local exts = os.matchdirs(baseDir .. "/*")
+    local filesList = {}
+    for _, ext in ipairs(exts) do
+        local extName = string.match(ext, baseDir .. "/(.+)/?")
+        if enabledExts[extName:lower()] then
+            print("Adding files for: " .. extName)
+            table.insert(filesList, ext .. "/*.h")
+            table.insert(filesList, ext .. "/*.cpp")
+            table.insert(filesList, ext .. "/*.inl")
+            table.insert(filesList, ext .. "/**/*.h")
+            table.insert(filesList, ext .. "/**/*.cpp")
+            table.insert(filesList, ext .. "/**/*.inl")
+        else
+            -- skipped extName
+        end
+    end
+    return filesList
+end
+
+local dllDir = "src/dll/"
+local toolsDir = "src/tools/"
+local gmProjectDir = "src/gm/" .. projectName .. "/"
+local gmProjectExtDir = gmProjectDir .. "extensions/" .. projectName .. "/"
+local enabledExts = getEnabledExts(dllDir .. "config.h")
+local extIncDirs = buildExtIncludeDirs(dllDir .. "imext", enabledExts)
+local extFiles = buildExtFiles(dllDir .. "imext", enabledExts)
+
 function processImext(baseDir)
     local exts = os.matchdirs(baseDir .. "/*")
     for _, ext in ipairs(exts) do
         local extName = string.match(ext, baseDir .. "/(.+)/?")
-        local pascalCaseExtName = toPascalCase(extName)
-		_vpaths[pascalCaseExtName .. "/Internal"] = {
-			ext .. "/internal/*.*",
-			ext .. "/internal/**/*.*",
-		}
-		_vpaths[pascalCaseExtName .. "/Wrappers"] = {
-			ext .. "/wrappers/*.*",
-			ext .. "/wrappers/**/*.*",
-		}
-		_vpaths[pascalCaseExtName .. "/*"] = {
-			ext .. "/*.h",
-			ext .. "/*.cpp",
-			ext .. "/*.inl",
-		}
+		if enabledExts[extName:lower()] then
+			local pascalCaseExtName = toPascalCase(extName)
+			_vpaths[pascalCaseExtName .. "/Internal"] = {
+				ext .. "/internal/*.*",
+				ext .. "/internal/**/*.*",
+			}
+			_vpaths[pascalCaseExtName .. "/Wrappers"] = {
+				ext .. "/wrappers/*.*",
+				ext .. "/wrappers/**/*.*",
+			}
+			_vpaths[pascalCaseExtName .. "/*"] = {
+				ext .. "/*.h",
+				ext .. "/*.cpp",
+				ext .. "/*.inl",
+			}
+		end
     end
 end
+
+-- #endregion
 
 workspace "dll"
     configurations { "Debug", "Release" }
@@ -52,8 +125,7 @@ project(projectName)
         dllDir .. "internal",
         dllDir .. "imgui",
         dllDir .. "imgui/internal",
-        dllDir .. "imext/*",
-        dllDir .. "imext/*/internal",
+		table.unpack(extIncDirs),
     }
 
     files {
@@ -68,9 +140,7 @@ project(projectName)
         dllDir .. "imgui/**/*.inl",
         dllDir .. "imgui/internal/im*.h",
         dllDir .. "imgui/internal/im*.cpp",
-        dllDir .. "imext/**/**/*.h",
-        dllDir .. "imext/**/**/*.cpp",
-        dllDir .. "imext/**/**/*.inl",
+		table.unpack(extFiles),
     }
 
     excludes {
@@ -86,8 +156,8 @@ project(projectName)
 			dllDir .. "internal/gm.h",
 		},
 		["ImGui/*"] = {
-			dllDir .. "imgui/**.h",
-			dllDir .. "imgui/**.cpp",
+			dllDir .. "imgui/*.h",
+			dllDir .. "imgui/*.cpp",
 		},
 		["ImGui/Internal"] = {
 			dllDir .. "imgui/internal/*.*",

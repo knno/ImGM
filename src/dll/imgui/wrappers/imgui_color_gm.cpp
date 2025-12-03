@@ -1,4 +1,4 @@
-#include "../imgm.h"
+#include <imgm.h>
 
 // Color_3 uses BGR integer
 // Color_4 uses ImColor GML struct

@@ -23,12 +23,15 @@ export const logLevelsColors = {
 // (LEVEL)(TYPE)(nn)
 export const logTypes = {
 	// WRAPPER
+	WRAPPER_FILE_READ: "DW01",
+	WRAPPER_FILE_PARSE: "DW02",
 	WRAPPER_TARGET_CHANGED: "WW01",
 	WRAPPER_ARG_CHANGED: "WW02",
 	WRAPPER_MODIFIER_UNKNOWN: "WW03",
 	WRAPPER_CONTEXT_CHANGED: "WW04",
 	WRAPPER_ENUM_COMMA: "WW05",
 	WRAPPER_TOKEN_UNKNOWN: "WW06",
+	WRAPPER_DISCARDED: "WW07",
 	// MODULE
 	MODULE_DEBUG_INFO: "DM01",
 	MODULE_CONFIG_DISCARDED: "WM01",
@@ -39,8 +42,12 @@ export const logTypes = {
 	PARSER_DEBUG_INFO_PARSED_TOKENS: "DP03",
 	PARSER_DEBUG_INFO_LEXED_TOKENS: "DP04",
 	PARSER_DEBUG_INFO_PARSED_TOKENS_RESULT: "DP05",
-	// COPY
-	COPY_DEBUG_INFO: "DC01",
+	// FILES
+	FILES_COPY_DEBUG_INFO: "DF01",
+	FILES_UPDATE_OPENED: "DF02",
+	FILES_UDPATE_SKIPPED: "DF03",
+	FILES_UDPATE_WRITTEN: "DF04",
+
 }
 
 /**
@@ -199,10 +206,17 @@ export class Logger {
 			if (typeof error.resolve != "undefined") {
 				error = error.resolve()
 			}
-			msg = colors.wrap(
-				extraColor,
-				`(stacktrace)\n${error.stack.replace(/^(.*)/gm, colors.wrap(extraColor, ` - $1`))}`
-			)
+			if (this.Program.debug) {
+				msg = colors.wrap(
+					extraColor,
+					`(stacktrace)\n${error.stack.replace(/^(.*)/gm, colors.wrap(extraColor, ` - $1`))}`
+				)
+			} else {
+				msg = colors.wrap(
+					extraColor,
+					`(to see stacktrace, try again with --debug)`
+				)
+			}
 			delete extra.error
 		} else {
 			msg = colors.wrap(extraColor, msg)
@@ -338,21 +352,22 @@ export class Logger {
 					" > " +
 					(this.Program.workData.workerData.name ?? "worker") +
 					"-" +
-					this.Program.workData.workerData.index
+					String(this.Program.workData.workerData.index).padStart(2, '0')
 			} else {
 				extra = {
 					name:
 						(this.Program.workData.workerData.name ?? "worker") +
 						"-" +
-						this.Program.workData.workerData.index,
+						String(this.Program.workData.workerData.index).padStart(2, '0'),
 				}
 			}
-			if (extra.name.length > 13)
-				extra.name = extra.name.split(" > ")[0] + " > " + 
+			if (extra.name.split(" > ").length > 3) {
+				extra.name = extra.name.split(" > ")[0] + " > " +
 					(this.Program.workData.workerData.name ?? "worker") +
 					"-" +
-					this.Program.workData.workerData.index +
+					String(this.Program.workData.workerData.index).padStart(2, '0') +
 					"...."
+			}
 			this.Program.workData.parentPort.postMessage({
 				type: "log",
 				message: message,

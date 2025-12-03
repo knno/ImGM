@@ -1,4 +1,4 @@
-#include "../imgm.h"
+#include <imgm.h>
 
 GMFUNC(__imgui_is_key_down) {
 	RValue* key = &arg[0];

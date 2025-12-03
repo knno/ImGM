@@ -1,15 +1,15 @@
 import fs from "fs"
+import path from "path"
 import { parentPort, workerData } from "worker_threads"
+import Name from "../../lib/class/name.js"
 import { getOrCreateModule } from "../../lib/modules.js"
 import cpp from "../../lib/parsers/langs/cpp.js"
 import { getApi } from "../../lib/parsers/wrappers.js"
-
-import path from "path"
 import { Program } from "../../lib/program.js"
 
 Program.setup(true)
 
-const { filePath, moduleHandle, totalStartTime } = workerData
+const { filePath, moduleHandle, parentModule, totalStartTime } = workerData
 
 const Logger = Program.Logger
 const NAME = "wrapper:gen"
@@ -18,7 +18,13 @@ const main = async () => {
 	try {
 		// Check file exists
 		fs.accessSync(filePath, fs.constants.F_OK)
-		const module = await getOrCreateModule(moduleHandle)
+		var module;
+		if (parentModule) {
+			const parentModuleObj = await getOrCreateModule(parentModule);
+			module = await getOrCreateModule(moduleHandle, undefined, parentModuleObj)
+		} else {
+			module = await getOrCreateModule(moduleHandle);
+		}
 
 		const fileContent = fs.readFileSync(filePath, "utf-8")
 		const lexer = new cpp.Lexer(fileContent)
@@ -31,7 +37,6 @@ const main = async () => {
 
 		result.time = (Date.now() - totalStartTime) / 1000
 		result.moduleHandle = module.handle
-		result.moduleConfig = module.sourceConfig
 		result.moduleName = module.name.get()
 		result.file = filePath
 		result.tokens = JSON.stringify(api.tokens)
@@ -46,7 +51,7 @@ const main = async () => {
 			api.artifacts.length > 0 ? JSON.stringify(api.artifacts) : undefined
 
 		// Send result back to main thread
-		Logger.warn(`Finished: "${path.basename(filePath)}"`, { name: NAME })
+		Logger.debug(`Finished`, { name: NAME, type: Logger.types.WRAPPER_FILE_PARSE })
 		parentPort.postMessage({
 			type: "result",
 			success: true,

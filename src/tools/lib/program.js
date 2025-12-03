@@ -1,3 +1,7 @@
+import fs from "fs"
+import path from "path"
+import * as str from "../lib/utils/string.js"
+import Import from "../lib/utils/import.js"
 import { parentPort, Worker, workerData } from "worker_threads"
 import Config from "../config.js"
 import { defaultLogLevels } from "./class/base-logger.js"
@@ -5,6 +9,7 @@ import ImGMError, { ImGMAbort } from "./class/error.js"
 import Logger, { defaultLevel } from "./logging.js"
 import Terminal from "./terminal.js"
 import { ansiClean, ansiSlice, toCamelCase } from "./utils/string.js"
+import { projectRoot } from "../defaults.js"
 
 const abortController = new AbortController()
 const { signal } = abortController
@@ -165,7 +170,18 @@ export class ANSIColors {
 	}
 
 	reset(reset = undefined) {
-		return this.enabled ? (reset ?? this._reset) : ""
+		if (this.enabled) {
+			if (reset != undefined) {
+				if (typeof this._names[reset] != "undefined") {
+					reset = this._names[reset];
+					return reset ?? this._reset
+				}
+				return reset ?? this._reset
+			} else {
+				return this._reset
+			}
+		}
+		return "";
 	}
 
 	bold(wrapped = undefined, reset = undefined) {
@@ -185,6 +201,7 @@ export class ANSIColors {
 class ProcessProgram {
 	static _pNoColor = undefined
 	static _pRainbow = undefined
+	static _config = undefined
 
 	static env = {}
 	/**
@@ -285,13 +302,6 @@ class ProcessProgram {
 		const terminal = this.terminal
 		const startTime = Date.now()
 
-		const cbResultError = callbacks.resultError
-		const cbResultSuccess = callbacks.resultSuccess
-		const cbResult = callbacks.result
-		const cbMessage = callbacks.message
-		const cbError = callbacks.error
-		const cbExit = callbacks.exit
-
 		terminal.updateTask(name, "processing")
 		terminal.render()
 
@@ -310,20 +320,30 @@ class ProcessProgram {
 				workerData: _workerData,
 			})
 			Program._workers.push(worker)
+			worker.name = name;
 			worker.index = wIndex
 
+			worker.cbResultError = callbacks.resultError
+			worker.cbResultSuccess = callbacks.resultSuccess
+			worker.cbResult = callbacks.result
+			worker.cbMessage = callbacks.message
+			worker.cbError = callbacks.error
+			worker.cbExit = callbacks.exit
+
 			worker.on("message", (message) => {
+				message._worker = worker;
 				switch (message.type) {
 					case "log":
 						let extra = message.extra
+						let ind = `${worker.index}`.padStart(2, '0');
 						if (extra) {
 							extra = {
-								name: `${extra.name}|${worker.name ?? "worker"}-${worker.index}`,
+								name: `${extra.name}|${worker.name ?? "worker"}-${ind}`,
 								_formatted: true,
 							}
 						} else {
 							extra = {
-								name: `|${worker.name ?? "worker"}-${worker.index}`,
+								name: `|${worker.name ?? "worker"}-${ind}`,
 								_formatted: true,
 							}
 						}
@@ -337,24 +357,24 @@ class ProcessProgram {
 						break
 
 					case "result":
-						if (cbResult) {
-							cbResult(message, resolve, reject)
+						if (worker.cbResult) {
+							worker.cbResult(message, resolve, reject)
 						} else {
 							if (message.success) {
 								const timeTaken =
 									(Date.now() - startTime) / 1000
 								terminal.updateTask(name, "success", timeTaken)
 								terminal.render()
-								if (cbResultSuccess) {
-									cbResultSuccess(message, resolve, reject)
+								if (worker.cbResultSuccess) {
+									worker.cbResultSuccess(message, resolve, reject)
 								} else {
 									resolve(message.result)
 								}
 							} else {
 								terminal.updateTask(name, "error")
 								terminal.render()
-								if (cbResultError) {
-									// cbResultError(message, resolve, reject)
+								if (worker.cbResultError) {
+									worker.cbResultError(message, resolve, reject)
 								} else {
 									ProcessProgram.Logger.error(
 										`${message.message ?? "Unsuccessful"}: ${message.error ? (message.error.message ?? message.error) : message.result}`,
@@ -377,8 +397,8 @@ class ProcessProgram {
 						break
 
 					default:
-						if (cbMessage) {
-							cbMessage(message, resolve, reject)
+						if (worker.cbMessage) {
+							worker.cbMessage(message, resolve, reject)
 						}
 						break
 				}
@@ -388,16 +408,16 @@ class ProcessProgram {
 				terminal.updateTask(name, "error")
 				ProcessProgram.Logger.error(error.message, { error })
 				terminal.render()
-				if (cbError) {
-					cbError(error, resolve, reject)
+				if (worker.cbError) {
+					worker.cbError(error, resolve, reject)
 				} else {
 					reject(error)
 				}
 			})
 
 			worker.on("exit", (code) => {
-				if (cbExit) {
-					cbExit(code, resolve, reject)
+				if (worker.cbExit) {
+					worker.cbExit(code, resolve, reject)
 				} else {
 					if (code !== 0) {
 						reject(
@@ -432,6 +452,7 @@ class ProcessProgram {
 
 		ProcessProgram.evals()
 		ProcessProgram.postSetup()
+		ProcessProgram.configure()
 	}
 
 	static evals() {
@@ -469,10 +490,33 @@ class ProcessProgram {
 		ProcessProgram.Logger.ignoredTypes = ProcessProgram._logIgnoredTypes
 		ProcessProgram.Logger.setLevel(ProcessProgram._logLevel)
 
-		if (process.env.DRYRUN) {
+		if (process.env.DRYRUN && workerData == null) {
 			Logger.warn("--dry-run %(status)s", {
 				status: ProcessProgram.colors.get("green", "On"),
 			})
+		}
+	}
+
+	static configure() {
+		if (typeof process.env._IMGM_PROGRAM_CONFIGURED == "undefined") {
+			if (!ProcessProgram._config) {
+				if (Config.dll.configFile != undefined && Config.dll.configFile != "") {
+					const confPath = path.join(Config.dll.baseDir, Config.dll.configFile)
+					if (fs.existsSync(confPath)) {
+						const fileContent = fs.readFileSync(confPath, "utf-8")
+						const enabledImExts = new Set();
+						const regex = /^\s*#define\s+IMEXT_([A-Za-z0-9_]+)/gm;
+						let match;
+						while ((match = regex.exec(fileContent)) !== null) {
+							enabledImExts.add(str.toKebabCase(match[1].toLowerCase(), "-"));
+						}
+						ProcessProgram._config = {
+							enabledImExts
+						}
+					}
+				}
+			}
+			process.env._IMGM_PROGRAM_CONFIGURED = true;
 		}
 	}
 
@@ -489,6 +533,39 @@ class ProcessProgram {
 			}
 		}
 		return ProcessProgram.params
+	}
+
+	static hasHelpFlag() {
+		if (typeof ProcessProgram._hasHelpFlag != "undefined") {
+			return ProcessProgram._hasHelpFlag;
+		}
+		const params = this.getParams()
+		const helpFlags = ["help", "?", "h"];
+		const args = params._args || [];
+		const keys = [...Object.keys(params), ...args.filter(a => a.startsWith("-"))];
+
+		// Combine args + keys into one array of strings
+		ProcessProgram._hasHelpFlag = keys.some(a => {
+			const lower = String(a).replace(/^-+|\//, "").toLowerCase();
+			return helpFlags.includes(lower)
+		});
+
+		return ProcessProgram._hasHelpFlag;
+	}
+
+	static hasForceFlag() {
+		if (typeof ProcessProgram._hasForceFlag != "undefined") {
+			return ProcessProgram._hasForceFlag;
+		}
+		const params = this.getParams()
+		const forceFlags = ["force", "f"];
+		const args = params._args || [];
+		const keys = [...Object.keys(params), ...args.filter(a => a.startsWith("-"))];
+		ProcessProgram._hasForceFlag = keys.some(a => {
+			const lower = String(a).replace(/^-+|\//, "").toLowerCase();
+			return forceFlags.includes(lower);
+		});
+		return ProcessProgram._hasForceFlag;
 	}
 
 	static _processParams() {

@@ -1,9 +1,12 @@
-import Path from "path"
-import { fileURLToPath } from "url"
-import { Program } from "../../lib/program.js"
-import File from "../../lib/class/file.js"
-import Config from "../../config.js"
-import Name from "../../lib/class/name.js"
+import fs from "fs";
+import Path from "path";
+import { fileURLToPath } from "url";
+import Config from "../../config.js";
+import File from "../../lib/class/file.js";
+import Name from "../../lib/class/name.js";
+import { Module, toHandle } from "../../lib/modules.js";
+import { Program } from "../../lib/program.js";
+import * as str from "../../lib/utils/string.js";
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = Path.dirname(__filename)
@@ -12,7 +15,7 @@ const Logger = Program.Logger
 
 
 function getSrcLine(wrapper) {
-    let srcLineFile = Path.relative(Path.join(__dirname,'../../../../'), wrapper.source);
+    let srcLineFile = Path.relative(Path.join(__dirname, '../../../../'), wrapper.source);
     let srcLineLink = `${Config.projectLink}/blob/main/${srcLineFile.replace(/\\/g, `/`)}#L${wrapper.sourceToken.line}`;
     return `[${Path.basename(srcLineFile)}](${srcLineLink})`;
 }
@@ -53,32 +56,41 @@ export function generateCoverage(fullApi) {
             return nameA.localeCompare(nameB);
         });
 
-        const getWNote = function(wrapper, def="-") {
+        const getWNote = function (wrapper, def = "-") {
             const wname = (wrapper.name instanceof Name ? wrapper.name.get() : wrapper.name);
-            const ws = fullApi.modulesConfigs[wrapper.namespace].wrappers
-            let found = ws[wname];
-            if (found) {
-                return found.note ?? def;
+            const wns = toHandle(wrapper.namespace)
+            const ws = Module._loadedModules[wns]?.config?.docs?.wrappers
+            if (ws) {
+                let found = ws[wname];
+                if (found) {
+                    return found.note ?? def;
+                }
             }
             return def;
         }
 
-        const getWLocation = function(wrapper, def="-") {
+        const getWLocation = function (wrapper, def = "-") {
             const wname = (wrapper.name instanceof Name ? wrapper.name.get() : wrapper.name);
-            const ws = fullApi.modulesConfigs[wrapper.namespace].wrappers
-            let found = ws[wname];
-            if (found) {
-                return found.link ?? def;
+            const wns = toHandle(wrapper.namespace)
+            const ws = Module._loadedModules[wns]?.config?.docs?.wrappers
+            if (ws) {
+                let found = ws[wname];
+                if (found) {
+                    return found.link ?? def;
+                }
             }
             return def;
         }
 
-        const getWSupported = function(wrapper, def="-") {
+        const getWSupported = function (wrapper, def = "-") {
             const wname = (wrapper.name instanceof Name ? wrapper.name.get() : wrapper.name);
-            const ws = fullApi.modulesConfigs[wrapper.namespace].wrappers
-            let found = ws[wname];
-            if (found) {
-                return found.supported ? "✅" : "❌";
+            const wns = toHandle(wrapper.namespace)
+            const ws = Module._loadedModules[wns]?.config?.docs?.wrappers
+            if (ws) {
+                let found = ws[wname];
+                if (found) {
+                    return found.supported ? "✅" : "❌";
+                }
             }
             return def;
         }
@@ -87,8 +99,9 @@ export function generateCoverage(fullApi) {
             const w = sortedGroupWrappers.find(wrapper => (wrapper.name instanceof Name ? wrapper.name.get() : wrapper.name) == f.name._name || wrapper.name?._name == f.name._name || wrapper.targetFunc == f.name._name);
             var covered = w != undefined;
             if (covered) {
-                coverageCount++;
-                wrappers.push(w);
+                if (!w.isHidden) {
+                    wrappers.push(w);
+                }
                 f._wrapper = w;
             } else {
                 f._wrapper = undefined;
@@ -101,7 +114,9 @@ export function generateCoverage(fullApi) {
         sortedGroupWrappers.map(w => {
             var isExtra = (!wrappers.includes(w));
             if (isExtra) {
-                extraWrappers.push(w);
+                if (!w.isHidden) {
+                    extraWrappers.push(w);
+                }
             }
         });
 
@@ -111,27 +126,32 @@ export function generateCoverage(fullApi) {
             } else {
                 let supportText = getWSupported(f, "❌");
                 if (supportText == "✅") {
-                    coverageCount++;
                 }
                 return `| \`${f.namespace}.${f.name}\` | ${supportText} | ${getWLocation(f, "-")} | ${getWNote(f, "-")} |`;
             }
         })
+        coverageCount = _wraps.length;
+
         const _extras = extraWrappers.map(w => `| \`${w.namespace}.${w.name}\` | ${getWLocation(w, getSrcLine(w))} | ${getWNote(w, "-")} |`);
 
         const percent = totalCount === 0 ? 0 : Math.round((coverageCount / totalCount) * 100);
 
         const coveragePath = Path.join("docs/coverage", `${namespace}.md`);
+        if (!fs.existsSync(coveragePath)) {
+            fs.writeFileSync(coveragePath, "");
+        }
         const file = new File(coveragePath)
+
 
         const newCov = [
             `# ${namespace} Coverage`,
             '',
             `**Coverage:** ${percent}% (${coverageCount}/${totalCount})`,
-            '','','## Wrappers','',`These are the wrappers of functions generated for ${namespace}.`,'',
+            '', '', '## Wrappers', '', `These are the wrappers of functions generated for ${namespace}.`, '',
             '| Wrapper | Covered | Wrapper Location | Note |',
             '|---------|---------|------------------|------|',
             ..._wraps,
-            '','','## Custom Wrappers','',`These are non-standard functions made specifically for ${namespace}.`,'',
+            '', '', '## Custom Wrappers', '', `These are non-standard functions made specifically for ${namespace}.`, '',
             '| Wrapper | Wrapper Location | Note |',
             '|---------|------------------|------|',
             ..._extras,
@@ -139,10 +159,18 @@ export function generateCoverage(fullApi) {
 
         if (!process.env.DRYRUN) {
             if (file.update(newCov)) {
-                file.commit()
+                if (file.commit()) {
+                    Logger.info(`Updated coverage: ${coveragePath}`, {
+                        type: Logger.types.FILES_UDPATE_WRITTEN
+                    })
+                }
             }
         }
 
-        Logger.info(`Updated coverage: ${coveragePath}`)
+        return {
+            percent,
+            coverageCount,
+            totalCount,
+        }
     }
 }

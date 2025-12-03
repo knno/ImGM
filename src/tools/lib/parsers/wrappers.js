@@ -4,15 +4,10 @@ import Config from "../../config.js"
 import { BaseFunction, BaseFunctionArgument } from "../class/base-functions.js"
 import ImGMError from "../class/error.js"
 import Name from "../class/name.js"
-import { getChildModules, Module } from "../modules.js"
+import { getChildModules, Module, nameFromHandle, toHandle } from "../modules.js"
 import { CppKeywords, TokenType } from "../parsers/langs/cpp.js"
 import { Program } from "../program.js"
-import {
-	removeTrailingCommas,
-	resolveTemplate,
-	stripLineCommentMulti,
-	stripLineCommentPrefix,
-} from "../utils/string.js"
+import * as str from "../utils/string.js"
 import { BaseParser } from "./base.js"
 
 const Logger = Program.Logger
@@ -142,7 +137,7 @@ export class ApiAnalyzer extends BaseParser {
 
 			const testIdent = (ident, extras, patts) => {
 				for (const pat of patts) {
-					const regex = new RegExp(resolveTemplate(pat, extras))
+					const regex = new RegExp(str.resolveTemplate(pat, extras))
 					if (regex.test(ident)) return true
 				}
 				return false
@@ -255,7 +250,7 @@ export class ApiAnalyzer extends BaseParser {
 				sourceToken: func,
 				source: this.opts.source ?? func.source,
 				namespace: ns,
-				comment: comment ? stripLineCommentPrefix(comment.value) : "",
+				comment: comment ? comment.value : "",
 			})
 
 			this.functions.push(_func)
@@ -333,9 +328,9 @@ export class ApiAnalyzer extends BaseParser {
 				nav.advance()
 				let name = next.value
 				if (
-					this.opts.module.sourceConfig == undefined ||
-					(this.opts.module.sourceConfig &&
-						!this.opts.module.sourceConfig.ignore?.enums.includes(
+					this.opts.module.config == undefined ||
+					(this.opts.module.config &&
+						!this.opts.module.config.apiIgnore?.enums?.includes(
 							name
 						))
 				) {
@@ -386,7 +381,8 @@ export class ApiAnalyzer extends BaseParser {
 						}
 					}
 					if (comment) {
-						comment = stripLineCommentPrefix(comment)
+						comment = str.stripSingleJsdoc(comment);
+						comment = comment.replace(/^@(?:desc|description)\s+(.+)$/im, `$1`).trim(); // Remove description tag if found
 					}
 					const def = {}
 					let inner
@@ -553,13 +549,29 @@ export class WrapperArgument extends BaseFunctionArgument {
 	static reserved = reservedArgumentNames
 }
 
+/**
+ * @function WrapperFunction
+ * @extends BaseFunction
+ * @description Represents a GML wrapper.
+ *
+ */
 export class WrapperFunction extends BaseFunction {
 	constructor({ targetFunc = undefined, ...options } = {}) {
 		super(options)
+		/**
+		 * @type {Array<WrapperArgument>}
+		 */
 		this.args = options.args ?? []
+		/**
+		 * @type {String}
+		 */
 		this.targetFunc = targetFunc
-		this.isWrapped = true
+		this.isHidden = false
+		this.isPrivate = false
 		this.isUnsupported = false
+		/**
+		 * @type {String|Undefined}
+		 */
 		this.oldName = undefined
 		this.argIndex = -1
 		this.isForceInline = false
@@ -632,6 +644,8 @@ export class WrapperFunction extends BaseFunction {
 				) {
 					if (name.value != "_") {
 						this.setName(name.value)
+					} else {
+						this.isHidden = true;
 					}
 					return true
 				}
@@ -723,6 +737,17 @@ export class WrapperFunction extends BaseFunction {
 				const arg = this.args[this.argIndex]
 				const next = bodyNavigator.peek(1)
 				arg.type = this._resolveModVal(next.getFlatString())
+				return true
+			}
+
+			case `${GMMOD}DESCRIPTION`:
+			case `${GMMOD}DESC`: {
+				if (this.argIndex === -1)
+					throw `Could not handle ${token.value} modifier, target argument is unset at line ${token.line}`
+
+				const arg = this.args[this.argIndex]
+				const next = bodyNavigator.peek(1)
+				arg.description = this._resolveModVal(next.getFlatString())
 				return true
 			}
 
@@ -869,6 +894,7 @@ export class WrapperFunction extends BaseFunction {
 			// Argument tags
 			for (const arg of visibleArgs) {
 				let type = arg.type
+				let description = arg.description;
 				if (type === "Real" && arg.defaultValue) {
 					if (arg.defaultValue.startsWith("ImGuiReturnMask")) {
 						type = "Enum.ImGuiReturnMask"
@@ -891,7 +917,21 @@ export class WrapperFunction extends BaseFunction {
 				} else {
 					argLine += ` ${arg.name._name}`
 				}
-				lines.push(argLine)
+				if (description) {
+					if (description.includes("\n")) {
+						let descriptionLines = description.trim().split("\n");
+						argLine += ` ${descriptionLines[0]}`;
+						descriptionLines.shift();
+						lines.push(argLine);
+						lines.push(...descriptionLines.map(line => `${indent} * ${line}`))
+						lines.push(`${indent} *`);
+					} else {
+						argLine += ` ${description}`;
+						lines.push(argLine)
+					}
+				} else {
+					lines.push(argLine)
+				}
 			}
 
 			// Return tag
@@ -917,7 +957,7 @@ export class WrapperFunction extends BaseFunction {
 							if (trimmed.length === 0) {
 								return `${indent}///`;
 							}
-							return `${indent}/// ${(l == 0 ? `@desc ` : ``)}${line}`;
+							return `${indent}/// ${(l == 0 ? `${jsdocConfig.descriptionTag} ` : ``)}${line}`;
 						})
 						.join("\n")
 				);
@@ -926,6 +966,7 @@ export class WrapperFunction extends BaseFunction {
 
 			for (const arg of visibleArgs) {
 				let type = arg.type
+				let description = arg.description;
 				if (type === "Real" && arg.defaultValue) {
 					if (arg.defaultValue.startsWith("ImGuiReturnMask")) {
 						type = "Enum.ImGuiReturnMask"
@@ -947,7 +988,21 @@ export class WrapperFunction extends BaseFunction {
 				} else {
 					argLine += ` ${arg.name._name}`
 				}
-				lines.push(argLine)
+				if (description) {
+					if (description.includes("\n")) {
+						let descriptionLines = description.trim().split("\n");
+						argLine += ` ${descriptionLines[0]}`;
+						descriptionLines.shift();
+						lines.push(argLine);
+						lines.push(...descriptionLines.map(line => `${indent}/// ${line}`))
+						lines.push(`${indent}///`);
+					} else {
+						argLine += ` ${description}`;
+						lines.push(argLine)
+					}
+				} else {
+					lines.push(argLine)
+				}
 			}
 
 			lines.push(`${indent}/// ${jsdocConfig.returnTag} {${this.Return}}`)
@@ -1012,13 +1067,19 @@ export class WrapperFunction extends BaseFunction {
 	}
 
 	finalize() {
+		if (typeof this.name == "string") {
+			this.name = new Name(this.name, "PascalCase", "");
+		}
+
 		if (!this.targetFunc) {
 			const calls = this.name.slice("__imgui_".length).split("_")
 			this.targetFunc = calls
 				.map((e) => e[0].toUpperCase() + e.slice(1))
 				.join("")
-			Logger.warning(
-				`Calling function is unset for wrapper "${this.name}", infering call as "${this.targetFunc}" from name`
+			Logger.warn(
+				`Calling function is unset for wrapper "${this.name}", infering call as "${this.targetFunc}" from name`, {
+				type: Logger.types.WRAPPER_TARGET_CHANGED
+			}
 			)
 		}
 
@@ -1041,12 +1102,14 @@ export class WrapperFunction extends BaseFunction {
 		for (let i = 0; i < this.args.length; i++) {
 			const arg = this.args[i]
 			if (!arg) {
-				throw `Could not read undefined argument at index ${i} in ${this.name} at line ${this.sourceToken.line}`
+				throw `Could not read undefined argument at index ${i} in wrapper name "${this.name}" at line ${this.sourceToken.line}`
 			}
 
 			if (WrapperArgument.reserved.includes(arg.name._name)) {
-				Logger.warning(
-					`Reserved keyword "${arg.name._name}" found in arguments for wrapper "${this.name}", renaming to "_${arg.name._name}"`
+				Logger.warn(
+					`Reserved keyword "${arg.name._name}" found in arguments for wrapper "${this.name}", renaming to "_${arg.name._name}"`, {
+					type: Logger.types.WRAPPER_ARG_CHANGED
+				}
 				)
 				arg.name._name = "_" + arg.name._name
 			}
@@ -1068,28 +1131,74 @@ export class WrapperFunction extends BaseFunction {
 			}
 		}
 
-		let _targetFuncComment = this._targetFuncComment;
 		let _targetFuncNamespace = this.namespace;
-		let comment = undefined;
+		let wrapperDescription = undefined;
 
-		if (comment) {
-			comment = stripLineCommentPrefix(comment) + (_targetFuncComment ? `\n\n${_targetFuncComment}` : ``);
-		} else {
-			if (_targetFuncNamespace == undefined) {
-				// Custom wrapper
-				comment = `A custom wrapper.` + (_targetFuncComment ? `\n\n${_targetFuncComment}` : ``);
-			} else {
-				if (this._isCustom) {
-					comment = `${_targetFuncNamespace} custom wrapper.`
-				} else {
-					comment = `${_targetFuncNamespace} function wrapper.`
-				}
-				comment += (_targetFuncComment ? `\n\n${_targetFuncComment}` : ``);
+		// Based on jsdocInfo, update wrapper argument attrs (type and description). etc.
+		let jsdocInfoFunc = this._targetFuncComment ? str.parseJsDoc(this._targetFuncComment) : undefined;
+		let jsdocInfoWrap = this._wrapperComment ? str.parseJsDoc(this._wrapperComment) : undefined;
+
+		let jsdocInfo = Object.assign(jsdocInfoFunc ?? {}, jsdocInfoWrap ?? {});
+
+		if (jsdocInfo) {
+			if (jsdocInfo.private) {
+				this.isPrivate = true;
 			}
+			wrapperDescription = jsdocInfo.description || "";
+			if (jsdocInfo._) {
+				wrapperDescription = str.stripSingleJsdoc(jsdocInfo._) + (wrapperDescription ? `\n\n${wrapperDescription}` : ``);
+			}
+
+			if (typeof jsdocInfo.params != "undefined" && Object.keys(jsdocInfo.params).length > 0) {
+				for (const arg of this.args) {
+					// Find the argument based on name._name or oldName
+					let argJsdocKey = Object.keys(jsdocInfo.params).filter(item => item === arg.name._name || item === arg.oldName);
+					if (argJsdocKey == -1) continue;
+					let argJsdoc = jsdocInfo.params[argJsdocKey[0]];
+					if (argJsdoc) {
+						if (typeof argJsdoc === "string") {
+							// If it is a string, convert it to { type, desc }
+							let typeMatch = argJsdoc.match(/^\{(.+)\}\s*(.+)?$/);
+							if (typeMatch) {
+								argJsdoc = {
+									type: typeMatch[1],
+									description: typeMatch[2] || "",
+								};
+							} else {
+								argJsdoc = {
+									type: undefined,
+									description: argJsdoc,
+								};
+							}
+						}
+						if (argJsdoc.type) {
+							let _type = WrapperFunction.typefunc(argJsdoc.type);
+							if (_type != "") {
+								arg.type = _type;
+							}
+						}
+						if (argJsdoc.description) {
+							arg.description = argJsdoc.description;
+						}
+					}
+				}
+			}
+		}
+		let comment = undefined;
+		if (_targetFuncNamespace == undefined) {
+			// This is a custom wrapper.
+			comment = `ImGM custom wrapper.` + (wrapperDescription ? `\n\n${wrapperDescription}` : ``);
+		} else {
+			if (this._isCustom) {
+				comment = `ImGM custom wrapper for \`${_targetFuncNamespace}\`.`
+			} else {
+				comment = `ImGM wrapper for \`${_targetFuncNamespace}\`.`
+			}
+			comment += (wrapperDescription ? `\n${wrapperDescription}` : ``) + "\n";
 		}
 		this.comment = comment;
 
-		return this
+		return this;
 	}
 
 	static _fixArgDefaultValue(val) {
@@ -1125,7 +1234,7 @@ export class WrapperAnalyzer extends BaseParser {
 			cmt.type == TokenType.COMMENT ||
 			cmt.type == TokenType.COMMENT_MULTILINE
 		) {
-			comment = stripLineCommentMulti(cmt.value)
+			comment = cmt.value
 			let _f = 0
 			for (
 				let i = (this.opts.addNewline ? -2 : -3);
@@ -1157,11 +1266,12 @@ export class WrapperAnalyzer extends BaseParser {
 
 		if (!contentToken || !contentToken.children) return
 
-		// Remove ImguiAddFont to become AddFont only
-		let wrapperName = new Name(funcName.slice("__imgui_".length), "PascalCase", "");
+		// Remove prefix e.g. "__imgui_add_font" to become "add_font", then create a name from it.
+		// Prefix is: "__imgui_", "__imext_", or e.g. "__node_editor_" etc.
+		let wrapperName = new Name(funcName.slice(8/*"__imgui_".length*/), "PascalCase", "");
 		let wrapname = wrapperName.toSnakeCase();
 
-		const wr = new WrapperFunction({
+		var wr = new WrapperFunction({
 			name: wrapname,
 			source: this.opts.source ?? next.source,
 			sourceToken: funcNameToken,
@@ -1379,16 +1489,25 @@ export class WrapperAnalyzer extends BaseParser {
 		// Custom wrapper, placeholder apifunction
 		if (_targetFunc == undefined) {
 			wr._isCustom = true;
-			wr.namespace = this.opts.moduleName ?? ns ?? this.opts.source;
-			wr._targetFuncComment = comment ?? wr.comment;
+			var defaultNs = this.opts.moduleName ?? ns ?? this.opts.source;
+			if (defaultNs == undefined) {
+				var s = this.opts.apis.filter(a => a.file == wr.source)[0]
+				if (s) {
+					defaultNs = s.moduleName;
+				}
+			}
+			wr.namespace = defaultNs;
+			wr._targetFuncComment = "";
 		} else { // native wrapper, pre-detected apifunction
 			wr._isCustom = false;
 			wr.namespace = _targetFunc?.namespace;
 			wr._targetFuncComment = _targetFunc?.comment;
 		}
+		wr._wrapperComment = comment;
+		wr = wr.finalize();
 		if (this.wrappers.findIndex(w => (w.name instanceof Name ? w.name.get() : w.name) == (wr.name instanceof Name ? wr.name.get() : wr.name) && w.namespace == wr.namespace) == -1) {
-			this.wrappers.push(wr.finalize?.() ?? wr)
-			return wr
+			this.wrappers.push(wr)
+			return wr;
 		}
 	}
 
@@ -1401,6 +1520,101 @@ export class WrapperAnalyzer extends BaseParser {
 	steps() {
 		return [this.p_wrapper_defs]
 	}
+}
+
+
+export function getNameOfGMExtensionFunction(gmfn) {
+	if (!gmfn) return ""
+	if (gmfn["%Name"]) return String(gmfn["%Name"])
+	if (gmfn.externalName) return String(gmfn.externalName)
+	if (gmfn.name) return String(gmfn.name)
+	return ""
+}
+
+function _getNamespacesOfGMExtensionFunction(gmfn, fullApi) {
+	// Normalize gmfnName
+	const gmfnName = typeof gmfn === "string" ? gmfn : getNameOfGMExtensionFunction(gmfn);
+	if (!gmfnName) return undefined;
+
+	const fnFullName = gmfnName.toLowerCase();
+
+	// Parent handles: ensure "imgui" is evaluated last (pattern priority)
+	const parentHandles = new Set([...Object.keys(Config.modules).filter(k => k !== "imgui"), "imgui"]);
+	const childHandles = new Set([...Object.keys(Module._loadedModules).filter(k => !parentHandles.has(k))]);
+
+	// Pattern templates
+	const chPatterns = [
+		"%(name)s_",               // child-only (e.g., "node_editor_")
+		"%(parent)s_%(name)s_",    // parent + child (e.g., "imgui_node_editor_")
+	];
+
+	// Try to resolve against all patterns constructed for the requested child handle
+	const result = { parent: undefined, name: undefined };
+
+	const allPatts = new Set();
+	for (const chHandle of childHandles) {
+		const normName = nameFromHandle(chHandle);
+		const nsHandle = toHandle(normName);
+		const fnNsName = nsHandle.replace(/[-_]/g, "_"); // normalized child handle
+		if (!fnNsName) continue;
+
+		// Build all concrete patterns for this child across all parents
+		for (const par of parentHandles) {
+			chPatterns
+				.map(p => str.resolveTemplate(p, { name: fnNsName, parent: par }))
+				.forEach(s => allPatts.add(s));
+		}
+	}
+	parentHandles.forEach(p => allPatts.add(p)); // "%(parent)s_" (parent-only like "imgui_")
+
+	for (const pat of allPatts) {
+		const matchesPlain = fnFullName.startsWith(pat);
+		const matchesUnderscored = fnFullName.startsWith(`__${pat}`);
+		if (!matchesPlain && !matchesUnderscored) continue;
+		let { parent: patParent, name: patName } = str.parseGMFunctionName(pat, parentHandles, childHandles);
+
+		// Case A: child-only pattern (e.g., "node_editor") with no parent
+		if (!patParent && patName) {
+			if (childHandles.has(patName)) {
+				patParent = Module._loadedModules[patName].parentHandle;
+			}
+			result.parent = patParent;
+			result.name = patName;
+			break;
+		}
+
+		// Case B: parent-only match without recognized child after it
+		if (patParent == "imgui") {
+			result.parent = undefined;
+			result.name = patParent;
+		} else {
+			result.parent = patParent;
+			result.name = patName;
+		}
+		break;
+	}
+
+	if (result.parent == undefined || result.name == undefined) {
+		if (!parentHandles.has(result.name))
+			return undefined
+	};
+
+	return result;
+}
+
+
+export function getNamespaceOfGMExtensionFunction(gmfn, fullApi) {
+	var gmfnName;
+	if (typeof gmfn != "string") {
+		gmfnName = getNameOfGMExtensionFunction(gmfn);
+	} else {
+		gmfnName = gmfn;
+	}
+
+	if (!gmfnName) return undefined
+
+	const gmfnInfo = _getNamespacesOfGMExtensionFunction(gmfn, fullApi)
+	return gmfnInfo
 }
 
 /**
@@ -1425,8 +1639,9 @@ export function getWrappers(tokens, source, apis, extras) {
  * @param {Array<WrapperFunction>} wrappers
  * @param {File} extensionFile
  */
-export function injectWrappers(wrappers, extensionFile) {
-	const extension = JSON.parse(removeTrailingCommas(extensionFile.content))
+export function updateGMExtensionWrappers(fullApi, extensionFile) {
+	const wrappers = fullApi.wrappers;
+	const extension = JSON.parse(str.removeTrailingCommas(extensionFile.content))
 	if (extension.resourceType !== "GMExtension") {
 		throw new ImGMError(
 			`Invalid extension file "${extensionFile.name}": expected resourceType "GMExtension"`
@@ -1442,13 +1657,29 @@ export function injectWrappers(wrappers, extensionFile) {
 	}
 
 	const resource = extension.files[index]
+	const obsoleted = getUnusedWrappers(fullApi, extensionFile);
+	const obsoletedNames = obsoleted.map(o => o.externalName);
+
+	if (obsoleted.length > 0) {
+		Logger.warn(`Found ${obsoleted.length} obsolete wrapper(s) in ${extensionFile.name}`)
+		obsoleted.forEach(o => Logger.warn(` - ${o.externalName || o.name}`))
+	}
+
+	resource.functions = resource.functions.filter(gmfn => !obsoletedNames.includes(gmfn.externalName));
 	const existing = resource.functions || []
 
+	// Identify new Wrapper functions (not present by externalName)
 	const newFunctions = wrappers
 		.filter((w) => existing.some((fn) => fn?.externalName == w.targetFunc) === false)
+		.filter((w) => !obsoleted.includes(w.targetFunc))
 		.map((w) => w.toGMExtensionFunction())
 
-	const allFunctions = [...existing, ...newFunctions]
+	// Sort [...keptExisting, ...newFunctions] by the "%Name" attribute in each object, alphabetically.
+	const allFunctions = [...existing, ...newFunctions].slice().sort((a, b) => {
+		const na = getNameOfGMExtensionFunction(a).toLowerCase()
+		const nb = getNameOfGMExtensionFunction(b).toLowerCase()
+		return na.localeCompare(nb, "en", { sensitivity: "base" })
+	})
 
 	// remove functions for pretty serialization (temporary)
 	const extensionClone = structuredClone(extension)
@@ -1457,7 +1688,7 @@ export function injectWrappers(wrappers, extensionFile) {
 	let output = JSON.stringify(extensionClone, null, 2)
 
 	// Find the exact filename block for imgm.dll and insert/replace functions
-	// NOTE: This relies on syntax of YY: before: (filename:...) after: (init:...)
+	// NOTE: This relies on syntax of YY and its order: before: (filename:...) after: (init:...)
 
 	const fileBlockRegex = new RegExp(
 		`("filename":\\s*"imgm.dll",.*?\\n?\\s*"final":\\s*"",.*?)\\n?\\s*(.*).*?\\n?\\s*("init":\\s*"",?).*?\\n([\\s]*)`,
@@ -1471,7 +1702,7 @@ export function injectWrappers(wrappers, extensionFile) {
 			.map((fn) => fnIndent + JSON.stringify(fn))
 			.join(",\n")
 
-		const functionsBlock = `${indent}"functions": [\n${compactFunctions}\n${indent}]`
+		const functionsBlock = `${indent}"functions": [\n${compactFunctions},\n${indent}]`
 
 		return `${fileContent}\n${indent}${functionsBlock},\n${indent}"init":"",\n${indent}`
 	})
@@ -1481,6 +1712,84 @@ export function injectWrappers(wrappers, extensionFile) {
 			extensionFile.commit()
 		}
 	}
+}
+
+/**
+ * Retrieves array of wrapper functions from a GMExtension file.
+ *
+ * @param {File} extensionFile
+ * @return {Array<WrapperFunction>}
+ */
+export function getInjectedWrappers(extensionFile) {
+	const extension = JSON.parse(str.removeTrailingCommas(extensionFile.content))
+	if (extension.resourceType !== "GMExtension") {
+		throw new ImGMError(
+			`Invalid extension file "${extensionFile.name}": expected resourceType "GMExtension"`
+		)
+	}
+
+	const dllName = "imgm.dll"
+	const index = extension.files.findIndex((f) => f.filename === dllName)
+	if (index === -1) {
+		throw new ImGMError(`Missing DLL entry "${dllName}" in "${extensionFile.name}"`)
+	}
+
+	const resource = extension.files[index]
+	return resource.functions || []
+}
+
+export function getUnusedWrappers(fullApi, extensionFile) {
+	const extension = JSON.parse(str.removeTrailingCommas(extensionFile.content))
+	if (extension.resourceType !== "GMExtension") {
+		throw new ImGMError(
+			`Invalid extension file "${extensionFile.name}": expected resourceType "GMExtension"`
+		)
+	}
+
+	const dllName = "imgm.dll"
+	const index = extension.files.findIndex((f) => f.filename === dllName)
+	if (index === -1) {
+		throw new ImGMError(`Missing DLL entry "${dllName}" in "${extensionFile.name}"`)
+	}
+
+	const resource = extension.files[index]
+	const existing = resource.functions || []
+	var newWrappers = fullApi.wrappers;
+
+	const requestedHandle = fullApi.modulesConfigs.requestedModuleHandle;
+	const requestedHandleChildren = fullApi.modulesConfigs.requestedModuleChildrenHandles;
+
+	const others = existing.filter(gmfn => {
+		var { name: handle, parent: parentHandle } = getNamespaceOfGMExtensionFunction(gmfn, fullApi);
+		return handle != str.toKebabCase(requestedHandle, "-") && !requestedHandleChildren.has(handle)
+	})
+	const othersNames = others.map(gmfn => gmfn.externalName);
+	const ours = existing.filter(gmfn => !othersNames.includes(gmfn.externalName));
+	const obsoletes = ours.filter(gmfn => !newWrappers.some(w => w.targetFunc == gmfn.externalName));
+
+	// Remove existing functions from any extension(s) that are disabled currently in the config header
+	const loadedChilds = Object.keys(Module._loadedModules).filter(k => Module._loadedModules[k].parent != undefined);
+	const otherObsoletes = new Set()
+	const disabledExtensions = loadedChilds.filter(k => !Program._config.enabledImExts.has(k));
+	for (const disabledExt of disabledExtensions) {
+		let disabledModule = Module._loadedModules[disabledExt];
+		if (disabledModule) {
+			const moduleGmfns = existing.filter(gmfn => {
+				var { name: handle, parent: parentHandle } = getNamespaceOfGMExtensionFunction(gmfn, fullApi);
+				if (handle == disabledModule.handle) {
+					if (parentHandle == disabledModule.parentHandle) {
+						return true;
+					}
+				}
+			});
+			const moduleGmfnsNames = moduleGmfns.map(gmfn => gmfn.externalName);
+			moduleGmfnsNames.forEach(mgmfn => otherObsoletes.add(mgmfn))
+		}
+	}
+
+	obsoletes.push(...existing.filter(gmfn => otherObsoletes.has(gmfn.externalName)));
+
+	return obsoletes
 }
 
 // #endregion

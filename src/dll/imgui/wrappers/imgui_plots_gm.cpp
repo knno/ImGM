@@ -1,4 +1,4 @@
-#include "../imgm.h"
+#include <imgm.h>
 
 GMFUNC(__imgui_plot_lines) {
 	const char* label = YYGetString(arg, 0);

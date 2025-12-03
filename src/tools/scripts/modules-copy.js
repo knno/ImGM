@@ -3,7 +3,7 @@ import Path from "path"
 import Config from "../config.js"
 import { copyFiles } from "../lib/filesystem.js"
 import * as gmk from "../lib/gm.js"
-import { getChildModules, getOrCreateModule } from "../lib/modules.js"
+import { getChildModules, getOrCreateModule, loadModules } from "../lib/modules.js"
 import { Program } from "../lib/program.js"
 
 const NAME = "modules:copy"
@@ -16,6 +16,8 @@ async function copyModulesFiles(params) {
 	const cpFromToPerModule = {}
 	let count = 0
 	let countChilds = 0
+
+	const modules = await loadModules(); // Preload modules
 
 	for (const cfgModuleHandle in Config.modules) {
 		const cfgModule = await getOrCreateModule(cfgModuleHandle)
@@ -164,10 +166,10 @@ function copyRuntimeFiles(params) {
 async function main() {
 	const params = Program.getParams()
 
-	if (
+	if ((
 		Object.keys(params).length == 0 &&
 		(typeof params._args == "undefined" || params._args.length == 0)
-	) {
+	) || Program.hasHelpFlag()) {
 		console.error(
 			`Usage: npm run ${NAME} -- [--gm [--gm-*]] [--imgui] [--ext [all|<name>[,<name>]] ...]`
 		)

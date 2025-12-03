@@ -1,8 +1,6 @@
-#include "../imgm.h"
+#include <imgm.h>
 
-/// <summary>
 /// Layout & Cursor
-/// </summary>
 
 GMFUNC(__imgui_spacing) {
 	ImGui::Spacing();

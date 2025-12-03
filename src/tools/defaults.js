@@ -20,16 +20,25 @@ const modulesConfig = {
 			"backends/imgui_impl_dx11.*",
 			"backends/imgui_impl_win32.*",
 		],
+		wrappersGenFilesPatterns: [
+			"src/dll/imgui/internal/imgui.h",
+			"src/dll/imgui/wrappers/imgui_*_gm.cpp",
+		],
 		paramName: "imgui",
 		apiIdentifierPatterns: ["IMGUI_API"],
+		// apiIgnore: { enums: [...]}
+		// docs: {...}
 	},
 	/**
 	 * ImExt module
 	 */
 	imext: {
 		name: "ImExt",
-		submoduleDir: "modules/extensions", // folder with git submodules
+		submoduleDir: "modules/extensions", // folder with git submodules (or just an empty .gitignore file)
 		copyPatterns: ["*.cpp", "*.h", "*.inl"],
+		wrappersGenFilesPatterns: [
+			"src/dll/imext/%(snake_case_name)s/wrappers/*_gm.cpp",
+		],
 		paramName: "ext",
 		apiIdentifierPatterns: [
 			"IMGUI_%(screaming_case_name)s_API",

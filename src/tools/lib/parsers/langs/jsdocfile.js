@@ -2,6 +2,7 @@
  * @overview
  *
  * A lightweight version of a parser for text files to parse jsdoc comments
+ * @deprecated Use strings.js parseJsdoc instead for parsing strings.
  *
  * @author knno <github.com/knno>
  */
@@ -88,7 +89,7 @@ export class JsdocFileDirectives extends Dict {
  * @class
  * @extends {Dict}
  */
-export class JsdocFileKeywords extends Dict {}
+export class JsdocFileKeywords extends Dict { }
 
 // #endregion Language
 

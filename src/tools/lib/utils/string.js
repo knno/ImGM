@@ -1,3 +1,5 @@
+import Name from "../class/name.js"
+
 export function padNumber(number, digits = 1000) {
 	digits = digits.toString().length
 	return number.toString().padStart(digits, "0")
@@ -9,6 +11,7 @@ export function rePascalCase(str) {
 }
 
 function _normName(name) {
+	if (name instanceof Name) { name = name._name; }
 	return name
 		.replace(/([a-z])([A-Z])/g, `$1 $2`) // camels (aA => a A)
 		.replace(/[^a-zA-Z0-9]+/g, " ") // Remove non-alphanumeric characters
@@ -124,16 +127,17 @@ export function ansiSlice(string, start, end) {
 }
 
 /**
+ * Strip all prefixes from each line in the input string.
  *
  * @param {String} input
  * @returns {String}
  */
-export function stripLineCommentPrefix(input) {
+export function stripLinesPrefix(input) {
 	let x = input
 		.split("\n")
 		.map((line) =>
 			line.trimStart().startsWith("//")
-				? line.replace(/^\/\/\s*/, "")
+				? line.replace(/^\/\/\/?\s*/, "")
 				: line
 		)
 		.filter(line => line.length > 0)
@@ -142,14 +146,26 @@ export function stripLineCommentPrefix(input) {
 }
 
 /**
- * Strip from multiline docstring (and if there's a jsdoc tag @desc or @description remove the tag but keep its value)
+ * Strip from single-line jsdoc comments to the contents only.
+ *
  * @param {String} input
  * @returns {String}
  */
-export function stripLineCommentMulti(input) {
-	return input
+export function stripSingleJsdoc(input) {
+	let x = stripLinesPrefix(input);
+	return x;
+}
+
+/**
+ * Strip from multiline jsdoc to contents only.
+ *
+ * @param {String} input
+ * @returns {String}
+ */
+export function stripMultiJsdoc(input) {
+	let x = input
 		.split("\n")
-		.map(line => {
+		.map((line) => {
 			let trimmed = line.trimStart();
 			if (trimmed.startsWith("/**") || trimmed.startsWith("/*") || trimmed.startsWith("*/")) {
 				return "";
@@ -157,12 +173,137 @@ export function stripLineCommentMulti(input) {
 			if (trimmed.startsWith("*")) {
 				trimmed = trimmed.replace(/^\*\s?/, "");
 			}
-			// Replace desc tags and keep value
-			trimmed = trimmed.replace(/^@desc(ription)?\s*/i, "");
 			return trimmed;
 		})
 		.filter(line => line.length > 0)
-		.join("\n");
+		.join("\n")
+	return x
+}
+
+/**
+ * Return docstring information in an object keyed by tag and the rest of line.
+ * - Param tags are grouped in a params object.
+ * - Other multiple tags are grouped in arrays.
+ * - Description text before any tags is stored in the "_" key if there was no description tag.
+ * - When there's no description tag, the text before any tags is considered the description.
+ * - Single tags are stored as strings.
+ * - desc and description tags are considered the same. Using description attr.
+ *
+ * @example
+ * "/**
+ * * Text before anything.
+ * *
+ * * \@desc This is a sample function.
+ * * \@param arg1 The first argument.
+ * * \@param arg2 The second argument.
+ * * \@customtag Some custom tag info.
+ * * \@customtag2 Additional info one.
+ * * \@customtag2 Additional info two.
+ * *
+ * * \@return The result.
+ * *\/"
+ *
+ * parseJsDoc(comment) == {
+ *   _: "Text before anything."
+ *   description: "This is a sample function.",
+ *   params: {
+ *      arg1: "The first argument.",
+ *      arg2: "The second argument."
+ *   },
+ *   customtag: "Some custom tag info.",
+ *   customtag2: [
+ * 		"Additional info one."
+ * 		"Additional info two."
+ *   ],
+ *   return: "The result."
+ * }
+ *
+ * @param {String} input
+ * @returns {String}
+ */
+export function parseJsDoc(input) {
+	const docInfo = {}
+	let currentTag = null
+	let currentTagContent = []
+	const lines = stripMultiJsdoc(input).split("\n");
+	for (const line of lines) {
+		const tagMatch = line.match(/^@(\w+)(\s+(.+))?/);
+		if (tagMatch) {
+			// Save previous tag content
+			if (currentTag) {
+				const content = currentTagContent.join("\n").trim();
+				if (currentTag === "param") {
+					//					const paramMatch = content.match(/^(\w+)\s+(.+)$/);
+					const paramMatch = content.match(/^(\w+)\s+([\s\S]+)$/);
+					if (paramMatch) {
+						const paramName = paramMatch[1];
+						const paramDesc = paramMatch[2];
+						if (!docInfo.params) docInfo.params = {};
+						docInfo.params[paramName] = paramDesc;
+					}
+				} else if (currentTag === "desc" || currentTag === "description") {
+					docInfo["description"] = content;
+				} else {
+					if (docInfo[currentTag]) {
+						// If tag already exists, convert to array or push to existing array
+						if (Array.isArray(docInfo[currentTag])) {
+							docInfo[currentTag].push(content);
+						} else {
+							docInfo[currentTag] = [docInfo[currentTag], content];
+						}
+					} else {
+						docInfo[currentTag] = content != "" ? content : true;
+					}
+				}
+			}
+			// Start new tag
+			currentTag = tagMatch[1];
+			currentTagContent = [];
+			if (tagMatch[3]) {
+				currentTagContent.push(tagMatch[3]);
+			}
+		} else {
+			// Continuation of current tag content or description
+			if (currentTag) {
+				currentTagContent.push(line);
+			} else {
+				// Description before any tags
+				if (!docInfo._) {
+					docInfo._ = line;
+				} else {
+					docInfo._ += " " + line;
+				}
+			}
+		}
+	}
+	// Save last tag content
+	if (currentTag) {
+		const content = currentTagContent.join("\n").trim();
+		if (currentTag === "param") {
+			//			const paramMatch = content.match(/^(\w+)\s+(.+)$/);
+			const paramMatch = content.match(/^(\w+)\s+([\s\S]+)$/);
+			if (paramMatch) {
+				const paramName = paramMatch[1];
+				const paramDesc = paramMatch[2];
+				if (!docInfo.params) docInfo.params = {};
+				docInfo.params[paramName] = paramDesc;
+			}
+		} else if (currentTag === "desc" || currentTag === "description") {
+			docInfo["description"] = content;
+		} else {
+			if (docInfo[currentTag]) {
+				// If tag already exists, convert to array or push to existing array
+				if (Array.isArray(docInfo[currentTag])) {
+					docInfo[currentTag].push(content);
+				} else {
+					docInfo[currentTag] = [docInfo[currentTag], content];
+				}
+			} else {
+				docInfo[currentTag] = content != "" ? content : true;
+			}
+		}
+	}
+	return docInfo;
 }
 
 /**
@@ -194,4 +335,49 @@ export function removeTrailingCommas(input) {
 	}
 
 	return cleaned
+}
+
+
+/**
+ * Parse a pattern into { parent, name } without breaking compound names, from function name.
+ * parent will be undefined if it does not include two components in the provided function name.
+ *
+ * @param {String} gmfnName A GMExtensionFunction externalName
+ * @param {Set<String>} parentSet An array of all parent handles
+ * @param {Set<String>} childSet An array of all child handles
+ * @returns {Object}
+ */
+export function parseGMFunctionName(gmfnName, parentSet, childSet = undefined) {
+	// Drop leading "__" and trailing "_" and convert to hyphen
+	const trimmed = gmfnName.replace(/^__/, "").replace(/_$/, "").replaceAll("_","-");
+
+	// Try to match against known parents
+	for (const parent of parentSet) {
+		const prefix = parent + "-";
+		if (trimmed === parent) {
+			// Exact parent-only match
+			return { parent: undefined, name: parent };
+		}
+		if (trimmed.startsWith(prefix)) {
+			const rest = trimmed.slice(prefix.length);
+			// If rest is in childSet, treat as child; otherwise undefined
+			if (!childSet || childSet.has(rest)) {
+				return { parent, name: rest || undefined };
+			}
+			return { parent: undefined, name: parent };
+		}
+	}
+
+	// No known parent matched
+	if (trimmed.includes("-")) {
+		// Treat whole trimmed token as child if it's in childSet
+		if (childSet && childSet.has(trimmed)) {
+			return { parent: undefined, name: trimmed };
+		}
+		// Otherwise: parent-only literal
+		return { parent: undefined, name: trimmed };
+	}
+
+	// Single token, no underscores
+	return { parent: undefined, name: trimmed };
 }

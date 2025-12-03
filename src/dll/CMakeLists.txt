@@ -114,7 +114,6 @@ set(PROJECT_NAME ImGMDll)
 set(no_group_source_files
     "imgm.cpp"
     "imgm.h"
-    "main.cpp"
 )
 source_group("" FILES ${no_group_source_files})
 

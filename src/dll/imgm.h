@@ -150,6 +150,8 @@ enum ImGuiGFlags_ {
 	ImGuiGFlags_GM = ImGuiGFlags_RENDERER_GM | ImGuiGFlags_IMPL_GM,
 };
 
+extern bool g_ImGuiInitialized;
+
 extern ImGuiGFlags g_ImGuiGFlags;
 extern ID3D11Device* g_pd3dDevice;
 extern ID3D11DeviceContext* g_pd3dDeviceContext;

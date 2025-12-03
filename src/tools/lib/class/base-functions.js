@@ -52,6 +52,7 @@ export class BaseFunctionArgument {
 		this.isHidden = isHidden
 		this.passthrough = passthrough
 		this.defaultValue = defaultValue
+		this.description = undefined
 		if (extra) {
 			for (const k in extra) {
 				this[k] = extra[k]
@@ -121,6 +122,27 @@ export class BaseFunction {
 		this.returnType = returnType
 	}
 
+	isNameMatching(name) {
+		let thisName = this.name instanceof Name ? this.name.get() : this.name;
+		let thisNameOrig = this.name instanceof Name ? this.name._name : this.name;
+		let providedName = name instanceof Name ? name.get() : name;
+		let providedNameOrig = name instanceof Name ? name._name : name;
+
+		return ((thisName === providedName) || (thisNameOrig === providedNameOrig))
+	}
+
+	isNameMatchingAny(name) {
+		let thisName = this.name instanceof Name ? this.name.get() : this.name;
+		let thisNameOrig = this.name instanceof Name ? this.name._name : this.name;
+		let providedName = name instanceof Name ? name.get() : name;
+		let providedNameOrig = name instanceof Name ? name._name : name;
+
+		return (
+			((thisName === providedName) || (thisNameOrig === providedNameOrig)) ||
+			((thisName === providedNameOrig) || (thisNameOrig === providedName))
+		)
+	}
+
 	toString() {
 		const colors = Program.colors
 		let nameColor = colors.get("red")
@@ -156,8 +178,8 @@ export class BaseFunction {
 				colors.get(
 					"gray",
 					` at ` +
-						(source ? `${source}:` : "") +
-						`${this.sourceToken.line}${source ? "" : `:${this.sourceToken.col}`}`
+					(source ? `${source}:` : "") +
+					`${this.sourceToken.line}${source ? "" : `:${this.sourceToken.col}`}`
 				)
 			)
 		}

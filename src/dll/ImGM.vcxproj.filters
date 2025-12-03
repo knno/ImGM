@@ -13,43 +13,10 @@
     <Filter Include="ImGui\Wrappers">
       <UniqueIdentifier>{032276CB-EFEF-69D1-D883-DAF7C4F04536}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NodeEditor">
-      <UniqueIdentifier>{924C8D43-7E04-CF90-E70B-A8ECD3E26981}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="NodeEditor\Internal">
-      <UniqueIdentifier>{FE9668EE-6AF8-45FC-F365-8CAE5FC67CBB}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
       <Filter>Config</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\crude_json.h">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\imgui_bezier_math.h">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\imgui_bezier_math.inl">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\imgui_canvas.h">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\imgui_extra_math.h">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\imgui_extra_math.inl">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\imgui_node_editor.h">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\imgui_node_editor_internal.h">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClInclude>
-    <ClInclude Include="imext\node-editor\internal\imgui_node_editor_internal.inl">
-      <Filter>NodeEditor\Internal</Filter>
     </ClInclude>
     <ClInclude Include="imgm.h" />
     <ClInclude Include="imgui\imgui_impl_gm.h">
@@ -96,18 +63,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="imext\node-editor\internal\crude_json.cpp">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClCompile>
-    <ClCompile Include="imext\node-editor\internal\imgui_canvas.cpp">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClCompile>
-    <ClCompile Include="imext\node-editor\internal\imgui_node_editor.cpp">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClCompile>
-    <ClCompile Include="imext\node-editor\internal\imgui_node_editor_api.cpp">
-      <Filter>NodeEditor\Internal</Filter>
-    </ClCompile>
     <ClCompile Include="imgm.cpp" />
     <ClCompile Include="imgui\imgui_impl_gm.cpp">
       <Filter>ImGui</Filter>
@@ -169,6 +124,9 @@
     <ClCompile Include="imgui\wrappers\imgui_listbox_gm.cpp">
       <Filter>ImGui\Wrappers</Filter>
     </ClCompile>
+    <ClCompile Include="imgui\wrappers\imgui_main_gm.cpp">
+      <Filter>ImGui\Wrappers</Filter>
+    </ClCompile>
     <ClCompile Include="imgui\wrappers\imgui_menu_gm.cpp">
       <Filter>ImGui\Wrappers</Filter>
     </ClCompile>
@@ -211,6 +169,5 @@
     <ClCompile Include="imgui\wrappers\imgui_window_gm.cpp">
       <Filter>ImGui\Wrappers</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#include "../imgm.h"
+#include <imgm.h>
 
 GMFUNC(__imgui_begin_popup) {
 	const char* str_id = YYGetString(arg, 0);

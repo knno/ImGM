@@ -70,7 +70,11 @@ export default class Terminal {
 		this._interval ??= setInterval(() => {
 			this.loop.bind(this)()
 			if (this.loopBreakCheck.bind(this)(cond)) {
-				then()
+				try {
+					then()
+				} catch (error) {
+					this.program.Logger.error(`${error.message}`, { error })
+				}
 			}
 		}, 50)
 	}

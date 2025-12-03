@@ -1,4 +1,4 @@
-#include "../imgm.h"
+#include <imgm.h>
 
 GMFUNC(__imgui_tree_node) {
 	const char* label = YYGetString(arg, 0);

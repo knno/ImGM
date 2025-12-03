@@ -58,7 +58,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;DEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\node-editor;imext\text-edit;imext\node-editor\internal;imext\text-edit\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp14</LanguageStandard>
@@ -75,7 +75,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;NDEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\node-editor;imext\text-edit;imext\node-editor\internal;imext\text-edit\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -93,15 +93,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
-    <ClInclude Include="imext\node-editor\internal\crude_json.h" />
-    <ClInclude Include="imext\node-editor\internal\imgui_bezier_math.h" />
-    <ClInclude Include="imext\node-editor\internal\imgui_bezier_math.inl" />
-    <ClInclude Include="imext\node-editor\internal\imgui_canvas.h" />
-    <ClInclude Include="imext\node-editor\internal\imgui_extra_math.h" />
-    <ClInclude Include="imext\node-editor\internal\imgui_extra_math.inl" />
-    <ClInclude Include="imext\node-editor\internal\imgui_node_editor.h" />
-    <ClInclude Include="imext\node-editor\internal\imgui_node_editor_internal.h" />
-    <ClInclude Include="imext\node-editor\internal\imgui_node_editor_internal.inl" />
     <ClInclude Include="imgm.h" />
     <ClInclude Include="imgui\imgui_impl_gm.h" />
     <ClInclude Include="imgui\internal\backends\imgui_impl_dx11.h" />
@@ -119,10 +110,6 @@
     <ClInclude Include="internal\gm.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="imext\node-editor\internal\crude_json.cpp" />
-    <ClCompile Include="imext\node-editor\internal\imgui_canvas.cpp" />
-    <ClCompile Include="imext\node-editor\internal\imgui_node_editor.cpp" />
-    <ClCompile Include="imext\node-editor\internal\imgui_node_editor_api.cpp" />
     <ClCompile Include="imgm.cpp" />
     <ClCompile Include="imgui\imgui_impl_gm.cpp" />
     <ClCompile Include="imgui\internal\backends\imgui_impl_dx11.cpp" />
@@ -144,6 +131,7 @@
     <ClCompile Include="imgui\wrappers\imgui_input_widgets_gm.cpp" />
     <ClCompile Include="imgui\wrappers\imgui_layout_gm.cpp" />
     <ClCompile Include="imgui\wrappers\imgui_listbox_gm.cpp" />
+    <ClCompile Include="imgui\wrappers\imgui_main_gm.cpp" />
     <ClCompile Include="imgui\wrappers\imgui_menu_gm.cpp" />
     <ClCompile Include="imgui\wrappers\imgui_payload_gm.cpp" />
     <ClCompile Include="imgui\wrappers\imgui_plots_gm.cpp" />
@@ -158,7 +146,6 @@
     <ClCompile Include="imgui\wrappers\imgui_tree_gm.cpp" />
     <ClCompile Include="imgui\wrappers\imgui_widgets_gm.cpp" />
     <ClCompile Include="imgui\wrappers\imgui_window_gm.cpp" />
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

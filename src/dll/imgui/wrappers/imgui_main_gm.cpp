@@ -1,41 +1,11 @@
-#pragma warning(disable: 4244)
-
-#include <tchar.h>
-#include <stdlib.h>
-#include <string>
-#include <imgui_impl_gm.h>
 #include <imgm.h>
 
-static bool g_ImGuiInitialized = false;
-
-char g_InputBuf[INPUT_SIZE];
-RValue g_Copy;
-
-ID3D11Device* g_pd3dDevice;
-ID3D11DeviceContext* g_pd3dDeviceContext;
-ID3D11ShaderResourceView* g_pView;
-
-ImGuiGFlags g_ImGuiGFlags;
-int g_KeepAlive;
-
-YYRunnerInterface gs_runnerInterface;
-YYRunnerInterface* g_pYYRunnerInterface;
-
-GMEXPORT void YYExtensionInitialise(const struct YYRunnerInterface* _pFunctions, size_t _functions_size) {
-	if (_functions_size < sizeof(YYRunnerInterface)) {
-		memcpy(&gs_runnerInterface, _pFunctions, _functions_size);
-	} else {
-		memcpy(&gs_runnerInterface, _pFunctions, sizeof(YYRunnerInterface));
-	}
-	g_pYYRunnerInterface = &gs_runnerInterface;
-
-	WriteLog("Successfully initialized runner interface");
-	return;
-}
-
+/**
+ * @private
+ */
 GMFUNC(__imgui_initialize) {
-	HWND window_handle = (HWND)YYGetPtr(arg, 0);
-
+	void* window_handle = YYGetPtr(arg, 0);
+	HWND finaL_window_handle = (HWND)window_handle;
 	void* ctx = YYGetPtr(arg, 1);
 	GMDEFAULT(undefined);
 	GMHINT(ImGuiContext);
@@ -48,7 +18,7 @@ GMFUNC(__imgui_initialize) {
 	ImGuiIO& io = ImGui::GetIO();
 
 	ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-	main_viewport->PlatformHandle = window_handle;
+	main_viewport->PlatformHandle = finaL_window_handle;
 
 	RValue* info = YYGetStruct(arg, 2);
 	GMHINT(Struct)
@@ -98,14 +68,14 @@ GMFUNC(__imgui_initialize) {
 	}
 
 	bool ok = true;
-	if (g_ImGuiGFlags & ImGuiGFlags_IMPL_WIN32) { ok = ImGui_ImplWin32_Init(window_handle); };
+	if (g_ImGuiGFlags & ImGuiGFlags_IMPL_WIN32) { ok = ImGui_ImplWin32_Init(finaL_window_handle); };
 	if (ok) { if (g_ImGuiGFlags & ImGuiGFlags_IMPL_DX11) { ok = ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext); } }
 	else {
 		io.ConfigFlags = configFlagsPrev;
 		Result.ptr = nullptr;
 		return;
 	}
-	if (ok) { if (g_ImGuiGFlags & ImGuiGFlags_IMPL_GM) { ok = ImGui_ImplGM_Init(window_handle); } }
+	if (ok) { if (g_ImGuiGFlags & ImGuiGFlags_IMPL_GM) { ok = ImGui_ImplGM_Init(finaL_window_handle); } }
 	else {
 		if (g_ImGuiGFlags & ImGuiGFlags_IMPL_DX11) ImGui_ImplDX11_Shutdown();
 		io.ConfigFlags = configFlagsPrev;
@@ -126,6 +96,9 @@ GMFUNC(__imgui_initialize) {
 	GMRETURNS(ImGuiContext);
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_shutdown) {
 	void* ctx = YYGetPtr(arg, 0);
 	GMDEFAULT(undefined);
@@ -153,6 +126,9 @@ GMFUNC(__imgui_shutdown) {
 	Result.val = true;
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_update_state_from_struct) {
 	RValue* state = YYGetStruct(arg, 0);
 	StateUpdateFlags flags = YYGetInt64(arg, 1);
@@ -160,6 +136,9 @@ GMFUNC(__imgui_update_state_from_struct) {
 	UpdateStateFromStruct(state, flags);
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_new_frame) {
 	RValue* state = YYGetStruct(arg, 0);
 	if (state == nullptr) ShowError("Could not call new_frame function when state struct is null");
@@ -187,6 +166,9 @@ GMFUNC(__imgui_new_frame) {
 	Result.kind = VALUE_UNDEFINED;
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_end_frame) {
 	if (!g_ImGuiInitialized) ShowError("Could not call end_frame function when ImGM is not initialized");
 
@@ -196,6 +178,9 @@ GMFUNC(__imgui_end_frame) {
 	Result.kind = VALUE_UNDEFINED;
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_render) {
 	if (!g_ImGuiInitialized) ShowError("Could not call render function when ImGM is not initialized");
 
@@ -206,6 +191,9 @@ GMFUNC(__imgui_render) {
 	Result.kind = VALUE_UNDEFINED;
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_draw) {
 	RValue* state = YYGetStruct(arg, 0);
 
@@ -240,10 +228,16 @@ GMFUNC(__imgui_draw) {
 	Result.kind = VALUE_UNDEFINED;
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_key) {
 	ImGui::GetIO().AddKeyEvent((ImGuiKey)YYGetReal(arg, 0), YYGetBool(arg, 1));
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_input) {
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.WantTextInput) io.AddInputCharactersUTF8(YYGetString(arg, 0));
@@ -252,14 +246,23 @@ GMFUNC(__imgui_input) {
 	Result.val = io.WantTextInput;
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_mouse) {
 	ImGui::GetIO().AddMouseButtonEvent(YYGetReal(arg, 0), YYGetBool(arg, 1));
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_mouse_wheel) {
 	ImGui::GetIO().AddMouseWheelEvent(YYGetReal(arg, 0), YYGetReal(arg, 1));
 }
 
+/**
+ * @private
+ */
 GMFUNC(__imgui_mouse_cursor) {
 	Result.kind = VALUE_REAL;
 	Result.val = ImGui::GetMouseCursor();

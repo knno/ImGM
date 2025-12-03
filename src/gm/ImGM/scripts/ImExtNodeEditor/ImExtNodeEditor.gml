@@ -4,25 +4,15 @@
 /// Feather ignore GM1045
 
 function ImExtNodeEditor() constructor {
-    /// @section Binds
-    /// @function CreateEditor
-    /// @description Wrapper function for NodeEditor.
-    /// @param {String|Undefined} [config_file=undefined]
-    /// @context ImExtNodeEditor
-    /// @return {ImExtNodeEditorContext}
-    static CreateEditor = function(config_file=undefined) {
-        return __imext_node_editor_create_editor(config_file);
-    }
-    /// @endsection
+    #region Binds
 
-    /// @section Enums
-    enum ImCubicBezierSubdivideFlags {
-        None = 0,
-        SkipFirst = 1,
-    }
-    /// @endsection
+    #endregion
 
-    /// @section Internal
+    #region Enums
+
+    #endregion
+
+    #region Internal
     static __initialized = false;
 
     static Initialize = function() {
@@ -36,10 +26,10 @@ function ImExtNodeEditor() constructor {
 	__ImGui_Initialize = method(self, function(state) {
 		return Initialize();
 	})
-	
+
     __ImGui_NewFrame = method(self, function(state) {
         return __NewFrame(state); // self
     })
 
-	/// @endsection
+    #endregion
 }
