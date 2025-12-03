@@ -109,20 +109,20 @@ Open the `dll.sln` solution file in Visual Studio and build the solution. Note t
 
 ### 7. Update GML files with the Tools
 
-ImGM provides a tool to automatically generates GML code to interface with the DLL. The following commands use `src/dll/imgui/wrappers/imgui_*_gm.cpp` to generate GML code for the GameMaker-facing external functions.
+ImGM provides a tool to automatically generates GML code to interface with the DLL. The following commands use "module" handles to generate GML code for the GameMaker-facing external functions.
 
-The command syntax for this tool is `imgm wrappers:gen <namespace> <headers-and-files...>`. More information can be found [via ImGM's documentation](https://knno.github.io/ImGM/).
+The command syntax for this tool is `imgm wrappers:gen <namespace>`. More information can be found [via ImGM's documentation](https://knno.github.io/ImGM/).
 
 #### Using Powershell
 
 ```bash
-npm run wrappers:gen imgui src/dll/imgui/internal/imgui.h src/dll/imgui/wrappers/imgui_*_gm.cpp
+npm run wrappers:gen imgui
 ```
 
 #### Using Bash
 
 ```bash
-imgm wrappers:gen imgui src/dll/imgui/internal/imgui.h src/dll/imgui/wrappers/imgui_*_gm.cpp
+imgm wrappers:gen imgui
 ```
 
 ### 8. Finished!
