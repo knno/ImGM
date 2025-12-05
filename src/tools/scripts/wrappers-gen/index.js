@@ -71,7 +71,7 @@ async function main() {
 		if (Program.hasForceFlag()) {
 			Program._config.enabledImExts.add(requestedModuleHandle);
 		} else {
-			Logger.error(`Use --force to execute with disabled extension in ${Program.colors.get("orange", "config.h", "red")}: "${requestedModuleHandle}"`, {
+			Logger.error(`Use --force to execute with disabled extension in ${Program.colors.get("orange", "config.h", "red")}: ${Program.colors.get("white", "IMEXT_" + str.toScreamingCase(requestedModuleHandle), "red")}`, {
 				name: NAME,
 			})
 			process.exit(1)

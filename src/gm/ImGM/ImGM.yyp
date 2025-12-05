@@ -28,8 +28,9 @@
   ],
   "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[
-    {"$GMIncludedFile":"","%Name":"andlso.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"andlso.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"LICENSE.txt","CopyToMask":-1,"filePath":"datafiles/fonts","name":"LICENSE.txt","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"NotoSans-Hiragana-Bold.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"NotoSans-Hiragana-Bold.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"NotoSans-Main.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"NotoSans-Main.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"Roboto-Regular.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"Roboto-Regular.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
   ],
   "isEcma":false,
@@ -51,6 +52,7 @@
     {"id":{"name":"rm_main","path":"rooms/rm_main/rm_main.yy",},},
     {"id":{"name":"rm_tests","path":"rooms/rm_tests/rm_tests.yy",},},
     {"id":{"name":"__ImGM","path":"scripts/__ImGM/__ImGM.yy",},},
+    {"id":{"name":"buffer_from_bin_file","path":"scripts/buffer_from_bin_file/buffer_from_bin_file.yy",},},
     {"id":{"name":"ImExtNodeEditor","path":"scripts/ImExtNodeEditor/ImExtNodeEditor.yy",},},
     {"id":{"name":"ImGM_Conf","path":"scripts/ImGM_Conf/ImGM_Conf.yy",},},
     {"id":{"name":"ImGui_Extras","path":"scripts/ImGui_Extras/ImGui_Extras.yy",},},

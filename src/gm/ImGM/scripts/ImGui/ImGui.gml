@@ -36,6 +36,24 @@ function ImGui() constructor {
 	}
 
 	/**
+	 * @function AddFontFromBuffer
+	 * @context ImGui
+	 * @desc ImGM custom wrapper for `ImGui`.
+	 * Adds a font from a GameMaker buffer of TTF font file contents and calls `ImGui.AddFontFromMemoryTTF`
+	 *
+	 * @param {Id.Buffer} ttf_buffer A GameMaker buffer containing the TTF font data.
+	 * @param {Real} size_pixels The font size in pixels.
+	 * @param {ImFontConfig} [font_cfg=undefined]
+	 * @param {Array<Real>} [glyph_ranges=undefined] An optional flat array of unicode pairs [start,end...] ending with an optional terminating-zero element.
+	 * e.g. Some characters for Arabic: [$0600, $06FF, $0750, $077F, 0]
+	 *
+	 * @return {Pointer|Undefined}
+	 */
+	static AddFontFromBuffer = function(ttf_buffer, size_pixels, font_cfg=undefined, glyph_ranges=undefined) {
+		return __imgui_add_font_from_buffer(ttf_buffer, size_pixels, font_cfg, glyph_ranges, array_length(glyph_ranges), buffer_get_size(ttf_buffer));
+	}
+
+	/**
 	 * @function AddFontFromFileTTF
 	 * @context ImGui
 	 * @desc ImGM custom wrapper for `ImGui`.

@@ -1,17 +1,55 @@
 #region ImGM Project
 
-_local*/
+__local*/
+*.local.*
 
-dist/package/
-dist/bundle/
+src/dll/**/internal/**/*
+!src/dll/internal/*.h
+*.vs
+
+src/gm/**/*.zip
+src/gm/ImGM/extensions/ImGM/*.exp
+!src/gm/ImGM/extensions/ImGM/ImGM.dll
 
 temp/
 tmp/
 imgm.config.js
+tests/*
 
-#endregion ImGM Project
+dist/package/
+dist/bundle/
+
+#endregion
 
 #region Internal
+
+._*
+
+#region macOS
+
+.DS_Store
+__MACOSX/
+.AppleDouble
+.LSOverride
+Icon[]
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+#endregion
 
 .env
 .actrc
@@ -32,6 +70,35 @@ CMakeCache.txt
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+#region GM
+
+*.resource_order
+# If all of your sprite sources are in this repo you can stick a "!" in front of this to track this file. Otherwise this file is machine-specific and should be ignored.
+sprites.import.json
+# This is a cache file for speeding up subsequent pipeline operations. It should not be tracked in git.
+sprites.info.json
+
+# Ignore backup and temporary files
+*.yyc
+*.temp
+*.log
+*.bak
+*.swp
+# Ignore build output directories
+*.win
+*.mac
+*.linux
+*.ios
+*.android
+# Ignore IDE-specific files
+idea/
+DS_Store
+# Ignore cache and compiled assets
+gmx/
+cache/
+
+#endregion
 
 #endregion Internal
 

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"buffer_from_bin_file",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"buffer_from_bin_file",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Example/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -7,8 +7,6 @@ import cpp from "../../lib/parsers/langs/cpp.js"
 import { getApi } from "../../lib/parsers/wrappers.js"
 import { Program } from "../../lib/program.js"
 
-Program.setup(true)
-
 const { filePath, moduleHandle, parentModule, totalStartTime } = workerData
 
 const Logger = Program.Logger

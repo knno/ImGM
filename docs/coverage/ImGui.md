@@ -74,7 +74,7 @@ These are the wrappers of functions generated for ImGui.
 | `ImGui.PushFont` | ✅ | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L9) | - |
 | `ImGui.PopFont` | ✅ | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L21) | - |
 | `ImGui.GetFont` | ✅ | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L4) | - |
-| `ImGui.GetFontSize` | ✅ | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L90) | - |
+| `ImGui.GetFontSize` | ✅ | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L154) | - |
 | `ImGui.GetFontBaked` | ❌ | - | - |
 | `ImGui.PushStyleColor` | ✅ | [imgui_style_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_style_gm.cpp#L18) | - |
 | `ImGui.PopStyleColor` | ✅ | [imgui_style_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_style_gm.cpp#L27) | - |
@@ -397,6 +397,7 @@ These are non-standard functions made specifically for ImGui.
 | Wrapper | Wrapper Location | Note |
 |---------|------------------|------|
 | `ImGui.AddFontDefault` | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L76) | - |
+| `ImGui.AddFontFromBuffer` | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L101) | - |
 | `ImGui.AddFontFromFileTTF` | [imgui_fonts_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_fonts_gm.cpp#L37) | - |
 | `ImGui.BeginChildFrame` | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L49) | - |
 | `ImGui.CalcTextHeight` | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L365) | - |

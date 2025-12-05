@@ -194,10 +194,9 @@ export function isSubmoduleDir(dirname) {
 			throw new ImGMError(`Directory does not exist: ${dirname}`)
 		}
 	}
-	if (fs.existsSync(path.join(dir, ".git"))) {
-		return true
-	} else if (fs.existsSync(path.join(dir, ".gitignore"))) {
-		return true
+	let dirs = dir.split(/\/|\\/).reverse();
+	if (dirs[1] == "modules") {
+		return true;
 	} else {
 		for (const key in Config.modules) {
 			if (
@@ -229,15 +228,7 @@ async function _getFSChildModules(module) {
 		if (!fs.existsSync(path.join(modulePath, ".git"))) {
 			const directories = fs
 				.readdirSync(modulePath, { withFileTypes: true })
-				.filter((entry) => entry.isDirectory())
-				.filter(
-					(dir) =>
-						isPathInside(dir.name, modulePath) &&
-						(
-							fs.existsSync(path.join(modulePath, dir.name, ".git")) ||
-							fs.existsSync(path.join(modulePath, dir.name, ".gitignore"))
-						)
-				)
+				.filter((dir) => dir.isDirectory() && isPathInside(dir.name, modulePath))
 				.map((dir) => dir.name)
 
 			children = await Promise.all(

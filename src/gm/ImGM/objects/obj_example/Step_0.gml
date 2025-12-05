@@ -359,12 +359,10 @@ if (main_open) {
         ImGui.BeginChild("Inner_Fonts", width / 2, height, ImGuiChildFlags.Borders);
             ImGui.Text("Fonts");
             ImGui.Separator();
-            ImGui.Text("Hello! " + chr(0x0647) + chr(0x0627)+ chr(0x064A) + "/هاي! привет!");
-            ImGui.Separator();
-            ImGui.Text("You can load TTF/OTF font files from disk!");
-            ImGui.PushFont(global.font_roboto);
-            ImGui.Text("Hello! " + chr(0x0647) + chr(0x0627)+ chr(0x064A) + "/هاي! привет!");
-            ImGui.TextColored("And use them wherever!", c_aqua);
+            ImGui.Text("You can load TTF/OTF font\nfiles from disk!");
+            ImGui.PushFont(global.font_noto);
+            ImGui.TextColored("And even from buffers!", c_aqua);
+            ImGui.TextColored("- Hello! \n- " + global.ohayo + "!\n- привет!", global.accent_color);
             ImGui.Text("Pretty neat, right?!");
             ImGui.PopFont();
             ImGui.Text("And back to the default font ^_^");

@@ -203,7 +203,14 @@ class ProcessProgram {
 	static _pRainbow = undefined
 	static _config = undefined
 
-	static env = {}
+	/**
+	 *
+	 * See function ProcessProgram.worker
+	 * @memberof ProcessProgram
+	 */
+	static env = {
+		ISTTY: process.stdout.isTTY,
+	}
 	/**
 	 *
 	 * @type {Terminal}
@@ -299,6 +306,13 @@ class ProcessProgram {
 		onFinish,
 		onError
 	) {
+		let workerEnv = {
+			ISTTY: envIsTrue("ISTTY"),
+			// LOG_LEVEL: ProcessProgram._logLevel,
+			// DEBUG: ProcessProgram.debug,
+			// NO_COLOR: ProcessProgram._pNoColor,
+			// RAINBOW: ProcessProgram._pRainbow,
+		};
 		const terminal = this.terminal
 		const startTime = Date.now()
 
@@ -308,12 +322,7 @@ class ProcessProgram {
 		return new Promise((resolve, reject) => {
 			let wIndex = Program._workers.length
 			_workerData.index = wIndex
-			_workerData.env = {
-				// LOG_LEVEL: ProcessProgram._logLevel,
-				// DEBUG: ProcessProgram.debug,
-				// NO_COLOR: ProcessProgram._pNoColor,
-				// RAINBOW: ProcessProgram._pRainbow,
-			}
+			_workerData.env = workerEnv
 			_workerData.params = ProcessProgram.params
 
 			const worker = new Worker(workerFilePath, {
@@ -433,7 +442,16 @@ class ProcessProgram {
 			.catch(onError)
 	}
 
-	static setup(argIsWorker = false) {
+	static setup() {
+		const argIsWorker = workerData != null;
+
+		var didOnce;
+		if (argIsWorker || typeof process.env._IMGM_PROGRAM_CONFIGURED == "undefined") {
+			didOnce = false;
+		} else {
+			didOnce = true;
+		}
+
 		let wParams = undefined
 		let wEnv = undefined
 		if (argIsWorker == true) {
@@ -447,20 +465,22 @@ class ProcessProgram {
 		ProcessProgram._processParams()
 
 		if (typeof wEnv != "undefined") {
-			ProcessProgram.env = wEnv
+			ProcessProgram.env = Object.assign(ProcessProgram.env, wEnv)
 		}
 
-		ProcessProgram.evals()
+		if (!didOnce) {
+			ProcessProgram.evals()
+		}
 		ProcessProgram.postSetup()
 		ProcessProgram.configure()
 	}
 
 	static evals() {
-		Object.assign(process.env, ProcessProgram.env)
+		process.env = Object.assign(process.env, ProcessProgram.env)
 
 		ProcessProgram._pNoColor =
-			(workerData == null && !process.stdout.isTTY) ||
-			envIsTrue("NO_COLOR") ||
+			!envIsTrue("ISTTY") ||
+			envIsTrue("NO_COLOR") || envIsTrue("NOCOLOR") ||
 			Config.logging.color == false
 		ProcessProgram._pRainbow =
 			envIsTrue("RAINBOW") || Config.logging.colorUseRGB == true

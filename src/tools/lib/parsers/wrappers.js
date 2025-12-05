@@ -595,7 +595,7 @@ export class WrapperFunction extends BaseFunction {
 		})
 		if (this.args[ind].oldName != undefined) {
 			Logger.warn(
-				`Changing arg${ind + 1} name of ${this.name}: \"${this.args[ind].oldName}\" -> \"${this.args[ind].name._name}\"`,
+				Program.colors.get("gray", `Changing arg${ind + 1} name of ${Program.colors.get("white", this.name, "gray")}: \"${this.args[ind].oldName}\" -> \"${this.args[ind].name._name}\"`),
 				{
 					type: Logger.types.WRAPPER_ARG_CHANGED,
 				}
@@ -694,9 +694,9 @@ export class WrapperFunction extends BaseFunction {
 							default: {
 								this.returnType = token.getFlatString()
 								Logger.warn(
-									"Overwriting return type for " +
-									this.name +
-									": " +
+									Program.colors.get("gray", "Overwriting return type for ") +
+									Program.colors.get("white", this.name) +
+									Program.colors.get("gray", ": ") +
 									this.returnType,
 									{
 										type: Logger.types
@@ -719,9 +719,9 @@ export class WrapperFunction extends BaseFunction {
 				const next = bodyNavigator.peek(1)
 				this.returnType = this._resolveModVal(next.getFlatString())
 				Logger.warn(
-					"Overwriting return type for " +
-					this.name +
-					": " +
+					Program.colors.get("gray", "Overwriting return type for ") +
+					Program.colors.get("white", this.name) +
+					Program.colors.get("gray", ": ") +
 					this.returnType,
 					{
 						type: Logger.types.WRAPPER_CONTEXT_CHANGED,
@@ -1633,6 +1633,38 @@ export function getWrappers(tokens, source, apis, extras) {
 	return wrapperAnalyzer
 }
 
+function _yyFix(output) {
+	output = output.replace(/(\s*".+?":\s*[^,\n\[{\}]+)(?=\n)/g, "$1,");
+	output = output.replace(/([}\]])(\s*\n)/g, "$1,$2");
+	output = output.replace(
+		/\{\s*"\$GMExtensionFile"([\s\S]*?)\}/g,
+		(m) => m.replace(/\s+/g, "")
+	);
+
+	output = output
+		.split("\n")
+		.map((line) => {
+			// Preserve leading indentation
+			const m = line.match(/^([ \t]*)/);
+			const indent = m ? m[1] : "";
+			let body = line.slice(indent.length).replace(/[ \t]+/g, " ");
+			body = body
+				.replace(/"[ \t]*:[ \t]*/g, '":')     // after colon
+				.replace(/,[ \t]*/g, ",")             // after comma
+				.replace(/[ \t]*([}\]])/g, "$1")      // before closing } or ]
+				.replace(/([\[{])[ \t,]*/g, "$1");    // after opening { or [
+
+			return indent + body;
+		})
+		.join("\n");
+
+	output = output
+		.replace(/,,+/g, ",")
+		.replace(/(\[|\{), +/g, "$1");
+
+	return output;
+}
+
 /**
  * Injects wrapper functions into a GMExtension file if they don't already exist.
  *
@@ -1683,35 +1715,41 @@ export function updateGMExtensionWrappers(fullApi, extensionFile) {
 
 	// remove functions for pretty serialization (temporary)
 	const extensionClone = structuredClone(extension)
-	delete extensionClone.files[index].functions
 
 	let output = JSON.stringify(extensionClone, null, 2)
 
-	// Find the exact filename block for imgm.dll and insert/replace functions
-	// NOTE: This relies on syntax of YY and its order: before: (filename:...) after: (init:...)
+	const pat = `\\{(?<sf>[\\n\\s]*)\\"\\$GMExtensionFile\\"[\\n\\s]*:[\\s\\S]*?\\"filename\\"[\\n\\s]*:[\\n\\s]*\\"${dllName}\\"[\\s\\S]*?\\"functions\\"[\\n\\s]*:[\\n\\s]*\\[(?<sw>\\s*)(?<functions>([^\\[\\]]|\\][^}]|\\"[^\\"\\\\\\\\]*(?:\\\\\\\\.[^\\"\\\\]*)*\\"|\\\\{[^}]*\\\\})*?)\\][\\s\\S]*?\\}`;
+	const outputRegex = new RegExp(pat, 'g')
+	let fileTextMatch = outputRegex.exec(output);
 
-	const fileBlockRegex = new RegExp(
-		`("filename":\\s*"imgm.dll",.*?\\n?\\s*"final":\\s*"",.*?)\\n?\\s*(.*).*?\\n?\\s*("init":\\s*"",?).*?\\n([\\s]*)`,
-		"s"
-	)
-
-	// add functions back
-	output = output.replace(fileBlockRegex, (match, fileContent, indent) => {
-		const fnIndent = indent + "  "
-		const compactFunctions = allFunctions
-			.map((fn) => fnIndent + JSON.stringify(fn))
+	if (fileTextMatch) {
+		const gmfnIndent = fileTextMatch.groups.sw.slice(1);
+		const gmfnWrappersIndent = fileTextMatch.groups.sf.slice(1);
+		const gmfnsPosStart = output.indexOf(fileTextMatch[3]);
+		const gmfnsPosEnd = gmfnsPosStart + fileTextMatch.groups.functions.length - gmfnWrappersIndent.length;
+		// Count newlines starting for GMExtFns
+		const preContent = output.slice(0, gmfnsPosStart)//.split("\n").length + 1;
+		const postContent = output.slice(gmfnsPosEnd)//.split("\n").length + 1;
+		let newOutput = allFunctions
+			.map((fn, i) => {
+				fn = JSON.stringify(fn);
+				fn = fn.slice(0, fn.length - 1) + ",}"
+				if (i == 0) return gmfnIndent + fn;
+				if (i == allFunctions.length-1) return gmfnIndent + fn + ",";
+				return gmfnIndent + fn;
+			})
 			.join(",\n")
-
-		const functionsBlock = `${indent}"functions": [\n${compactFunctions},\n${indent}]`
-
-		return `${fileContent}\n${indent}${functionsBlock},\n${indent}"init":"",\n${indent}`
-	})
-
-	if (!process.env.DRYRUN) {
-		if (extensionFile.update(output)) {
-			extensionFile.commit()
+		output = preContent + "\"<NEW_OUTPUT_HOLDER>\"" + postContent;
+		output = _yyFix(output)
+		output = output.replace("\"<NEW_OUTPUT_HOLDER>\"", `\n${newOutput}\n` + gmfnWrappersIndent);
+		if (!process.env.DRYRUN) {
+			if (extensionFile.update(output)) {
+				extensionFile.commit()
+			}
 		}
+		return true;
 	}
+	Logger.error("Error parsing ImGM.yy extension file.", { error: true });
 }
 
 /**

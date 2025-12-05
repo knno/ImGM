@@ -75,6 +75,24 @@ function buildExtFiles(baseDir, enabledExts)
     return filesList
 end
 
+function buildExtExcludes(baseDir, enabledExts)
+    local exts = os.matchdirs(baseDir .. "/*")
+    local filesList = {}
+    for _, ext in ipairs(exts) do
+        local extName = string.match(ext, baseDir .. "/(.+)/?")
+        if enabledExts[extName:lower()] then
+            print("Adding excludes for: " .. extName)
+            table.insert(filesList, ext .. "/*.local")
+            table.insert(filesList, ext .. "/*.local.*")
+            table.insert(filesList, ext .. "/**/*.local")
+            table.insert(filesList, ext .. "/**/*.local.*")
+        else
+            -- skipped extName
+        end
+    end
+    return filesList
+end
+
 local dllDir = "src/dll/"
 local toolsDir = "src/tools/"
 local gmProjectDir = "src/gm/" .. projectName .. "/"
@@ -82,6 +100,7 @@ local gmProjectExtDir = gmProjectDir .. "extensions/" .. projectName .. "/"
 local enabledExts = getEnabledExts(dllDir .. "config.h")
 local extIncDirs = buildExtIncludeDirs(dllDir .. "imext", enabledExts)
 local extFiles = buildExtFiles(dllDir .. "imext", enabledExts)
+local extExcludes = buildExtExcludes(dllDir .. "imext", enabledExts)
 
 function processImext(baseDir)
     local exts = os.matchdirs(baseDir .. "/*")
@@ -146,8 +165,9 @@ project(projectName)
     excludes {
         dllDir .. ".old.*",
         dllDir .. "**/.old.*",
-        -- dllDir .. "imext/**/internal/*.*",
-        -- dllDir .. "imext/**/internal/**/*.*",
+        dllDir .. "**/*.local",
+        dllDir .. "**/*.local.*",
+		table.unpack(extExcludes),
     }
 
 	_vpaths = {

@@ -26,17 +26,49 @@ global.accent_color = #00A1ff;
 
 /// ImGui fonts: Add the default and a custom font with glyph ranges (Unicode)
 global.font_default = ImGui.AddFontDefault();
-global.font_roboto = ImGui.AddFontFromFileTTF("fonts/andlso.ttf", 24, undefined, 
-	[
+
+// Example of adding font with custom glyphs
+global.glyph_ranges = {
+	english: [
 		0x0020, 0x00FF, // Latin
+	],
+	arabic: [
 		0x600, 0x6FF, // Arabic U+0600-U+06FF (1536-1791)
-	    1872, 1919,   // Arabic Supplement (U+0750–U+077F)
-	    2208, 2303,   // Arabic Extended-A (U+08A0–U+08FF)
-	    64336, 65023, // Presentation Forms-A (U+FB50–U+FDFF)
-	    65136, 65279, // Presentation Forms-B (U+FE70–U+FEFF)
-		0			  // Optional: Provide a terminating zero for the array for ImGui backend.
-	]
+		1872, 1919,   // Arabic Supplement (U+0750–U+077F)
+		2208, 2303,   // Arabic Extended-A (U+08A0–U+08FF)
+		64336, 65023, // Presentation Forms-A (U+FB50–U+FDFF)
+		65136, 65279, // Presentation Forms-B (U+FE70–U+FEFF)
+	],
+	cyrillic: [
+		0x400, 0x4FF, // Russian U+0400-U+04FF/
+		// ...
+	],
+	japanese: [
+		0x3040, 0x309F, // Hiragana
+		// 0x30A0, 0x30FF, // Katakana
+		// 0x4E00, 0x9FFF, // CJK-ExtA Kanji (some)
+		// 0x3000, 0x303F,  // CJK Punctuation
+		// ...
+	],
+	// ...
+}
+
+global.font_noto = ImGui.AddFontFromFileTTF("fonts/NotoSans-Main.ttf", 20, undefined,
+	array_concat(global.glyph_ranges.english, global.glyph_ranges.cyrillic)
 );
+
+// Example for loading a font as a buffer instead!
+// - Font merging: add cyrillic glyphs from any font buffer to any "previous" font (merge mode).
+
+// Example Japanese text
+global.ohayo = "おはよう";
+
+// Example Arabic text (buggy BIDI and letter connections)
+//  global.marhaba = "مرحبا" // Or chr(0x0645) + chr(0x0631) + chr(0x062D) + chr(0x0628) + chr(0x0627);
+
+var font_buffer = buffer_from_bin_file("fonts/NotoSans-Hiragana-Bold.ttf");
+ImGui.AddFontFromBuffer(font_buffer, 24, { MergeMode: true }, global.glyph_ranges.japanese); // Like ImGui::AddFontFromMemoryTTF
+buffer_delete(font_buffer);
 
 /// Whether to enable or use ImGui.DockSpaceOverViewport
 global.enable_docking = false;
