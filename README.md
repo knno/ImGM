@@ -1,7 +1,7 @@
 # ImGM — ImGui for GameMaker
-![Screenshot](./.github/Screenshot%202025-03-14%20043958.png)
+![Screenshot](./extras/screenshot.png)
 ![Build](https://github.com/knno/ImGM/actions/workflows/build.yml/badge.svg)
-<!-- ![coverage](https://badgen.net/https/raw.githubusercontent.com/knno/ImGM/dev/extra/badges/coverage.json?icon=awesome) -->
+![coverage](https://badgen.net/https/raw.githubusercontent.com/knno/ImGM/main/extras/badges/coverage.ImGui.badge.json?icon=awesome)
 
 ### Background
 

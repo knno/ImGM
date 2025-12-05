@@ -140,8 +140,12 @@ export function generateCoverage(fullApi) {
         if (!fs.existsSync(coveragePath)) {
             fs.writeFileSync(coveragePath, "");
         }
+        const coverageBadgePath = Path.join(`extras/badges/coverage.${namespace}.badge.json`);
+        if (!fs.existsSync(coverageBadgePath)) {
+            fs.writeFileSync(coverageBadgePath, "");
+        }
         const file = new File(coveragePath)
-
+        const badgeFile = new File(coverageBadgePath)
 
         const newCov = [
             `# ${namespace} Coverage`,
@@ -157,6 +161,8 @@ export function generateCoverage(fullApi) {
             ..._extras,
         ].join('\n');
 
+        const newBadge = `{"subject":"coverage","status":"${percent}%","color":"green"}`;
+
         if (!process.env.DRYRUN) {
             if (file.update(newCov)) {
                 if (file.commit()) {
@@ -164,6 +170,9 @@ export function generateCoverage(fullApi) {
                         type: Logger.types.FILES_UDPATE_WRITTEN
                     })
                 }
+            }
+            if (badgeFile.update(newBadge)) {
+                badgeFile.commit()
             }
         }
 
