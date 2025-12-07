@@ -37,7 +37,7 @@ static ImFontConfig* ImGuiFontConfigFromStruct(RValue* yystruct) {
         AssignIfDefinedElse(rvalue, cfg->MergeMode, RConvertToBool, false);
 
         rvalue = YYStructGetMember(yystruct, "FontDataOwnedByAtlas");
-        AssignIfDefinedElse(rvalue, cfg->FontDataOwnedByAtlas, RConvertToBool, true);
+        AssignIfDefinedElse(rvalue, cfg->FontDataOwnedByAtlas, RConvertToBool, nullptr);
 
         rvalue = YYStructGetMember(yystruct, "RasterizerMultiply");
         AssignIfDefinedElse(rvalue, cfg->RasterizerMultiply, RConvertToReal, 1.0f);

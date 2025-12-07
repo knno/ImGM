@@ -1,12 +1,11 @@
 /**
  * @function __ImGM
- * @constructor
  * @context ImGM
- * @desc A static constructor for useful ImGM
+ * @desc A function to retrieve ImGM. It has
  * functions and variables you can use during runtime.
  *
  */
-function __ImGM(){
+function __ImGM() {
     static base_x = 0;
     static base_y = 0;
 

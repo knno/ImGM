@@ -7,8 +7,10 @@
 imgm = __ImGM();
 
 #region Configurations
+/// Accent color
+global.accent_color = #00A1ff;
 
-/// Optional: Ini settings for ImGui
+/// Optional: ImGui settings: INI for ImGui
 ini_filename = "";
 // Example:
 // ini_filename = game_save_id + "imgm.ini";
@@ -18,16 +20,13 @@ if ini_filename != "" {
     ImGui.LoadIniSettingsFromDisk(ini_filename);
 }
 
-/// Optional: input system to use (see Step event)
+/// Optional: ImGui input: system to use (see Step event)
 global.use_imgui_input = not (ImGui.__GFlags & ImGuiGFlags.RENDERER_GM); // Default usage. Use imgui input if renderer is not GM
 
-/// Accent color
-global.accent_color = #00A1ff;
+/// Optional: ImGui fonts: whether to load Japanese glyphs.
+global.font_load_japanese = false;
 
-/// ImGui fonts: Add the default and a custom font with glyph ranges (Unicode)
-global.font_default = ImGui.AddFontDefault();
-
-// Example of adding font with custom glyphs
+/// ImGui fonts: some glyphs ranges to use with fonts.
 global.glyph_ranges = {
 	english: [
 		0x0020, 0x00FF, // Latin
@@ -53,24 +52,24 @@ global.glyph_ranges = {
 	// ...
 }
 
+/// ImGui fonts: Add the default and a custom font with glyph ranges (Unicode)
+global.font_default = ImGui.AddFontDefault();
+
+/// ImGui fonts: create a font from a TTF file
 global.font_noto = ImGui.AddFontFromFileTTF("fonts/NotoSans-Main.ttf", 20, undefined,
 	array_concat(global.glyph_ranges.english, global.glyph_ranges.cyrillic)
 );
 
-// Example for loading a font as a buffer instead!
-// - Font merging: add cyrillic glyphs from any font buffer to any "previous" font (merge mode).
+/// ImGui fonts: add a font from a buffer to the previous font.
+/// - MergeMode = true: add glyphs from currently being created font buffer to any "previous" font (merge mode).
+/// - FontDataOwnedByAtlas = false: always false unless explicitly specified. Since it's a gamemaker buffer.
+if global.font_load_japanese {
+	var font_buffer = buffer_from_bin_file("fonts/NotoSans-Hiragana-Bold.ttf");
+	ImGui.AddFontFromBuffer(font_buffer, 24, { MergeMode: true }, global.glyph_ranges.japanese); // Like ImGui::AddFontFromMemoryTTF
+	buffer_delete(font_buffer);
+}
 
-// Example Japanese text
-global.ohayo = "おはよう";
-
-// Example Arabic text (buggy BIDI and letter connections)
-//  global.marhaba = "مرحبا" // Or chr(0x0645) + chr(0x0631) + chr(0x062D) + chr(0x0628) + chr(0x0627);
-
-var font_buffer = buffer_from_bin_file("fonts/NotoSans-Hiragana-Bold.ttf");
-ImGui.AddFontFromBuffer(font_buffer, 24, { MergeMode: true }, global.glyph_ranges.japanese); // Like ImGui::AddFontFromMemoryTTF
-buffer_delete(font_buffer);
-
-/// Whether to enable or use ImGui.DockSpaceOverViewport
+/// ImGui docking: Whether to enable or use ImGui.DockSpaceOverViewport
 global.enable_docking = false;
 
 #endregion Configurations
@@ -100,6 +99,7 @@ tick = 0;
 
 /// Function to draw the status bar
 render_status_bar = function() {
+	// TODO: behave better in multi viewports
     var _status_height = 30;
     var _window_width = window_get_width();
     var _window_height = window_get_height();

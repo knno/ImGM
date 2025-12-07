@@ -362,7 +362,7 @@ if (main_open) {
             ImGui.Text("You can load TTF/OTF font\nfiles from disk!");
             ImGui.PushFont(global.font_noto);
             ImGui.TextColored("And even from buffers!", c_aqua);
-            ImGui.TextColored("- Hello! \n- " + global.ohayo + "!\n- привет!", global.accent_color);
+            ImGui.TextColored("- Hello! \n- " + str_ohayo + "!\n- привет!", global.accent_color);
             ImGui.Text("Pretty neat, right?!");
             ImGui.PopFont();
             ImGui.Text("And back to the default font ^_^");

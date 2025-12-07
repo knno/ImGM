@@ -29,9 +29,7 @@ GMFUNC(__imgui_pop_font) {
  * @param file The path to the TTF file.
  * @param size_pixels The font size in pixels.
  * @param glyph_ranges An optional flat array of unicode pairs [start,end...] ending with an optional terminating-zero element.
- *
- *
- * e.g. Some characters for Arabic: [$0600, $06FF, $0750, $077F, 0]
+ * e.g. Some characters for Arabic: [0x0600, 0x06FF, 0x0750, 0x077F, 0]
  *
  */
 GMFUNC(__imgui_add_font_from_file_TTF) {
@@ -93,13 +91,12 @@ GMFUNC(__imgui_add_font_default) {
  * @param ttf_buffer A GameMaker buffer containing the TTF font data.
  * @param size_pixels The font size in pixels.
  * @param glyph_ranges An optional flat array of unicode pairs [start,end...] ending with an optional terminating-zero element.
- * e.g. Some characters for Arabic: [$0600, $06FF, $0750, $077F, 0]
- *
- * @todo Test if buffer is destroyed afterwards as per ImGui docs.
+ * e.g. Some characters for Arabic: [0x0600, 0x06FF, 0x0750, 0x077F, 0]
  *
  */
 GMFUNC(__imgui_add_font_from_buffer) {
-    // dear ImGui "will take ownership of the data and free the pointer on destruction."
+    // dear ImGui says it "will take ownership of the data and free the pointer on destruction."
+    // but it's a GM buffer so we always set the FontDataOwnedByAtlas to false unless it was provided.
 
     GMOVERRIDE(AddFontFromBuffer);
 	GMPREPEND("");
@@ -127,10 +124,17 @@ GMFUNC(__imgui_add_font_from_buffer) {
         final_glyph_ranges = YYGetArray<ImWchar>(arg, 3, glyph_ranges_count);
     }
     ImFontConfig* final_font_cfg = nullptr;
-    if (font_cfg->kind != VALUE_UNDEFINED) {
-        final_font_cfg = ImGuiFontConfigFromStruct(font_cfg);
-    }
+    final_font_cfg = ImGuiFontConfigFromStruct(font_cfg);
 
+    if (font_cfg->kind != VALUE_UNDEFINED) {
+        RValue* ownedByAtlas = YYStructGetMember(font_cfg, "FontDataOwnedByAtlas");
+        if (ownedByAtlas == nullptr || ownedByAtlas->kind == VALUE_UNDEFINED) {
+            final_font_cfg->FontDataOwnedByAtlas = false;
+        }
+    }
+    else {
+        final_font_cfg->FontDataOwnedByAtlas = false;
+    }
     ImGuiIO& io = ImGui::GetIO();
 
     void* ttf_buffer_data;
@@ -138,7 +142,6 @@ GMFUNC(__imgui_add_font_from_buffer) {
 
     Result.kind = VALUE_UNDEFINED;
     if (success) {
-        // TODO: maybe use: ttf_buffer_size = (static_cast<size_t>(ttf_buffer_size));
         ImFont* font = io.Fonts->AddFontFromMemoryTTF(ttf_buffer_data, ttf_buffer_size, size_pixels, final_font_cfg, final_glyph_ranges);
 
         if (font) {

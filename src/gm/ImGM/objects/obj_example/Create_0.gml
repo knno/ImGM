@@ -27,6 +27,8 @@ main_open = true; // Main window
 header_visible = true;
 tab1 = true;
 
+str_ohayo = "おはよう"; // Japanese text
+str_marhaba = "مرحبا" // Arabic text (buggy BIDI and letter connections) // Or chr(0x0645) + chr(0x0631) + chr(0x062D) + chr(0x0628) + chr(0x0627)
 
 _static = undefined;
 try {

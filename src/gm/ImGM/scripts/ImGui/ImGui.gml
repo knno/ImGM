@@ -45,7 +45,7 @@ function ImGui() constructor {
 	 * @param {Real} size_pixels The font size in pixels.
 	 * @param {ImFontConfig} [font_cfg=undefined]
 	 * @param {Array<Real>} [glyph_ranges=undefined] An optional flat array of unicode pairs [start,end...] ending with an optional terminating-zero element.
-	 * e.g. Some characters for Arabic: [$0600, $06FF, $0750, $077F, 0]
+	 * e.g. Some characters for Arabic: [0x0600, 0x06FF, 0x0750, 0x077F, 0]
 	 *
 	 * @return {Pointer|Undefined}
 	 */
@@ -63,7 +63,7 @@ function ImGui() constructor {
 	 * @param {Real} size_pixels The font size in pixels.
 	 * @param {ImFontConfig} [font_cfg=undefined]
 	 * @param {Array<Real>} [glyph_ranges=undefined] An optional flat array of unicode pairs [start,end...] ending with an optional terminating-zero element.
-	 * e.g. Some characters for Arabic: [$0600, $06FF, $0750, $077F, 0]
+	 * e.g. Some characters for Arabic: [0x0600, 0x06FF, 0x0750, 0x077F, 0]
 	 *
 	 * @return {Pointer|Undefined}
 	 */
