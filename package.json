@@ -1,6 +1,6 @@
 {
 	"name": "imgm",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"scripts": {
 		"prepare": "husky",
 		"modules:copy": "node src/tools/scripts/modules-copy.js",
