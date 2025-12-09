@@ -1,11 +1,11 @@
 {
 	"name": "imgm",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"scripts": {
 		"prepare": "husky",
 		"modules:copy": "node src/tools/scripts/modules-copy.js",
 		"wrappers:gen": "node src/tools/scripts/wrappers-gen/index.js",
-		"release": "standard-version",
+		"release": "echo \"automated releasing is WIP.\" && exit 0",
 		"commit": "commit",
 		"test": "echo \"No tests found.\" && exit 0"
 	},

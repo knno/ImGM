@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.4 (2025-12-09)
+
+Notable changes:
+
+- Build command and workflow simplified
+- Shaders are not needed anymore (thx @jujuadams for the PRs)
+- Some GML variable names changed. See ([20802b6](https://github.com/knno/ImGM/commit/20802b6ec2e6bc3a523fbc11c8250de7b269817b))
+- New custom wrappers
+  - ImGui
+    - `ImGui.AddFontFromBuffer` see the demo project for an example on how to use it.
+
+### Features
+
+* **gml:** example now depends on obj_ImGM ([42cd2ad](https://github.com/knno/ImGM/commit/42cd2ad3bae4d6c28689767365fb9eb1ca472afb))
+* **gml:** gm renderer & w/o rescale by default ([20802b6](https://github.com/knno/ImGM/commit/20802b6ec2e6bc3a523fbc11c8250de7b269817b))
+* **gml:** ttf fonts can have glyph ranges ([af8f917](https://github.com/knno/ImGM/commit/af8f917cb1d284e93c7cc33473b7f0256d28ece8))
+
+
+### Bug Fixes
+
+* tools workflow with imgui extensions improved
+
+
 ### 0.0.3 (2025-11-15)
 
 
