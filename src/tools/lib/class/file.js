@@ -4,8 +4,7 @@ import path from "node:path"
 import config from "../../config.js"
 import { Program } from "../program.js"
 import ImGMError from "./error.js"
-
-const Logger = Program.Logger
+import Logger from "../logging.js"
 
 /**
  * Represents a file that can be read, modified in memory, and written to disk.

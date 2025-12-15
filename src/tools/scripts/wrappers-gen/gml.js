@@ -7,8 +7,7 @@ import { Program } from "../../lib/program.js";
 import * as str from "../../lib/utils/string.js";
 import { generateGMLScript } from "./gml-writer.js";
 import ImGMError, { ImGMAbort } from "../../lib/class/error.js";
-
-const Logger = Program.Logger
+import Logger from "../../lib/logging.js"
 
 export function updateGmlScripts(fullApi) {
 	const namespaceApis = {}

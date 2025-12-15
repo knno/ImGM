@@ -6,11 +6,11 @@ import { getOrCreateModule } from "../../lib/modules.js"
 import cpp from "../../lib/parsers/langs/cpp.js"
 import { getApi } from "../../lib/parsers/wrappers.js"
 import { Program } from "../../lib/program.js"
+import Logger from "../../lib/logging.js"
 
 const { filePath, moduleHandle, parentModule, totalStartTime } = workerData
 
-const Logger = Program.Logger
-const NAME = "wrapper:gen"
+const NAME = "wrappers:gen"
 
 const main = async () => {
 	try {

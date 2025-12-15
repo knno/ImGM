@@ -511,7 +511,7 @@ class ProcessProgram {
 		ProcessProgram.Logger.setLevel(ProcessProgram._logLevel)
 
 		if (process.env.DRYRUN && workerData == null) {
-			Logger.warn("--dry-run %(status)s", {
+			ProcessProgram.Logger.warn("--dry-run %(status)s", {
 				status: ProcessProgram.colors.get("green", "On"),
 			})
 		}

@@ -6,8 +6,8 @@ import { isPathInside } from "./filesystem.js"
 import { Program } from "./program.js"
 import * as str from "./utils/string.js"
 import Import from "./utils/import.js"
+import Logger from "./logging.js"
 
-const Logger = Program.Logger
 const ImGMError = Program.Error
 const NAME = "modules"
 const colors = Program.colors

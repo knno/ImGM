@@ -5,9 +5,9 @@ import { copyFiles } from "../lib/filesystem.js"
 import * as gmk from "../lib/gm.js"
 import { getChildModules, getOrCreateModule, loadModules } from "../lib/modules.js"
 import { Program } from "../lib/program.js"
+import Logger from "../lib/logging.js"
 
 const NAME = "modules:copy"
-const Logger = Program.Logger
 const ImGMError = Program.Error
 
 // Task 1. [optional]    copy submoduleDirs to sourceDirs        (--imgui) and/or (--ext <names>,...)

@@ -1,5 +1,3 @@
-import Name from "../class/name.js"
-
 export function padNumber(number, digits = 1000) {
 	digits = digits.toString().length
 	return number.toString().padStart(digits, "0")
@@ -11,7 +9,13 @@ export function rePascalCase(str) {
 }
 
 function _normName(name) {
-	if (name instanceof Name) { name = name._name; }
+	if (name && typeof name === "object") {
+		// check if Name instance (avoid circular import)
+		const ctorName = name.constructor && name.constructor.name
+		if (ctorName === "Name" || Object.prototype.hasOwnProperty.call(name, "_name")) {
+			name = name._name
+		}
+	}
 	return name
 		.replace(/([a-z])([A-Z])/g, `$1 $2`) // camels (aA => a A)
 		.replace(/[^a-zA-Z0-9]+/g, " ") // Remove non-alphanumeric characters

@@ -7,11 +7,10 @@ import Name from "../../lib/class/name.js";
 import { Module, toHandle } from "../../lib/modules.js";
 import { Program } from "../../lib/program.js";
 import * as str from "../../lib/utils/string.js";
+import Logger from "../../lib/logging.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = Path.dirname(__filename)
-
-const Logger = Program.Logger
 
 
 function getSrcLine(wrapper) {

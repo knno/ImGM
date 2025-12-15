@@ -9,8 +9,7 @@ import { CppKeywords, TokenType } from "../parsers/langs/cpp.js"
 import { Program } from "../program.js"
 import * as str from "../utils/string.js"
 import { BaseParser } from "./base.js"
-
-const Logger = Program.Logger
+import Logger from "../logging.js"
 
 // #region API
 export const GMMOD = Config.dll.modifierDirective

@@ -25,11 +25,11 @@ import * as str from "../../lib/utils/string.js"
 import { generateCoverage } from "./coverage.js"
 import { updateGmlScripts } from "./gml.js"
 import ImGMError, { ImGMAbort } from "../../lib/class/error.js"
+import Logger from "../../lib/logging.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = Path.dirname(__filename)
 const NAME = "wrappers:gen"
-const Logger = Program.Logger
 
 const Term = Program.terminal
 let isReady = false

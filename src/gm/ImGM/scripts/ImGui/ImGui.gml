@@ -5903,6 +5903,7 @@ function ImGui() constructor {
 		CallbackCharFilter = 1 << 21,
 		CallbackResize = 1 << 22,
 		CallbackEdit = 1 << 23,
+		WordWrap = 1 << 24,
 	}
 
 	/**
@@ -5971,6 +5972,7 @@ function ImGui() constructor {
 		Disabled = 1 << 3,
 		AllowOverlap = 1 << 4,
 		Highlight = 1 << 5,
+		SelectOnNav = 1 << 6,
 		DontClosePopups = ImGuiSelectableFlags.NoAutoClosePopups,
 		AllowItemOverlap = ImGuiSelectableFlags.AllowOverlap,
 	}
@@ -6318,6 +6320,7 @@ function ImGui() constructor {
 		CellPadding,
 		ScrollbarSize,
 		ScrollbarRounding,
+		ScrollbarPadding,
 		GrabMinSize,
 		GrabRounding,
 		ImageBorderSize,
@@ -6568,6 +6571,16 @@ function ImGui() constructor {
 		RowBg0 = 1,
 		RowBg1 = 2,
 		CellBg = 3,
+	}
+
+	/**
+	 * @enum ImGuiListClipperFlags
+	 * @desc Flags for ImGuiListClipper (currently not fully exposed in function calls: a future refactor will likely add this to ImGuiListClipper::Begin function equivalent)
+	 *
+	 */
+	enum ImGuiListClipperFlags {
+		None = 0,
+		NoSetTableRowCounters = 1 << 0,
 	}
 
 	/**

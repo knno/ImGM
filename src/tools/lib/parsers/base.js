@@ -12,10 +12,9 @@ import { ImGMAbort } from "../class/error.js"
 import { Program } from "../program.js"
 import { getObjectFunctions, getObjectProperties } from "../utils/data.js"
 import * as str from "../utils/string.js"
+import Logger from "../logging.js"
 
 // #region Base
-
-const Logger = Program.Logger
 
 /**
  *
