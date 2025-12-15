@@ -44,7 +44,7 @@ async function main() {
 	const params = Program.getParams()
 
 	if (!params._args || (params._args.length < 1 || Program.hasHelpFlag())) {
-		console.error(`Usage: npm run ${NAME} -- <module> <path/to/file.cpp>`)
+		console.error(`Usage: npm run ${NAME} -- <module>`)
 		return
 	}
 

@@ -433,7 +433,7 @@ export class Module {
 		let base, dir
 		if (this.parent != undefined) {
 			base = this.parent.getSourceDir()
-			dir = this.handle
+			dir = this.name.toSnakeCase('_')
 		} else {
 			base = path.join(Config.projectRoot, Config.dll.baseDir)
 			dir = this.handle

@@ -1,11 +1,12 @@
 import Path from "path"
 
 import Config from "../config.js"
+import Name from "../lib/class/name.js"
 import { copyFiles } from "../lib/filesystem.js"
 import * as gmk from "../lib/gm.js"
+import Logger from "../lib/logging.js"
 import { getChildModules, getOrCreateModule, loadModules } from "../lib/modules.js"
 import { Program } from "../lib/program.js"
-import Logger from "../lib/logging.js"
 
 const NAME = "modules:copy"
 const ImGMError = Program.Error
@@ -18,6 +19,7 @@ async function copyModulesFiles(params) {
 	let countChilds = 0
 
 	const modules = await loadModules(); // Preload modules
+	let moduleKeys = Object.keys(Config.modules);
 
 	for (const cfgModuleHandle in Config.modules) {
 		const cfgModule = await getOrCreateModule(cfgModuleHandle)
@@ -49,16 +51,48 @@ async function copyModulesFiles(params) {
 						) {
 							modulesToCopy = cfgModuleChilds
 						} else if (Array.isArray(param)) {
-							for (let p of param) {
-								if (typeof p == "string") {
-									p = [p]
+							// Match provided param entries against child modules using several name variants.
+							const wanted = new Set(
+								param
+									.flatMap((p) => (Array.isArray(p) ? p : [p]))
+									.filter((p) => typeof p === "string")
+									.map((p) => p.toLowerCase())
+							)
+
+							const matchModule = (mod) => {
+								const variants = new Set()
+								const name = new Name(String(mod.name?.get?.() ?? mod.name ?? ""))
+
+								variants.add(name.toSnakeCase())
+								variants.add(name.toKebabCase())
+								variants.add(name.toPascalCase())
+								variants.add(`im_${name.toSnakeCase()}`)
+								variants.add(`im-${name.toKebabCase()}`)
+								variants.add(`Im${name.toPascalCase()}`)
+
+								for (const mk of moduleKeys) {
+									// Iterate through keys as additional prefixes other than im-, im_, Im.
+									// Mostly for extensions like imext-, imext_, Imext. Including imgui- variants as well.
+									let modName = Config.modules[mk].name;
+									variants.add(`${modName.toLowerCase()}_${name.toSnakeCase()}`)
+									variants.add(`${modName.toLowerCase()}-${name.toKebabCase()}`)
+									variants.add(`${modName.toLowerCase()}${name.toPascalCase()}`)
 								}
-								modulesToCopy = cfgModuleChilds.filter(
-									(c) =>
-										p.includes(c.name) ||
-										p.includes(c.handle)
-								)
+
+								for (const v of variants) {
+									if (wanted.has(v)) return true
+								}
+
+								// also allow partial matches
+								for (const w of wanted) {
+									for (const v of variants) {
+										if (v.includes(w) || w.includes(v)) return true
+									}
+								}
+								return false
 							}
+
+							modulesToCopy = cfgModuleChilds.filter((c) => matchModule(c))
 						}
 						break
 					} else {
