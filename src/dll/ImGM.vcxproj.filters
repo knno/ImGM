@@ -13,10 +13,25 @@
     <Filter Include="ImGui\Wrappers">
       <UniqueIdentifier>{032276CB-EFEF-69D1-D883-DAF7C4F04536}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TextEditor">
+      <UniqueIdentifier>{317ABEC6-1D32-0014-8639-D96F72109B04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TextEditor\Internal">
+      <UniqueIdentifier>{7D87CCF6-E9E8-A904-7256-F0B6DEB6E0C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TextEditor\Wrappers">
+      <UniqueIdentifier>{94EBC2EA-004D-A0F8-89BA-E6AAF51AD7B7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
       <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\text_editor\internal\imext_text_editor.h">
+      <Filter>TextEditor\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\text_editor\internal\imgui_text_editor.h">
+      <Filter>TextEditor\Internal</Filter>
     </ClInclude>
     <ClInclude Include="imgm.h" />
     <ClInclude Include="imgui\imgui_impl_gm.h">
@@ -63,6 +78,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="imext\text_editor\internal\imgui_text_editor.cpp">
+      <Filter>TextEditor\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\text_editor\internal\imgui_text_editor_utils.cpp">
+      <Filter>TextEditor\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\text_editor\wrappers\text_editor_wrappers_gm.cpp">
+      <Filter>TextEditor\Wrappers</Filter>
+    </ClCompile>
     <ClCompile Include="imgm.cpp" />
     <ClCompile Include="imgui\imgui_impl_gm.cpp">
       <Filter>ImGui</Filter>

@@ -435,6 +435,25 @@ if (demo_open) {
     }
 	if (demo_extensions) {
 		if (ImGui.TreeNode("ImGui Extensions")) {
+			if (ImGui.Button("TextEditor")) {
+				ext_text_editor_open = !ext_text_editor_open;
+				if (ext_text_editor_open) {
+					var _text =
+					@'function foo() { return bar; }
+
+if (application_surface == -1)
+	return undefined;
+
+show_debug_message(/* Hmmm... */ "OOF!");
+'
+					text_editor ??= new ImExtTextEditor("My Editor", _text, 0);
+					text_editor.SetPalette(ImTextEditorPalette.GameMaker);
+					text_editor.SetLanguage(ImTextEditorLanguage.GML);
+				} else {
+					text_editor.Destroy();
+					text_editor = undefined;
+				}
+			}
 			ImGui.TreePop();
 		}
 	}
@@ -443,3 +462,69 @@ if (demo_open) {
 
 // ImGui Extensions
 
+if (text_editor) {
+	ImGui.SetNextWindowSize(600,400,ImGuiCond.Appearing);
+	var ret = ImGui.Begin("TextEditor", ext_text_editor_open, undefined, ImGuiReturnMask.Both)
+    if (ret & ImGuiReturnMask.Return) {
+        if (ret & ImGuiReturnMask.Pointer) {
+            ImGui.BeginChild("##editorsettings", 192);
+                if (ImGui.CollapsingHeader("Settings"))
+                {
+                    editor.SetReadOnly(ImGui.Checkbox("Read Only", editor.IsReadOnly()));
+                    editor.SetShowWhitespaces(ImGui.Checkbox("Show Whitespaces", editor.IsShowingWhitespaces()));
+                    editor.SetColorizerEnable(ImGui.Checkbox("Colorizer", editor.IsColorizerEnabled()));
+                    editor.SetTabSize(ImGui.SliderInt("Tab Size", editor.GetTabSize(), 1, 8));
+                    if (ImGui.Button("Select all"))
+                        editor.SelectAll();
+
+                    if (ImGui.BeginCombo("Language", LANG[SEL_LANG], 0))
+                    {
+                        for (var i = 0; i < 5; i++)
+                        {
+                            if (ImGui.Selectable(LANG[i], SEL_LANG == i))
+                            {
+                                SEL_LANG = i;
+                                editor.SetLanguage(SEL_LANG);
+                            }
+                        }
+
+                        ImGui.EndCombo();
+                    }
+
+                    if (ImGui.BeginCombo("Palette", PAL[SEL_PAL], 0))
+                    {
+                        for (var i = 0; i < 4; i++)
+                        {
+                            if (ImGui.Selectable(PAL[i], SEL_PAL == i))
+                            {
+                                SEL_PAL = i;
+                                editor.SetPalette(SEL_PAL);
+                            }
+                        }
+
+                        ImGui.EndCombo();
+                    }
+                }
+
+                ImGui.Separator();
+
+                ImGui.BeginChild("##editorcolors", 192, -1);
+                for (var i = 0; i < 14; i++)
+                {
+                    ImGui.PushID(i);
+                    text_editor.SetPaletteColor(i, ImGui.ColorEdit3($"###col", text_editor.GetPaletteColor(i)), 255);
+                    ImGui.PopID();
+                }
+                ImGui.EndChild();
+            ImGui.EndChild();
+
+            ImGui.SameLine();
+            text_editor.Render();
+    	} else {
+    		text_editor.Destroy();
+    		text_editor = undefined;
+    		ext_text_editor_open = false;
+	    }
+        ImGui.End();
+    }
+}

@@ -5,7 +5,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function CanRedo
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -16,7 +16,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function CanUndo
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -38,7 +38,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function Copy
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -60,7 +60,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function Cut
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -71,7 +71,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function Delete
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -127,7 +127,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function GetSelectedText
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {String}
 	 */
@@ -138,7 +138,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function GetTabSize
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Real}
 	 */
@@ -149,7 +149,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function GetText
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {String}
 	 */
@@ -160,7 +160,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function GetTotalLines
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Real}
 	 */
@@ -171,7 +171,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function HasSelection
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -182,7 +182,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function InsertText
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @param {Real} _handle
 	 * @param {String} _text
@@ -195,7 +195,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function IsColorizerEnabled
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -206,7 +206,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function IsOverwrite
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -217,7 +217,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function IsReadOnly
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -228,7 +228,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function IsShowingWhitespaces
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -250,7 +250,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function Paste
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -261,7 +261,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function Redo
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -272,7 +272,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function Render
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @param {Real} [_width=0]
 	 * @param {Real} [_height=0]
@@ -286,7 +286,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function SelectAll
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -309,7 +309,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function SelectWordUnderCursor
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -320,7 +320,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function SetColorizerEnable
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @param {Bool} _enable
 	 * @return {Bool}
@@ -330,7 +330,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	}
 
 	/**
-	 * @function SetCursorPosLineColumn
+	 * @function SetCursorPosition
 	 * @context TextEditor
 	 * @desc ImGM custom wrapper for `TextEditor`.
 	 *
@@ -338,7 +338,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	 * @param {Real} [_column=1]
 	 * @return {Bool}
 	 */
-	static SetCursorPosLineColumn = function(_line=1, _column=1) {
+	static SetCursorPosition = function(_line=1, _column=1) {
 		return __imext_text_editor_set_cursor_pos_line_column(_line, _column, self.handle);
 	}
 
@@ -357,7 +357,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function SetPalette
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @param {Real} _paletteID
 	 * @return {Bool}
@@ -383,7 +383,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function SetReadOnly
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @param {Bool} _readOnly
 	 * @return {Bool}
@@ -395,7 +395,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function SetShowWhitespaces
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @param {Bool} _enable
 	 * @return {Bool}
@@ -407,7 +407,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function SetTabSize
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @param {Real} _size
 	 * @return {Bool}
@@ -419,7 +419,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function SetText
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @param {String} _text
 	 * @return {undefined}
@@ -431,7 +431,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	/**
 	 * @function Undo
 	 * @context TextEditor
-	 * @desc ImGM custom wrapper for `TextEditor`.
+	 * @desc ImGM wrapper for `TextEditor`.
 	 *
 	 * @return {Bool}
 	 */
@@ -442,6 +442,29 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	#endregion
 
     #region Enums
+
+    /**
+	 * @enum ImTextEditorPalette
+	 *
+	 */
+	enum ImTextEditorPalette {
+		Dark = 0,
+		Light = 1,
+		RetroBlue = 2,
+		GameMaker = 3,
+	}
+
+	/**
+	 * @enum ImTextEditorLanguage
+	 *
+	 */
+	enum ImTextEditorLanguage {
+		CPlusPlus = 0,
+		HLSL = 1,
+		GLSL = 2,
+		Lua = 3,
+		GML = 4,
+	}
 
     #endregion
 

@@ -58,7 +58,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;DEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\text_editor;imext\text_editor\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp14</LanguageStandard>
@@ -75,7 +75,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;NDEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\text_editor;imext\text_editor\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -93,6 +93,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
+    <ClInclude Include="imext\text_editor\internal\imext_text_editor.h" />
+    <ClInclude Include="imext\text_editor\internal\imgui_text_editor.h" />
     <ClInclude Include="imgm.h" />
     <ClInclude Include="imgui\imgui_impl_gm.h" />
     <ClInclude Include="imgui\internal\backends\imgui_impl_dx11.h" />
@@ -110,6 +112,9 @@
     <ClInclude Include="internal\gm.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="imext\text_editor\internal\imgui_text_editor.cpp" />
+    <ClCompile Include="imext\text_editor\internal\imgui_text_editor_utils.cpp" />
+    <ClCompile Include="imext\text_editor\wrappers\text_editor_wrappers_gm.cpp" />
     <ClCompile Include="imgm.cpp" />
     <ClCompile Include="imgui\imgui_impl_gm.cpp" />
     <ClCompile Include="imgui\internal\backends\imgui_impl_dx11.cpp" />
