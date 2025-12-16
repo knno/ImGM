@@ -8,6 +8,7 @@ imgm = __ImGM();
 demo_imgui = false; // ImGui demo window
 demo_open = true;
     demo_multi_select = true;
+	demo_extensions = true;
 
 // MultiSelect
 multi_select_selection_size = 40;

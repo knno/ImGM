@@ -433,5 +433,13 @@ if (demo_open) {
             ImGui.TreePop();
         }
     }
-    ImGui.End();
+	if (demo_extensions) {
+		if (ImGui.TreeNode("ImGui Extensions")) {
+			ImGui.TreePop();
+		}
+	}
+	ImGui.End();
 }
+
+// ImGui Extensions
+

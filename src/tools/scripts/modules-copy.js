@@ -56,7 +56,6 @@ async function copyModulesFiles(params) {
 								param
 									.flatMap((p) => (Array.isArray(p) ? p : [p]))
 									.filter((p) => typeof p === "string")
-									.map((p) => p.toLowerCase())
 							)
 
 							const matchModule = (mod) => {

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ImExtTextEditor",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ImExtTextEditor",
+  "parent":{
+    "name":"ImExt",
+    "path":"folders/ImGM/Scripts/ImExt.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

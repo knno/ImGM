@@ -275,7 +275,7 @@ export class ApiAnalyzer extends BaseParser {
 					after = nav.peek(i)
 					i++
 				}
-				if (after.children.length > 0) {
+				if (after && after.children.length > 0) {
 					nav.advance()
 					const children = after.navigateChildren()
 					if (ns && next.value && ns != next.value) {
@@ -1211,6 +1211,7 @@ export class WrapperAnalyzer extends BaseParser {
 		super(tokens, opts)
 		this.wrappers = []
 		this._allFuncs = this.opts.apis.map(a => a.functions).flat();
+		this._allModuleNames = this.opts.apis.map(a => a.moduleName).flat();
 	}
 
 	_wrapper_func(token, nav, ns) {
@@ -1261,13 +1262,31 @@ export class WrapperAnalyzer extends BaseParser {
 
 		const funcNameToken = next.children[0]
 		const funcName = funcNameToken.value
-		const contentToken = nav.advance()
 
+		let i = 1;
+		let contentToken = nav.peek(i);
+		while (
+			contentToken &&
+			[
+				TokenType.NEWLINE,
+			].includes(contentToken.type)
+		) {
+			contentToken = nav.peek(i)
+			i++
+		}
 		if (!contentToken || !contentToken.children) return
 
 		// Remove prefix e.g. "__imgui_add_font" to become "add_font", then create a name from it.
 		// Prefix is: "__imgui_", "__imext_", or e.g. "__node_editor_" etc.
-		let wrapperName = new Name(funcName.slice(8/*"__imgui_".length*/), "PascalCase", "");
+
+		let nam = (funcName.startsWith("__imext_") || funcName.startsWith("__imgui_")) ? funcName.slice(8) : funcName;
+		this._allModuleNames.forEach(mn => {
+			let pre = `${str.toSnakeCase(mn)}`;
+			if (nam.startsWith(`${pre}_`)) { nam = nam.replace(`${pre}_`, ""); }
+			if (nam.startsWith(`__${pre}_`)) { nam = nam.replace(`__${pre}_`, ""); }
+		});
+
+		let wrapperName = new Name(nam, "PascalCase", "");
 		let wrapname = wrapperName.toSnakeCase();
 
 		var wr = new WrapperFunction({
@@ -1734,7 +1753,7 @@ export function updateGMExtensionWrappers(fullApi, extensionFile) {
 				fn = JSON.stringify(fn);
 				fn = fn.slice(0, fn.length - 1) + ",}"
 				if (i == 0) return gmfnIndent + fn;
-				if (i == allFunctions.length-1) return gmfnIndent + fn + ",";
+				if (i == allFunctions.length - 1) return gmfnIndent + fn + ",";
 				return gmfnIndent + fn;
 			})
 			.join(",\n")

@@ -1,8 +1,3 @@
-/// Feather ignore GM1003
-/// Feather ignore GM1014
-/// Feather ignore GM1019
-/// Feather ignore GM1045
-
 function ImExtNodeEditor() constructor {
     #region Binds
 

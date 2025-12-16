@@ -148,19 +148,23 @@ export function generateCoverage(fullApi) {
 
         const newCov = [
             `# ${namespace} Coverage`,
-            '',
-            `**Coverage:** ${percent}% (${coverageCount}/${totalCount})`,
-            '', '', '## Wrappers', '', `These are the wrappers of functions generated for ${namespace}.`, '',
-            '| Wrapper | Covered | Wrapper Location | Note |',
-            '|---------|---------|------------------|------|',
-            ..._wraps,
+            (totalCount > 0) ? `\n**Coverage:** ${percent}% (${coverageCount}/${totalCount})\n` : ``,
+            '', '## Wrappers', '',
+            ...((totalCount > 0) ? [
+                `These are the wrappers of functions generated for ${namespace}.`, '',
+                '| Wrapper | Covered | Wrapper Location | Note |',
+                '|---------|---------|------------------|------|',
+                ..._wraps,
+            ] : [
+                `There were no functions detected for ${namespace}.`,
+            ]),
             '', '', '## Custom Wrappers', '', `These are non-standard functions made specifically for ${namespace}.`, '',
             '| Wrapper | Wrapper Location | Note |',
             '|---------|------------------|------|',
             ..._extras,
         ].join('\n');
 
-        const newBadge = `{"subject":"coverage","status":"${percent}%","color":"green"}`;
+        const newBadge = `{"subject":"coverage","status":"${(totalCount > 0) ? percent : "100"}%","color":"green"}`;
 
         if (!process.env.DRYRUN) {
             if (file.update(newCov)) {

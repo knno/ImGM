@@ -417,6 +417,7 @@ export class CppKeywords extends Dict {
 	static IMPORT = "import"
 	static INLINE = "inline"
 	static INT = "int"
+	static INT32T = "int32_t"
 	static LONG = "long"
 	static MODULE = "module"
 	static MUTABLE = "mutable"

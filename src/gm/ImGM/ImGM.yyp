@@ -54,6 +54,7 @@
     {"id":{"name":"__ImGM","path":"scripts/__ImGM/__ImGM.yy",},},
     {"id":{"name":"buffer_from_bin_file","path":"scripts/buffer_from_bin_file/buffer_from_bin_file.yy",},},
     {"id":{"name":"ImExtNodeEditor","path":"scripts/ImExtNodeEditor/ImExtNodeEditor.yy",},},
+    {"id":{"name":"ImExtTextEditor","path":"scripts/ImExtTextEditor/ImExtTextEditor.yy",},},
     {"id":{"name":"ImGM_Conf","path":"scripts/ImGM_Conf/ImGM_Conf.yy",},},
     {"id":{"name":"ImGui_Extras","path":"scripts/ImGui_Extras/ImGui_Extras.yy",},},
     {"id":{"name":"ImGui_Misc","path":"scripts/ImGui_Misc/ImGui_Misc.yy",},},
