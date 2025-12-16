@@ -37,6 +37,8 @@ const modulesConfig = {
 		submoduleDir: "modules/extensions", // folder with git submodules (or just an empty .gitignore file)
 		copyPatterns: ["*.cpp", "*.h", "*.inl"],
 		wrappersGenFilesPatterns: [
+			"src/dll/imext/%(snake_case_name)s/internal/imext_%(snake_case_name)s.h",
+			"src/dll/imext/%(snake_case_name)s/internal/imext_%(snake_case_name)s_*.h",
 			"src/dll/imext/%(snake_case_name)s/wrappers/*_gm.cpp",
 		],
 		paramName: "ext",

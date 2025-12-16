@@ -736,10 +736,9 @@ export class CppParser extends BaseParser {
 			case this.TokenType.LBRACKET: {
 				const children = []
 				while (!this.isEnd()) {
-					const next = this.peek(1)
+					const next = this.advance()
 					let changes = {}
 					if (next) {
-						this.advance()
 						switch (next.type) {
 							case this.TokenType.RPAREN:
 								if (children.length == 1) {
@@ -780,11 +779,13 @@ export class CppParser extends BaseParser {
 								break
 
 							default:
-								children.push(next)
+								if (next.type != undefined) {
+									children.push(next)
+								}
 								break
 						}
 					} else {
-						return token
+						continue // return token
 					}
 				}
 				throw new ImGMError(`Non-closed token %(token)s`, { token })
@@ -864,7 +865,11 @@ export class CppParser extends BaseParser {
 				if (prev) {
 					let prevChanges = {}
 					if (prev.type == this.TokenType.AND) {
-						prevChanges.type = this.TokenType.ADDRESS_OF
+						if (this.peek(-2)?.type == this.TokenType.GT) {
+							prevChanges.type = this.TokenType.DEREFERENCE
+						} else {
+							prevChanges.type = this.TokenType.ADDRESS_OF
+						}
 						prevChanges.value = token.value
 						this.change(prev, prevChanges)
 						this.advance(2)
@@ -990,22 +995,107 @@ export class CppParser extends BaseParser {
 		}
 	}
 
+	_recur_keyword(token) {
+		if (token && token.type == this.TokenType.LT) {
+			let next = this.advance();
+			let content = "<" + next?.value;
+			this.replace(next, undefined);
+			var len = 1;
+			let after, afterType;
+			while (!this.isEnd()) {
+				after = this.advance()
+				afterType = after.type
+				this.replace(after, undefined)
+				if (afterType == this.TokenType.GT) {
+					break
+				}
+				content = content + after.value;
+				len++;
+			}
+			content += ">"
+			token.type = this.TokenType.KEYWORD
+			return [len, content];
+		}
+		return [0, undefined]
+	}
+
 	/**
 	 * @param {CppToken} token
 	 */
-	p_consts(token) {
-		if (
-			token.type == this.TokenType.KEYWORD &&
-			token.value == this.Keywords.CONST
-		) {
-			let next = this.peek()
-			switch (next.type) {
-				case this.TokenType.POINTER:
-				case this.TokenType.DEREFERENCE:
-					next = this.change(next, {
-						value: token.value + " " + next.value,
-					})
-					break
+	p_keywords(token) {
+		if ([this.TokenType.DEREFERENCE, this.TokenType.KEYWORD, this.TokenType.IDENTIFIER].includes(token.type)) {
+			let prev = this.peek(-1)
+			let next = this.peek(1)
+			let after = this.peek(2)
+			if (next) {
+				if (next.type == this.TokenType.SCOPE) {
+					if (after && (after.type == token.type ||
+						[this.TokenType.DEREFERENCE, this.TokenType.KEYWORD, this.TokenType.IDENTIFIER].includes(after.type)
+					)) {
+						let preContent = "";
+						if (prev.type == this.TokenType.KEYWORD && prev.value == this.Keywords.CONST) {
+							preContent = prev.value + " ";
+							this.replace(prev, undefined)
+						}
+						prev = this.peek(-2);
+						if (prev.type == this.TokenType.KEYWORD && prev.value == this.Keywords.STATIC) {
+							preContent = prev.value + " " + (preContent ?? "")
+							this.replace(prev, undefined)
+						}
+						this.change(after, {
+							value: (preContent ?? "") + token.value + next.value + after.value,
+							col: token.col
+						})
+						this.replace(token, undefined)
+						this.replace(next, undefined)
+						this.advance(3)
+						let later = this.peek();
+						let [len, cont] = this._recur_keyword(later);
+						if (len > 0) {
+							this.replace(later, undefined)
+							this.change(after, { value: after.value + cont });
+							this.advance()
+						} else if (later.type == this.TokenType.SCOPE) {
+							this.replace(after, undefined)
+							let soon = this.peek(2)
+							if (soon.type == this.TokenType.IDENTIFIER) {
+								soon.value = after.value + later.value + soon.value;
+								this.replace(later, undefined);
+								this.advance(2)
+							} else {
+								later.value = after.value + later.value + soon.value
+								this.advance(1)
+							}
+							return
+						}
+					}
+				} else if (next.type == this.TokenType.DEREFERENCE || (next.type == this.TokenType.KEYWORD && [
+					this.Keywords.STATIC,
+					this.Keywords.INLINE,
+					this.Keywords.CONST
+				].includes(next.value))) {
+					var i = 2;
+					while (!this.isEnd()) {
+						after = this.peek(i)
+						if (typeof after !== "undefined" || (after && after.type == undefined)) break;
+						i++;
+					}
+					let later = this.peek(i + 1);
+					if (later.type == this.TokenType.DEREFERENCE || later.type == this.TokenType.KEYWORD) {
+						this.change(later, {
+							value: next.value + " " + after.value + " " + later.value + (later.type == this.TokenType.DEREFERENCE ? "&" : ""),
+							col: next.col
+						})
+						this.replace(after, undefined)
+						this.advance();
+					} else {
+						this.change(after, {
+							value: next.value + " " + after.value,
+							col: next.col
+						})
+					}
+					this.replace(next, undefined)
+				}
 			}
 		}
 	}
@@ -1015,10 +1105,10 @@ export class CppParser extends BaseParser {
 			this.p_directives,
 			this.p_pointers,
 			this.p_numbers,
+			this.p_keywords,
 			this.p_groups,
 			this.p_templates,
 			this.p_funcs,
-			this.p_consts,
 		]
 	}
 }
