@@ -9,6 +9,6 @@
 
 // #region ext
 // #define IMEXT_NODE_EDITOR
-// #define IMEXT_TEXT_EDIT
+// #define IMEXT_TEXT_EDITOR
 
 // #endregion

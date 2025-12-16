@@ -110,6 +110,15 @@ export class ApiAnalyzer extends BaseParser {
 		this.artifacts = []
 	}
 
+	testIdent(ident, extras, patts) {
+		for (const pat of patts) {
+			const regex = new RegExp(str.resolveTemplate(pat, extras))
+			if (regex.test(ident)) return true
+		}
+		return false
+	}
+
+
 	_api_func(first, nav, ns) {
 		let token = first
 
@@ -126,20 +135,12 @@ export class ApiAnalyzer extends BaseParser {
 			token.type === TokenType.IDENTIFIER ||
 			token.type === TokenType.FUNCTION_CALL
 		) {
-			const moduleConfig = Config.modules[this.opts.module.handle]
+			const moduleConfig = Config.modules[this.opts.module.parentHandle ?? this.opts.module.handle]
 			if (!moduleConfig) return
 
 			const patts = moduleConfig.apiIdentifierPatterns
 			const base_extras = {
 				...this.opts.module.name.toExtra("name"),
-			}
-
-			const testIdent = (ident, extras, patts) => {
-				for (const pat of patts) {
-					const regex = new RegExp(str.resolveTemplate(pat, extras))
-					if (regex.test(ident)) return true
-				}
-				return false
 			}
 
 			let matchApiIdentifier = false
@@ -149,13 +150,13 @@ export class ApiAnalyzer extends BaseParser {
 						base_extras,
 						childModule.name.toExtra("name")
 					)
-					if (testIdent(token.value, extras, patts)) {
+					if (this.testIdent(token.value, extras, patts)) {
 						matchApiIdentifier = true
 						break
 					}
 				}
 			} else {
-				matchApiIdentifier = testIdent(token.value, base_extras, patts)
+				matchApiIdentifier = this.testIdent(token.value, base_extras, patts)
 			}
 
 			if (!matchApiIdentifier) return

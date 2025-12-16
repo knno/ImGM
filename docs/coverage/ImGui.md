@@ -1,6 +1,6 @@
 # ImGui Coverage
 
-**Coverage:** 90% (379/419)
+**Coverage:** 79% (330/416)
 
 
 ## Wrappers
@@ -13,9 +13,6 @@ These are the wrappers of functions generated for ImGui.
 | `ImGui.DestroyContext` | ✅ | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L10) | - |
 | `ImGui.GetCurrentContext` | ✅ | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L17) | - |
 | `ImGui.SetCurrentContext` | ✅ | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L22) | - |
-| `ImGui.GetIO` | ❌ | - | - |
-| `ImGui.GetPlatformIO` | ❌ | - | - |
-| `ImGui.GetStyle` | ❌ | - | - |
 | `ImGui.NewFrame` | ✅ | [imgui_main_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_main_gm.cpp#L142) | Supported internally |
 | `ImGui.EndFrame` | ✅ | [imgui_main_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_main_gm.cpp#L172) | Supported internally |
 | `ImGui.Render` | ✅ | [imgui_main_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_main_gm.cpp#L184) | Supported internally |

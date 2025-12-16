@@ -1,7 +1,7 @@
 import * as winston from "winston"
 import { workerData } from "worker_threads"
 import { getObjectProperties, formatDate } from "../utils/data.js"
-import ImGMError from "./error.js"
+import ImGMError, { ImGMAbort } from "./error.js"
 
 export const defaultLevel = "info"
 export const defaultLogLevels = {
@@ -203,7 +203,7 @@ export class Logger {
 		let error = undefined
 		if (typeof extra.error != "undefined") {
 			error = extra.error
-			if (typeof error.resolve != "undefined") {
+			if (error instanceof ImGMError) {
 				error = error.resolve()
 			}
 			if (this.Program.debug) {

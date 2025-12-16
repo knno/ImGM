@@ -719,7 +719,7 @@ export class BaseParser {
 				throw error
 			}
 			Logger.error(`Error while parsing`, { error })
-			Logger.error(`${error}`)
+			Logger.error(`${typeof error.resolve != "undefined" ? error.resolve() : error}`)
 		}
 	}
 

@@ -41,8 +41,9 @@ export function generateCoverage(fullApi) {
 
     // Write each namespace group to its own coverage
     for (const [namespace, group] of Object.entries(namespaceGroups)) {
-        var coverageCount = 0;
-        var totalCount = group.functions.length;
+        var coverageApiCount = 0; // all api funcs regardless of hidden
+        var coverageSupportedApiCount = 0; // all api funcs with wrappers regardless of hidden
+        var totalApiCount = group.functions.length; // regardless of hidden
 
         const functions = [];
         const wrappers = [];
@@ -120,20 +121,29 @@ export function generateCoverage(fullApi) {
         });
 
         const _wraps = functions.map(f => {
+            coverageApiCount++;
+            coverageSupportedApiCount++;
             if (f._wrapper) {
                 return `| \`${f._wrapper.namespace}.${f._wrapper.name}\` | ✅ | ${getWLocation(f._wrapper, getSrcLine(f._wrapper))} | ${getWNote(f._wrapper, "-")} |`;
             } else {
-                let supportText = getWSupported(f, "❌");
-                if (supportText == "✅") {
+                let supportText = getWSupported(f, "❌")
+                let note = getWNote(f, "-")
+                let loc = getWLocation(f, "-")
+                if (supportText != "✅") {
+                    coverageSupportedApiCount--;
+                    if (note == "-" && loc == "-") {
+                        coverageApiCount--;
+                    }
                 }
-                return `| \`${f.namespace}.${f.name}\` | ${supportText} | ${getWLocation(f, "-")} | ${getWNote(f, "-")} |`;
+                return `| \`${f.namespace}.${f.name}\` | ${supportText} | ${loc} | ${note} |`;
             }
         })
-        coverageCount = _wraps.length;
 
-        const _extras = extraWrappers.map(w => `| \`${w.namespace}.${w.name}\` | ${getWLocation(w, getSrcLine(w))} | ${getWNote(w, "-")} |`);
+        const _extras = extraWrappers.map(w => {
+            return `| \`${w.namespace}.${w.name}\` | ${getWLocation(w, getSrcLine(w))} | ${getWNote(w, "-")} |`
+        });
 
-        const percent = totalCount === 0 ? 0 : Math.round((coverageCount / totalCount) * 100);
+        const percent = totalApiCount === 0 ? 0 : Math.round((coverageApiCount / totalApiCount) * 100);
 
         const coveragePath = Path.join("docs/coverage", `${namespace}.md`);
         if (!fs.existsSync(coveragePath)) {
@@ -148,9 +158,9 @@ export function generateCoverage(fullApi) {
 
         const newCov = [
             `# ${namespace} Coverage`,
-            (totalCount > 0) ? `\n**Coverage:** ${percent}% (${coverageCount}/${totalCount})\n` : ``,
+            (totalApiCount > 0) ? `\n**Coverage:** ${percent}% (${coverageApiCount}/${totalApiCount})\n` : ``,
             '', '## Wrappers', '',
-            ...((totalCount > 0) ? [
+            ...((totalApiCount > 0) ? [
                 `These are the wrappers of functions generated for ${namespace}.`, '',
                 '| Wrapper | Covered | Wrapper Location | Note |',
                 '|---------|---------|------------------|------|',
@@ -164,7 +174,7 @@ export function generateCoverage(fullApi) {
             ..._extras,
         ].join('\n');
 
-        const newBadge = `{"subject":"coverage","status":"${(totalCount > 0) ? percent : "100"}%","color":"green"}`;
+        const newBadge = `{"subject":"coverage","status":"${(totalApiCount > 0) ? percent : "100"}%","color":"green"}`;
 
         if (!process.env.DRYRUN) {
             if (file.update(newCov)) {
@@ -181,8 +191,8 @@ export function generateCoverage(fullApi) {
 
         return {
             percent,
-            coverageCount,
-            totalCount,
+            coverageCount: coverageApiCount,
+            totalCount: totalApiCount,
         }
     }
 }
