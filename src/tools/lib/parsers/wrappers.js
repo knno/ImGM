@@ -1707,6 +1707,48 @@ export function updateGMExtensionWrappers(fullApi, extensionFile) {
 		)
 	}
 
+	// Process extension options to enable/disable modules
+	const extOptions = extension.options.filter((o => o.resourceType === "GMExtensionOption" || "$GMExtensionOption" in o));
+	let modulesAllChilds = Object.values(Module._loadedModules).filter(m => m.parent != undefined);
+
+	for (let mod of modulesAllChilds) {
+		let optName = `ImExt.${mod.name.get()}.Enabled`;
+		let optIndex = extOptions.findIndex(o => o["%Name"] == optName);
+		if (optIndex == -1) {
+			// Create new option
+			let newOpt = {
+				"$GMExtensionOption": "",
+				"%Name": optName,
+				"defaultValue": "False",
+				"description": "",
+				"displayName": "",
+				"exportToINI": false,
+				"extensionId": null,
+				"hidden": false,
+				"listItems": [],
+				"name": optName,
+				"optType": 0,
+				"resourceType": "GMExtensionOption",
+				"resourceVersion": "2.0",
+			};
+			extension.options.push(newOpt);
+		}
+	}
+
+	for (let opt of extOptions) {
+		let matched = String(opt["%Name"]).match(/ImExt\.(.+)\.Enabled/)?.[1];
+		let optName = `ImExt.${matched}.Enabled`;
+		if (matched) {
+			let matchedHandle = toHandle(matched);
+			let optIndex = extOptions.findIndex(o => o["%Name"] == optName);
+			if (fullApi.modulesConfigs.requestedModuleHandle == matchedHandle || fullApi.modulesConfigs.requestedModuleChildrenHandles.has(matchedHandle)) {
+				extOptions[optIndex].defaultValue = "True";
+			} else {
+				extOptions[optIndex].defaultValue = "False";
+			}
+		}
+	}
+
 	const resource = extension.files[index]
 	const obsoleted = getUnusedWrappers(fullApi, extensionFile);
 	const obsoletedNames = obsoleted.map(o => o.externalName);

@@ -4,3 +4,6 @@
 [submodule "modules/extensions/imgui-node-editor"]
 	path = modules/extensions/imgui-node-editor
 	url = https://github.com/ngscopeclient/imgui-node-editor
+[submodule "modules/extensions/im-file-dialog"]
+	path = modules/extensions/im-file-dialog
+	url = https://github.com/samuelvenable/ImFileDialog

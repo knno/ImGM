@@ -9,10 +9,13 @@ demo_imgui = false; // ImGui demo window
 demo_open = true;
     demo_multi_select = true;
 	demo_extensions = true;
+		ext_text_editor_open = false;
 
 // MultiSelect
 multi_select_selection_size = 40;
 multi_select_selection = new ImGuiSelectionBasicStorage();
+
+text_editor = undefined;
 
 randomize();
 
