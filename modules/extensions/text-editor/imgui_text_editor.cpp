@@ -4,7 +4,7 @@
 #include <regex>
 #include <cmath>
 
-#include "imgui_colortextedit.h"
+#include "imext_text_editor.h"
 
 #include "imgui.h"
 
@@ -2006,7 +2006,7 @@ const TextEditor::Palette& TextEditor::GetDarkPalette()
 {
 	const static Palette p = { {
 			0xff7f7f7f,	// Default
-			0xffd69c56,	// Keyword	
+			0xffd69c56,	// Keyword
 			0xff00ff00,	// Number
 			0xff7070e0,	// String
 			0xff70a0e0, // Char literal
@@ -2034,7 +2034,7 @@ const TextEditor::Palette& TextEditor::GetLightPalette()
 {
 	const static Palette p = { {
 			0xff7f7f7f,	// None
-			0xffff0c06,	// Keyword	
+			0xffff0c06,	// Keyword
 			0xff008000,	// Number
 			0xff2020a0,	// String
 			0xff304070, // Char literal
@@ -2062,7 +2062,7 @@ const TextEditor::Palette& TextEditor::GetRetroBluePalette()
 {
 	const static Palette p = { {
 			0xff00ffff,	// None
-			0xffffff00,	// Keyword	
+			0xffffff00,	// Keyword
 			0xff00ff00,	// Number
 			0xff808000,	// String
 			0xff808000, // Char literal
@@ -2089,16 +2089,16 @@ const TextEditor::Palette& TextEditor::GetRetroBluePalette()
 const TextEditor::Palette& TextEditor::GetGameMakerPalette()
 {
 	const static TextEditor::Palette p = { {
-			0xFFB2B1FF, // None 
-			0xFF71B8FF, // Keyword	 
-			0xFF8B8BFF, // Number 
-			0xFF00FFFF, // String 
-			0xFFE7C547, // Char literal 
-			0xFFC8C8C8, // Punctuation 
-			0xFF8080FF, // Preprocessor 
-			0xFFFFB1B2, // Identifier 
-			0xFF71B8FF, // Known identifier 
-			0xFF5AE558, // Preproc identifier 
+			0xFFB2B1FF, // None
+			0xFF71B8FF, // Keyword
+			0xFF8B8BFF, // Number
+			0xFF00FFFF, // String
+			0xFFE7C547, // Char literal
+			0xFFC8C8C8, // Punctuation
+			0xFF8080FF, // Preprocessor
+			0xFFFFB1B2, // Identifier
+			0xFF71B8FF, // Known identifier
+			0xFF5AE558, // Preproc identifier
 			0xFF509050, // Comment (single line)
 			0xFF509050, // Comment (multi line)
 			0xFF202020, // Background
@@ -2109,7 +2109,7 @@ const TextEditor::Palette& TextEditor::GetGameMakerPalette()
 			0xFFF4C340, // Line number
 			0x20808080, // Current line fill
 			0x10808080, // Current line fill (inactive)
-			0x80000000, // Current line edge 
+			0x80000000, // Current line edge
 		} };
 	return p;
 }
