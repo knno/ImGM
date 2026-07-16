@@ -3,9 +3,6 @@
 ![Build](https://github.com/knno/ImGM/actions/workflows/build.yml/badge.svg)
 ![coverage](https://badgen.net/https/raw.githubusercontent.com/knno/ImGM/main/extras/badges/coverage.ImGui.badge.json?icon=awesome)
 
-Note: GameMaker will have DearImGui included, so there is no need for my wrapper.
-This will be used for reference only. My active development is stopped due to both of my Discord accounts being removed.
-
 ### Background
 
 > This repository is heavily inspired and based on [Nommiin's ImGui_GM](https://github.com/nommiin/imgui_gm)
