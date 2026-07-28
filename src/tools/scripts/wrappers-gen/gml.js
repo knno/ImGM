@@ -9,100 +9,108 @@ import { generateGMLScript } from "./gml-writer.js";
 import ImGMError, { ImGMAbort } from "../../lib/class/error.js";
 import Logger from "../../lib/logging.js"
 
-export function updateGmlScripts(fullApi) {
-	const namespaceApis = {}
-	let par = undefined;
-
-	// Group wrappers and enums by namespace
-	for (const wrapper of fullApi.wrappers) {
-		const ns = wrapper.namespace ?? "ImGui"
-		wrapper.namespace = ns;
-		if (!namespaceApis[ns]) {
-			namespaceApis[ns] = { wrappers: [], enums: [] }
-		}
-		namespaceApis[ns].wrappers.push(wrapper)
-	}
-
-	for (const en of fullApi.enums) {
-		const ns = en.namespace ?? "ImGui"
-		en.namespace = ns;
-		if (!namespaceApis[ns]) {
-			namespaceApis[ns] = { wrappers: [], enums: [] }
-		}
-		namespaceApis[ns].enums.push(en)
-	}
-
+export function updateGmlScript(fullApi, targetModuleHandle) {
 	var modconf;
 	var mods;
 
-	// Write each namespace api to its own GML file
-	if (fullApi.modulesConfigs.requestedModuleChildrenHandles.size > 0) {
-		mods = fullApi.modulesConfigs.requestedModuleChildrenHandles;
+	const requestedModuleHandle = fullApi.modulesConfigs.requestedModuleHandle;
+	const requestedModuleChildrenHandles = fullApi.modulesConfigs.requestedModuleChildrenHandles ?? new Set();
+
+	// Write only the requested module's script unless a specific target handle is provided.
+	if (targetModuleHandle) {
+		mods = [targetModuleHandle];
+	} else if (requestedModuleChildrenHandles.size > 0) {
+		mods = Array.from(requestedModuleChildrenHandles);
 	} else {
-		mods = [fullApi.modulesConfigs.requestedModuleHandle];
+		mods = [requestedModuleHandle];
 	}
+
+	let updated = "";
+	let api = fullApi;
+	let file;
+
 	for (const mH of mods) {
-		for (const [namespace, api] of Object.entries(namespaceApis)) {
-			modconf = fullApi.modulesConfigs[mH] ?? {
-				moduleFileName: "ImGui",
-			};
-			const scriptPath = Path.join("src/gm/ImGM", "scripts", `${modconf.moduleFileName}/${modconf.moduleFileName}.gml`)
-			if (!fs.existsSync(scriptPath)) {
-				Logger.error(`Please create a GML asset or file as "${scriptPath}".`);
-				break;
+		const namespaceApi = {}
+		let par = undefined;
+
+		// Group wrappers and enums by namespace for the current module only.
+		for (const wrapper of fullApi.wrappers) {
+			const ns = wrapper.namespace ?? "ImGui"
+			wrapper.namespace = ns;
+			if (!namespaceApi[ns]) {
+				namespaceApi[ns] = { wrappers: [], enums: [] }
 			}
-			const file = new File(scriptPath)
+			namespaceApi[ns].wrappers.push(wrapper)
+		}
 
-			// Sort api.wrappers by name._name alphabetically
-			const sortedWrappers = [...api.wrappers].sort((a, b) => {
-				const nameA = a.name ? ((a.name instanceof Name) ? a.name.get() : a.name).toLowerCase() : '';
-				const nameB = b.name ? ((b.name instanceof Name) ? b.name.get() : b.name).toLowerCase() : '';
-				return nameA.localeCompare(nameB);
-			});
+		for (const en of fullApi.enums) {
+			const ns = en.namespace ?? "ImGui"
+			en.namespace = ns;
+			if (!namespaceApi[ns]) {
+				namespaceApi[ns] = { wrappers: [], enums: [] }
+			}
+			namespaceApi[ns].enums.push(en)
+		}
 
-			const sortedGmlWrappers = sortedWrappers.filter(w => w.isPrivate == false);
+		const namespace = Object.keys(namespaceApi)[0] ?? "ImGui";
+		modconf = fullApi.modulesConfigs[mH] ?? {
+			moduleFileName: "ImGui",
+		};
+		const scriptPath = Path.join("src/gm/ImGM", "scripts", `${modconf.moduleFileName}/${modconf.moduleFileName}.gml`)
+		if (!fs.existsSync(scriptPath)) {
+			Logger.error(`Please create a GML asset or file as "${scriptPath}".`);
+			break;
+		}
+		// Sort api.wrappers by name._name alphabetically
+		let sortedWrappers = [...api.wrappers].sort((a, b) => {
+			const nameA = a.name ? ((a.name instanceof Name) ? a.name.get() : a.name).toLowerCase() : '';
+			const nameB = b.name ? ((b.name instanceof Name) ? b.name.get() : b.name).toLowerCase() : '';
+			return nameA.localeCompare(nameB);
+		});
+		file = new File(scriptPath)
 
-			const contents = generateGMLScript({
-				namespace,
-				enums: api.enums,
-				wrappers: sortedGmlWrappers,
-			})
+		let sortedGmlWrappers = sortedWrappers.filter(w => w.isPrivate == false);
 
-			// contents.enums and contents.binds are texts inside their own regions.
-			// replace file.content (whatever inside "#region Binds\n... #endregion") with new contents.
+		let contents = generateGMLScript({
+			namespace,
+			enums: api.enums,
+			wrappers: sortedGmlWrappers,
+		})
 
-			const replaceRegion = (orig, regionName, newText) => {
-				const re = new RegExp(
-					`([\t ]*)(#region\\s+${regionName}\\s*[\\r\\n]*)([ \\t]*[\\s\\S]*?)([ \\t]*#endregion)`,
-					"i"
-				)
-				if (re.test(orig)) {
-					return orig.replace(re, (m, p1, p2, _old, p3) => {
-						// ensure newText ends with a single newline
-						let txt = newText.replace(/\r\n/g, "\n").replace(/\n+$/g, "")
-						return `${p1}#region ${regionName}\n` + (txt ? `\n${p1}${txt}\n` : ``) + `\n${p1}#endregion`;
+		// contents.enums and contents.binds are texts inside their own regions.
+		// replace file.content (whatever inside "#region Binds\n... #endregion") with new contents.
+
+		const replaceRegion = (orig, regionName, newText) => {
+			const re = new RegExp(
+				`([\t ]*)(#region\\s+${regionName}\\s*[\\r\\n]*)([ \\t]*[\\s\\S]*?)([ \\t]*#endregion)`,
+				"i"
+			)
+			if (re.test(orig)) {
+				return orig.replace(re, (m, p1, p2, _old, p3) => {
+					// ensure newText ends with a single newline
+					let txt = newText.replace(/\r\n/g, "\n").replace(/\n+$/g, "")
+					return `${p1}#region ${regionName}\n` + (txt ? `\n${p1}${txt}\n` : ``) + `\n${p1}#endregion`;
+				})
+			} else {
+				// region missing
+				throw new ImGMAbort(`Please add \"${Program.colors.get("green", `#region ${regionName}`)}${Program.colors.get("red")}\" and \"${Program.colors.get("green", `#endregion`)}${Program.colors.get("red")}\" in the file "${Program.colors.get("orange")}${file.name}${Program.colors.get("red")}" correctly and try again.`)
+			}
+		}
+
+		updated = file.content
+		if (contents.enums !== undefined) {
+			updated = replaceRegion(updated, "Enums", contents.enums)
+		}
+		if (contents.binds !== undefined) {
+			updated = replaceRegion(updated, "Binds", contents.binds)
+		}
+
+		if (!process.env.DRYRUN) {
+			if (file.update(updated)) {
+				if (file.commit()) {
+					Logger.info(`Updated GML: ${scriptPath}`, {
+						type: Logger.types.FILES_UDPATE_WRITTEN
 					})
-				} else {
-					// region missing
-					throw new ImGMAbort(`Please add \"${Program.colors.get("green", `#region ${regionName}`)}${Program.colors.get("red")}\" and \"${Program.colors.get("green", `#endregion`)}${Program.colors.get("red")}\" in the file "${Program.colors.get("orange")}${file.name}${Program.colors.get("red")}" correctly and try again.`)
-				}
-			}
-
-			let updated = file.content
-			if (contents.enums !== undefined) {
-				updated = replaceRegion(updated, "Enums", contents.enums)
-			}
-			if (contents.binds !== undefined) {
-				updated = replaceRegion(updated, "Binds", contents.binds)
-			}
-
-			if (!process.env.DRYRUN) {
-				if (file.update(updated)) {
-					if (file.commit()) {
-						Logger.info(`Updated GML: ${scriptPath}`, {
-							type: Logger.types.FILES_UDPATE_WRITTEN
-						})
-					}
 				}
 			}
 		}

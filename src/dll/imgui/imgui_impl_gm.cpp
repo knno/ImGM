@@ -131,6 +131,7 @@ void ImGui_ImplGM_Shutdown() {
 	IM_ASSERT(ud != nullptr && "No platform backend to shutdown, or already shutdown?");
 
 	ImGuiIO& io = ImGui::GetIO();
+	ImGui::DestroyPlatformWindows();
 
 	io.BackendPlatformName = nullptr;
 	io.UserData = nullptr;

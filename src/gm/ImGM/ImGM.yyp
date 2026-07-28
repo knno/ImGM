@@ -53,6 +53,7 @@
     {"id":{"name":"rm_tests","path":"rooms/rm_tests/rm_tests.yy",},},
     {"id":{"name":"__ImGM","path":"scripts/__ImGM/__ImGM.yy",},},
     {"id":{"name":"buffer_from_bin_file","path":"scripts/buffer_from_bin_file/buffer_from_bin_file.yy",},},
+    {"id":{"name":"ImExtNodeEditor_Misc","path":"scripts/ImExtNodeEditor_Misc/ImExtNodeEditor_Misc.yy",},},
     {"id":{"name":"ImExtNodeEditor","path":"scripts/ImExtNodeEditor/ImExtNodeEditor.yy",},},
     {"id":{"name":"ImExtTextEditor","path":"scripts/ImExtTextEditor/ImExtTextEditor.yy",},},
     {"id":{"name":"ImGM_Conf","path":"scripts/ImGM_Conf/ImGM_Conf.yy",},},

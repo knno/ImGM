@@ -89,8 +89,8 @@ export default class File {
 		if (!this.changed) {
 			Logger.debug(
 				Program.colors.get("gray", `Skipping write for "${this.name}", no changes detected`), {
-					type: Logger.types.FILES_UDPATE_SKIPPED
-				}
+				type: Logger.types.FILES_UDPATE_SKIPPED
+			}
 			)
 			return false
 		}
@@ -99,7 +99,7 @@ export default class File {
 
 		const outputPath = this.path + (config.useTest ? ".test" : "")
 		try {
-			fs.writeFileSync(outputPath, this.content, "utf-8")
+			fs.writeFileSync(outputPath, this.content, { encoding: "utf-8" })
 			this.hash = this._hash(this.content)
 		} catch (err) {
 			Logger.error(`Failed to write "${this.name}": ${err}`)
@@ -113,9 +113,8 @@ export default class File {
 
 		Logger.info(
 			`Wrote ${Program.colors.get("orange", this.name)} (${lineDiff >= 0 ? "+" : ""}${lineDiff} lines, ${charDiff >= 0 ? "+" : ""}${charDiff} characters)`, {
-				type: Logger.types.FILES_UDPATE_WRITTEN
-			}
-		)
+			type: Logger.types.FILES_UDPATE_WRITTEN
+		})
 
 		this.size = newSize
 		this.lines = newLines

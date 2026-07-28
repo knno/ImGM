@@ -1,4 +1,4 @@
-/// Use this script (or Extras/ImExt<name>_Extras) for additional or custom helpers.
+/// Use this script (or ImExt<name>_Extras) for additional or custom helpers.
 /// These functions will be parsed and included in the generatable docs.
 
 #region Example

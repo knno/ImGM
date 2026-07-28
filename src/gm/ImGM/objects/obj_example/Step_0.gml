@@ -435,7 +435,45 @@ if (demo_open) {
     }
 	if (demo_extensions) {
 		if (ImGui.TreeNode("ImGui Extensions")) {
-			ImGui.TreePop();
+            if (extension_get_option_value("ImGM", "ImExt.TextEditor.Enabled")) {
+			    if (ImGui.Button("TextEditor")) {
+				ext_text_editor_open = !ext_text_editor_open;
+				if (ext_text_editor_open) {
+					var _text =
+					@'function foo() { return bar; }
+
+if (application_surface == -1)
+	return undefined;
+
+show_debug_message(/* Hmmm... */ "OOF!");
+'
+					text_editor ??= new ImExtTextEditor("My TextEditor", _text, 0);
+					text_editor.SetPalette(ImTextEditorPalette.GameMaker);
+					text_editor.SetLanguage(ImTextEditorLanguage.GML);
+				} else {
+					text_editor.Destroy();
+					text_editor = undefined;
+				}
+			}
+            }
+
+
+            if (extension_get_option_value("ImGM", "ImExt.NodeEditor.Enabled")) {
+                if (ImGui.Button("NodeEditor")) {
+                    ext_node_editor_open = !ext_node_editor_open;
+                    if (ext_node_editor_open) {
+                        node_editor ??= ImExtNodeEditor.CreateEditor()
+                        node_editor_first_frame = true;
+                    } else {
+                        // Destroy node editor here.
+                        ImExtNodeEditor.DestroyEditor(node_editor);
+                        node_editor = undefined;
+                    }
+                }
+
+            }
+
+            ImGui.TreePop();
 		}
 	}
 	ImGui.End();
@@ -443,3 +481,143 @@ if (demo_open) {
 
 // ImGui Extensions
 
+if (node_editor) {
+    ImGui.SetNextWindowSize(720, 480, ImGuiCond.Appearing);
+    var node_ret = ImGui.Begin("NodeEditor Demo", ext_node_editor_open, undefined, ImGuiReturnMask.Both);
+    if (node_ret & ImGuiReturnMask.Return) {
+        if (node_ret & ImGuiReturnMask.Pointer) {
+            ImGui.Text("A minimal NodeEditor example.");
+            ImGui.Separator();
+
+            ImExtNodeEditor.SetCurrentEditor(node_editor);
+            ImExtNodeEditor.Begin("My Editor", 0, 0);
+                // 1) Commit known data to editor
+                if (node_editor_first_frame) {
+                    ImExtNodeEditor.SetNodePosition(node_editor_nodeA_Id, 10, 10);
+                }
+                ImExtNodeEditor.BeginNode(node_editor_nodeA_Id);
+                    ImGui.Text("Node A");
+                    ImExtNodeEditor.BeginPin(node_editor_nodeA_inputPinId, ImExtNodeEditorPinKind.Input);
+                        ImGui.Text("-> In");
+                    ImExtNodeEditor.EndPin();
+                    ImGui.SameLine();
+                    ImExtNodeEditor.BeginPin(node_editor_nodeA_outputPinId, ImExtNodeEditorPinKind.Output);
+                        ImGui.Text("Out ->");
+                    ImExtNodeEditor.EndPin();
+                ImExtNodeEditor.EndNode();
+
+                if (node_editor_first_frame) {
+                    ImExtNodeEditor.SetNodePosition(node_editor_nodeB_Id, 210, 60);
+                }
+                ImExtNodeEditor.BeginNode(node_editor_nodeB_Id);
+                    ImGui.Text("Node B");
+                    ImExtNodeEditor.BeginPin(node_editor_nodeB_inputPinId, ImExtNodeEditorPinKind.Input);
+                        ImGui.Text("-> In");
+                    ImExtNodeEditor.EndPin();
+                    ImGui.SameLine();
+                    ImExtNodeEditor.BeginPin(node_editor_nodeB_outputPinId, ImExtNodeEditorPinKind.Output);
+                        ImGui.Text("Out ->");
+                    ImExtNodeEditor.EndPin();
+                ImExtNodeEditor.EndNode();
+            
+                // Links
+                var link;
+                for (var i=0; i<array_length(node_editor_links); i++) {
+                    link = node_editor_links[i];
+                    ImExtNodeEditor.Link(link.id, link.in, link.out);
+                }
+
+                // Interaction
+                if (ImExtNodeEditor.BeginCreate()) {
+                    var _tempLinkInfo = {};
+                    var res = ImExtNodeEditor.QueryNewLink(_tempLinkInfo);
+                    if (res == true) {
+                        if (ImExtNodeEditor.AcceptNewItem()) {
+                            array_push(node_editor_links, {id: node_editor_uniqueId++, in: _tempLinkInfo.start_pin_id, out: _tempLinkInfo.end_pin_id});
+                        }
+                    }
+                }
+                ImExtNodeEditor.EndCreate();
+
+                /*if (ImExtNodeEditor.BeginDelete()) {
+                    // ...
+                }
+                ImExtNodeEditor.EndDelete();*/
+
+            ImExtNodeEditor.End();
+            if (node_editor_first_frame) {
+                ImExtNodeEditor.NavigateToContent(0.0);
+            }
+            ImExtNodeEditor.SetCurrentEditor(pointer_null);
+            node_editor_first_frame = false;
+        }
+        ImGui.End();
+    }
+}
+
+if (text_editor) {
+	ImGui.SetNextWindowSize(600,400,ImGuiCond.Appearing);
+	var ret = ImGui.Begin("TextEditor", ext_text_editor_open, undefined, ImGuiReturnMask.Both)
+    if (ret & ImGuiReturnMask.Return) {
+        if (ret & ImGuiReturnMask.Pointer) {
+            ImGui.BeginChild("##editorsettings", 192);
+                if (ImGui.CollapsingHeader("Settings"))
+                {
+                    text_editor.SetReadOnly(ImGui.Checkbox("Read Only", text_editor.IsReadOnly()));
+                    text_editor.SetShowWhitespaces(ImGui.Checkbox("Show Whitespaces", text_editor.IsShowingWhitespaces()));
+                    text_editor.SetColorizerEnable(ImGui.Checkbox("Colorizer", text_editor.IsColorizerEnabled()));
+                    text_editor.SetTabSize(ImGui.SliderInt("Tab Size", text_editor.GetTabSize(), 1, 8));
+                    if (ImGui.Button("Select all"))
+                        text_editor.SelectAll();
+
+                    if (ImGui.BeginCombo("Language", text_editor_langs[text_editor_lang_selected], 0))
+                    {
+                        for (var i = 0; i < 5; i++)
+                        {
+                            if (ImGui.Selectable(text_editor_langs[i], text_editor_lang_selected == i))
+                            {
+                                text_editor_lang_selected = i;
+                                text_editor.SetLanguage(text_editor_langs_array[text_editor_lang_selected]);
+                            }
+                        }
+
+                        ImGui.EndCombo();
+                    }
+
+                    if (ImGui.BeginCombo("Palette", text_editor_palettes[text_editor_palette_selected], 0))
+                    {
+                        for (var i = 0; i < 4; i++)
+                        {
+                            if (ImGui.Selectable(text_editor_palettes[i], text_editor_palette_selected == i))
+                            {
+                                text_editor_palette_selected = i;
+                                text_editor.SetPalette(text_editor_palettes_array[text_editor_palette_selected]);
+                            }
+                        }
+
+                        ImGui.EndCombo();
+                    }
+                }
+
+                ImGui.Separator();
+
+                ImGui.BeginChild("##editorcolors", 192, -1);
+                for (var i = 0; i < 14; i++)
+                {
+                    ImGui.PushID(i);
+                    text_editor.SetPaletteColor(i, ImGui.ColorEdit3($"###col", text_editor.GetPaletteColor(i)), 255);
+                    ImGui.PopID();
+                }
+                ImGui.EndChild();
+            ImGui.EndChild();
+
+            ImGui.SameLine();
+            text_editor.Render();
+    	} else {
+    		text_editor.Destroy();
+    		text_editor = undefined;
+    		ext_text_editor_open = false;
+	    }
+        ImGui.End();
+    }
+}

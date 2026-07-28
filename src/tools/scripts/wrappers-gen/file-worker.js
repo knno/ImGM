@@ -37,7 +37,7 @@ const main = async () => {
 		result.moduleHandle = module.handle
 		result.moduleName = module.name.get()
 		result.file = filePath
-		result.tokens = JSON.stringify(api.tokens)
+		result.tokens = JSON.stringify(api.tokens.filter(t => t != null))
 		result.enums = JSON.stringify(api.enums)
 		result.functions = JSON.stringify(
 			api.functions.map((f) => {

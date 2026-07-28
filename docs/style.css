@@ -1,18 +1,105 @@
 :root {
-  --theme-color: #1f6feb !important;
-  --accent: #1fa0eb !important;
-  --highlightColor: #83c4fd !important;
+	--theme-color: #1f6feb !important;
+	--accent: #1fa0eb !important;
+	--highlightColor: #83c4fd !important;
+	--siteFont: system-ui, sans-serif !important;
+	--bodyFontSize: 24px !important;
+	--sidebar-width: 400px !important;
+	--codeFontSize: 16px !important;
+	--codeFontFamily: Roboto Mono, Monaco, courier, monospace !important;
+}
+
+.sidebar {
+	width: var(--sidebar-width) !important;
+}
+.content {
+	left: var(--sidebar-width) !important;
 }
 
 /* Link styles */
 a {
-  color: var(--theme-color);
+	color: var(--theme-color);
+}
+.sidebar ul li a {
+	font-size: large;
+	line-height: normal;
+}
+.app-sub-sidebar {
+	position: relative;
+}
+.app-sub-sidebar li {
+	position: relative;
+	padding-left: 1.5em;
+	float: left;
+	clear: both;
+	width: var(--sidebar-width);
+	height: 0.5em;
+}
+.app-sub-sidebar li a {
+	position: absolute;
+	display: block;
+}
+.app-sub-sidebar li:before {
+	content: "•";
+	color: var(--theme-color);
+	font-weight: bold;
+	display: inline;
+	width: 1em;
+	margin-left: -1em;
+	position: relative;
+	top: -12px;
+	left: 0;
 }
 a:hover {
-  text-decoration: underline;
+	text-decoration: underline;
 }
+
+/* .sidebar-nav li.active:not(.collapse):has(ul)::before {
+	content: "\25BC";
+	color: var(--theme-color);
+	font-size: medium;
+	position: absolute;
+	top: -12px;
+	left: -15px;
+}
+.sidebar-nav li:has(ul) {
+  position: relative;
+}
+.sidebar-nav li.active.collapse:has(ul)::before {
+	content: "\25B6";
+	color: var(--theme-color);
+	font-size: medium;
+	position: absolute;
+	top: -12px;
+	left: -15px;
+}
+ */
 
 /* Header */
 .sidebar .app-name {
-  color: var(--theme-color);
+	color: var(--theme-color);
+}
+
+/* Markdown section */
+.markdown-section code {
+	font-size: var(--codeFontSize) !important;
+	font-family: var(--codeFontFamily);
+	font-weight: normal !important;
+}
+
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3,
+.markdown-section h4,
+.markdown-section h5 {
+	font-size: 150% !important;
+	padding-bottom: 0.5em !important;
+}
+
+.markdown-section p {
+	line-height: normal !important;
+}
+.markdown-section ol,
+.markdown-section ul {
+	line-height: normal !important;
 }
