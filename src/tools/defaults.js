@@ -39,6 +39,7 @@ const modulesConfig = {
 		wrappersGenFilesPatterns: [
 			"src/dll/imext/%(snake_case_name)s/internal/imext_%(snake_case_name)s.h",
 			"src/dll/imext/%(snake_case_name)s/internal/imext_%(snake_case_name)s_*.h",
+			"src/dll/imext/%(snake_case_name)s/%(snake_case_name)s_h.funcs",
 			"src/dll/imext/%(snake_case_name)s/wrappers/*_gm.cpp",
 		],
 		paramName: "ext",

@@ -4,7 +4,7 @@ function ImGui() constructor {
 
     /// Section for ImGui extensions.
     static Ext = {
-        NodeEditor: ImExtNodeEditor,
+        NodeEditor: static_get((new ImExtNodeEditor())),
 		TextEditor: ImExtTextEditor,
     }
     #endregion
@@ -6764,6 +6764,7 @@ function ImGui() constructor {
     static __inputStore = undefined;
 
     static __initialized = false;
+    static __in_new_frame = false;
 
     static toString = function() {
         return $"<ImGui {string(__window)}>";
@@ -6852,6 +6853,7 @@ function ImGui() constructor {
 
     static __NewFrame = function(state=undefined) {
         if !ImGui.__initialized return;
+        ImGui.__in_new_frame = true;
         state ??= __state; if state != __state state.Use();
 
         ImGui.__imgm.Utils.Update();
@@ -6934,6 +6936,7 @@ function ImGui() constructor {
 
     static __EndFrame = function(state=undefined) {
         if !ImGui.__initialized return;
+        if !ImGui.__in_new_frame return; ImGui.__in_new_frame = false;
         state ??= __state; if state != __state state.Use();
 
         __imgui_end_frame();

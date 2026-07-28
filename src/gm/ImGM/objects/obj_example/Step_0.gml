@@ -457,6 +457,22 @@ show_debug_message(/* Hmmm... */ "OOF!");
 			}
             }
 
+
+            if (extension_get_option_value("ImGM", "ImExt.NodeEditor.Enabled")) {
+                if (ImGui.Button("NodeEditor")) {
+                    ext_node_editor_open = !ext_node_editor_open;
+                    if (ext_node_editor_open) {
+                        node_editor ??= ImExtNodeEditor.CreateEditor()
+                        node_editor_first_frame = true;
+                    } else {
+                        // Destroy node editor here.
+                        ImExtNodeEditor.DestroyEditor(node_editor);
+                        node_editor = undefined;
+                    }
+                }
+
+            }
+
             ImGui.TreePop();
 		}
 	}
@@ -464,6 +480,80 @@ show_debug_message(/* Hmmm... */ "OOF!");
 }
 
 // ImGui Extensions
+
+if (node_editor) {
+    ImGui.SetNextWindowSize(720, 480, ImGuiCond.Appearing);
+    var node_ret = ImGui.Begin("NodeEditor Demo", ext_node_editor_open, undefined, ImGuiReturnMask.Both);
+    if (node_ret & ImGuiReturnMask.Return) {
+        if (node_ret & ImGuiReturnMask.Pointer) {
+            ImGui.Text("A minimal NodeEditor example.");
+            ImGui.Separator();
+
+            ImExtNodeEditor.SetCurrentEditor(node_editor);
+            ImExtNodeEditor.Begin("My Editor", 0, 0);
+                // 1) Commit known data to editor
+                if (node_editor_first_frame) {
+                    ImExtNodeEditor.SetNodePosition(node_editor_nodeA_Id, 10, 10);
+                }
+                ImExtNodeEditor.BeginNode(node_editor_nodeA_Id);
+                    ImGui.Text("Node A");
+                    ImExtNodeEditor.BeginPin(node_editor_nodeA_inputPinId, ImExtNodeEditorPinKind.Input);
+                        ImGui.Text("-> In");
+                    ImExtNodeEditor.EndPin();
+                    ImGui.SameLine();
+                    ImExtNodeEditor.BeginPin(node_editor_nodeA_outputPinId, ImExtNodeEditorPinKind.Output);
+                        ImGui.Text("Out ->");
+                    ImExtNodeEditor.EndPin();
+                ImExtNodeEditor.EndNode();
+
+                if (node_editor_first_frame) {
+                    ImExtNodeEditor.SetNodePosition(node_editor_nodeB_Id, 210, 60);
+                }
+                ImExtNodeEditor.BeginNode(node_editor_nodeB_Id);
+                    ImGui.Text("Node B");
+                    ImExtNodeEditor.BeginPin(node_editor_nodeB_inputPinId, ImExtNodeEditorPinKind.Input);
+                        ImGui.Text("-> In");
+                    ImExtNodeEditor.EndPin();
+                    ImGui.SameLine();
+                    ImExtNodeEditor.BeginPin(node_editor_nodeB_outputPinId, ImExtNodeEditorPinKind.Output);
+                        ImGui.Text("Out ->");
+                    ImExtNodeEditor.EndPin();
+                ImExtNodeEditor.EndNode();
+            
+                // Links
+                var link;
+                for (var i=0; i<array_length(node_editor_links); i++) {
+                    link = node_editor_links[i];
+                    ImExtNodeEditor.Link(link.id, link.in, link.out);
+                }
+
+                // Interaction
+                if (ImExtNodeEditor.BeginCreate()) {
+                    var _tempLinkInfo = {};
+                    var res = ImExtNodeEditor.QueryNewLink(_tempLinkInfo);
+                    if (res == true) {
+                        if (ImExtNodeEditor.AcceptNewItem()) {
+                            array_push(node_editor_links, {id: node_editor_uniqueId++, in: _tempLinkInfo.start_pin_id, out: _tempLinkInfo.end_pin_id});
+                        }
+                    }
+                }
+                ImExtNodeEditor.EndCreate();
+
+                /*if (ImExtNodeEditor.BeginDelete()) {
+                    // ...
+                }
+                ImExtNodeEditor.EndDelete();*/
+
+            ImExtNodeEditor.End();
+            if (node_editor_first_frame) {
+                ImExtNodeEditor.NavigateToContent(0.0);
+            }
+            ImExtNodeEditor.SetCurrentEditor(pointer_null);
+            node_editor_first_frame = false;
+        }
+        ImGui.End();
+    }
+}
 
 if (text_editor) {
 	ImGui.SetNextWindowSize(600,400,ImGuiCond.Appearing);
@@ -480,28 +570,28 @@ if (text_editor) {
                     if (ImGui.Button("Select all"))
                         text_editor.SelectAll();
 
-                    if (ImGui.BeginCombo("Language", LANG[SEL_LANG], 0))
+                    if (ImGui.BeginCombo("Language", text_editor_langs[text_editor_lang_selected], 0))
                     {
                         for (var i = 0; i < 5; i++)
                         {
-                            if (ImGui.Selectable(LANG[i], SEL_LANG == i))
+                            if (ImGui.Selectable(text_editor_langs[i], text_editor_lang_selected == i))
                             {
-                                SEL_LANG = i;
-                                text_editor.SetLanguage(SEL_LANG);
+                                text_editor_lang_selected = i;
+                                text_editor.SetLanguage(text_editor_langs_array[text_editor_lang_selected]);
                             }
                         }
 
                         ImGui.EndCombo();
                     }
 
-                    if (ImGui.BeginCombo("Palette", PAL[SEL_PAL], 0))
+                    if (ImGui.BeginCombo("Palette", text_editor_palettes[text_editor_palette_selected], 0))
                     {
                         for (var i = 0; i < 4; i++)
                         {
-                            if (ImGui.Selectable(PAL[i], SEL_PAL == i))
+                            if (ImGui.Selectable(text_editor_palettes[i], text_editor_palette_selected == i))
                             {
-                                SEL_PAL = i;
-                                text_editor.SetPalette(SEL_PAL);
+                                text_editor_palette_selected = i;
+                                text_editor.SetPalette(text_editor_palettes_array[text_editor_palette_selected]);
                             }
                         }
 

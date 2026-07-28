@@ -73,7 +73,7 @@ template <typename T > struct _RefThing
 		inc();
 	} // end _RefThing
 
-	~_RefThing() 
+	~_RefThing()
 	{
 		dec();
 	} // end ~_RefThing
@@ -88,10 +88,10 @@ template <typename T > struct _RefThing
 		LOCK_RVALUE_MUTEX();
 		--m_refCount;
 		if (m_refCount == 0) {
-			// use the factory to clean it up and give us a default thing to use			
+			// use the factory to clean it up and give us a default thing to use
 			m_thing = (m_size >= 0) ? _RefFactory<T>::Destroy(m_thing) : NULL;
 			m_size = 0;
-			
+
 			YYC_DELETE(this);
 		} // end if
 		UNLOCK_RVALUE_MUTEX();
@@ -115,7 +115,7 @@ template <typename T> struct RefThing
 		m_pThing = new _RefThing<T>( _thing );
 	} // end RefThing
 
-	RefThing( const _RefThing<T>& _other ) 
+	RefThing( const _RefThing<T>& _other )
 	{
 		m_pThing = _other.m_pThing;
 		m_pThing->Inc();
@@ -135,8 +135,8 @@ template <typename T> struct RefThing
 		m_pThing = NULL;
 	} // end dec
 
-	T get( void ) const { 
-		return (m_pThing != NULL) ? m_pThing->m_thing : NULL; 
+	T get( void ) const {
+		return (m_pThing != NULL) ? m_pThing->m_thing : NULL;
 	} // end get
 };
 

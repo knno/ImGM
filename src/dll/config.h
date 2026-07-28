@@ -8,7 +8,8 @@
 #pragma once
 
 // #region ext
-// #define IMEXT_NODE_EDITOR
 #define IMEXT_TEXT_EDITOR
+#define IMEXT_NODE_EDITOR
+
 
 // #endregion

@@ -259,71 +259,88 @@ export class ApiAnalyzer extends BaseParser {
 	}
 
 	p_ns_api_funcs(token, nav, ns) {
-		nav ??= this
-		if (token.type == TokenType.KEYWORD && token.value == "namespace") {
-			let fns = []
-			const next = nav.peek(1)
-			if (next && next.type == TokenType.IDENTIFIER) {
-				nav.advance()
-				let i = 1;
-				let after = nav.peek(i);
-				while (
-					after &&
-					[
-						TokenType.NEWLINE,
-					].includes(after.type)
-				) {
-					after = nav.peek(i)
-					i++
+		nav ??= this;
+		let newNS = ns;
+
+		if (token.type !== TokenType.KEYWORD || token.value !== "namespace") {
+			return;
+		}
+
+		const next = nav.peek(1);
+		if (!next) return;
+
+		// namespace <identifier>
+		if (next.type === TokenType.IDENTIFIER) {
+			nav.advance(); // consume identifier
+
+			// Skip newlines
+			let i = 1;
+			let after = nav.peek(i);
+			while (after && after.type === TokenType.NEWLINE) {
+				i++;
+				after = nav.peek(i);
+			}
+
+			if (!after || !after.children.length) return;
+
+			nav.advance(); // consume children token
+
+			const children = after.navigateChildren();
+			if (ns != next.value) {
+				newNS = ns ? `${ns}.${next.value}` : next.value;
+			}
+
+			const fns = [];
+
+			while (!children.isLast()) {
+				const child = children.peek();
+
+				let result = undefined;
+
+				if (child.type === TokenType.KEYWORD && child.value === "namespace") {
+					result = this.p_ns_api_funcs(child, children, newNS);
+					children.advance();
 				}
-				if (after && after.children.length > 0) {
-					nav.advance()
-					const children = after.navigateChildren()
-					if (ns && next.value && ns != next.value) {
-						ns = ns ? `${ns}.${next.value}` : next.value
-					}
-					let _res;
-					while (!children.isLast()) {
-						const child = children.peek()
-						_res = undefined
-						if (child.type == TokenType.IDENTIFIER) {
-							_res = this._api_func(child, children, ns)
-							if (_res) {
-								fns.push(_res)
-							}
-							children.advance();
-							continue
-						}
-						if (_res) {
-							if (Array.isArray(_res)) {
-								fns.push(..._res)
-							} else {
-								fns.push(_res)
-							}
-						} else {
-							children.advance()
-						}
-					}
-					this.functions.push(...fns)
-					return fns
+				else if (child.type === TokenType.IDENTIFIER) {
+					result = this._api_func(child, children, newNS);
+					children.advance();
 				}
-			} else if (next && next.type == TokenType.KEYWORD) {
-				const prev = nav.peek(-1)
-				if (prev) {
-					let fn = this._api_func(prev, nav, ns)
-					if (fn) {
-						this.functions.push(fn)
-						return fn
-					}
+				else {
+					children.advance();
 				}
+
+				if (result) {
+					if (Array.isArray(result)) fns.push(...result);
+					else fns.push(result);
+				}
+			}
+
+			this.functions.push(...fns);
+			return fns;
+		}
+
+		// namespace <keyword> fallback
+		if (next.type === TokenType.KEYWORD) {
+			const prev = nav.peek(-1);
+			if (!prev) return;
+
+			const fn = this._api_func(prev, nav, ns);
+			if (fn) {
+				this.functions.push(fn);
+				return fn;
 			}
 		}
 	}
 
+
 	p_api_enum(token, nav, ns) {
 		nav ??= this
 		if (token.type == TokenType.KEYWORD && token.value == "enum") {
-			const next = nav.peek(1)
+			let next = nav.peek(1)
+			if (next && next.value == "class") {
+				nav.advance();
+				next = nav.peek(1)
+			}
 			if (next && next.type == TokenType.IDENTIFIER) {
 				nav.advance()
 				let name = next.value
@@ -614,22 +631,24 @@ export class WrapperFunction extends BaseFunction {
 			if (!a) continue
 			def = def.replaceAll(`#arg${i}`, a.name._name)
 		}
-
+		// Replace #ret with ___ret.
+		def = def.replaceAll(`#ret`, `___ret`);
 		return def;
 	}
 
 	modifier(token, bodyNavigator) {
+		let spacing = 1;
 		switch (token.value) {
 			case `${GMMOD}PREPEND`: {
 				const next = bodyNavigator.peek(1)
 				const tokVal = next.children[0]
-				this._start += this._resolveModVal(tokVal.getFlatString());
+				this._start += this._resolveModVal((tokVal.getFlatString()).replace(/(?:[^\\])\\{1}n/g, '\n' + Config.style.spacing.repeat(spacing + 1)));
 				return true
 			}
 			case `${GMMOD}APPEND`: {
 				const next = bodyNavigator.peek(1)
 				const tokVal = next.children[0]
-				this._end += this._resolveModVal(tokVal.getFlatString());
+				this._end += this._resolveModVal((tokVal.getFlatString()).replace(/(?:[^\\])\\{1}n/g, '\n' + Config.style.spacing.repeat(spacing + 1)));
 				return true
 			}
 			case `${GMMOD}OVERRIDE`: {
@@ -664,7 +683,7 @@ export class WrapperFunction extends BaseFunction {
 					throw `Could not handle ${token.value} modifier, target argument is unset at line ${token.line}`
 				const arg = this.args[this.argIndex]
 				const next = bodyNavigator.peek(1)
-				arg.passthrough = this._resolveModVal(next.getFlatString())
+				arg.passthrough = this._resolveModVal((next.getFlatString()).replace(/(?:[^\\])\\{1}n/g, '\n' + Config.style.spacing.repeat(spacing + 1)));
 				return true
 			}
 			case `${GMMOD}HIDDEN`: {
@@ -747,7 +766,7 @@ export class WrapperFunction extends BaseFunction {
 
 				const arg = this.args[this.argIndex]
 				const next = bodyNavigator.peek(1)
-				arg.description = this._resolveModVal(next.getFlatString())
+				arg.description = this._resolveModVal((next.getFlatString()).replace(/[^\\]\\{1}n/g, '\n'));
 				return true
 			}
 
@@ -1719,7 +1738,7 @@ export function updateGMExtensionWrappers(fullApi, extensionFile) {
 			let newOpt = {
 				"$GMExtensionOption": "",
 				"%Name": optName,
-				"defaultValue": "False",
+				"defaultValue": "True",
 				"description": "",
 				"displayName": "",
 				"exportToINI": false,
@@ -1864,7 +1883,12 @@ export function getUnusedWrappers(fullApi, extensionFile) {
 	})
 	const othersNames = others.map(gmfn => gmfn.externalName);
 	const ours = existing.filter(gmfn => !othersNames.includes(gmfn.externalName));
-	const obsoletes = ours.filter(gmfn => !newWrappers.some(w => w.targetFunc == gmfn.externalName));
+	const obsoletes = ours.filter(gmfn => !newWrappers.some(w => w.targetFunc == gmfn.externalName)).filter(
+		gmfn => {
+			var { name: handle, parent: parentHandle } = getNamespaceOfGMExtensionFunction(gmfn, fullApi);
+			return handle != str.toKebabCase(requestedHandle, "-") && !requestedHandleChildren.has(handle)
+		}
+	);
 
 	// Remove existing functions from any extension(s) that are disabled currently in the config header
 	const loadedChilds = Object.keys(Module._loadedModules).filter(k => Module._loadedModules[k].parent != undefined);

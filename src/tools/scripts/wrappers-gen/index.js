@@ -5,27 +5,28 @@
  *
  * @author knno <github.com/knno>
  */
+import fs from 'fs'
 import { sync as globSync } from "glob"
 import Path from "path"
 import { fileURLToPath } from "url"
 import Config from "../../config.js"
+import { ImGMAbort } from "../../lib/class/error.js"
 import File from "../../lib/class/file.js"
 import Name from "../../lib/class/name.js"
-import { getOrCreateModule, loadModules, toHandle, Module, getChildModules } from "../../lib/modules.js"
-import { CppToken } from "../../lib/parsers/langs/cpp.js"
+import Logger from "../../lib/logging.js"
+import { Module, getOrCreateModule, loadModules, toHandle } from "../../lib/modules.js"
+import cpp, { CppToken } from "../../lib/parsers/langs/cpp.js"
 import {
 	ApiEnum,
 	ApiFunction,
+	getApi,
 	getWrappers,
 	updateGMExtensionWrappers,
-
 } from "../../lib/parsers/wrappers.js"
 import { Program } from "../../lib/program.js"
 import * as str from "../../lib/utils/string.js"
 import { generateCoverage } from "./coverage.js"
-import { updateGmlScripts } from "./gml.js"
-import ImGMError, { ImGMAbort } from "../../lib/class/error.js"
-import Logger from "../../lib/logging.js"
+import { updateGmlScript } from "./gml.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = Path.dirname(__filename)
@@ -48,9 +49,51 @@ async function main() {
 		return
 	}
 
-	const modules = await loadModules(true); // Preload modules
+	let moduleParam = params._args[0];
+	if (moduleParam) {
+		if (moduleParam == "exts" || moduleParam == "imext" || moduleParam == "ext") {
+			moduleParam = "ImExt";
+		}
+	}
 
-	const requestedModuleHandle = toHandle(params._args[0]);
+	const modules = await loadModules(true); // Preload modules
+	if (fs.existsSync(params._args[0])) {
+		let filePath = params._args[0];
+		let module = params.module;
+		module = await getOrCreateModule(module);
+		const totalStartTime = Date.now()
+
+		fs.accessSync(filePath, fs.constants.F_OK)
+		const fileContent = fs.readFileSync(filePath, "utf-8")
+		const lexer = new cpp.Lexer(fileContent)
+		const parser = new cpp.Parser(lexer)
+		parser.main()
+
+		const api = await getApi(parser.tokens, module, filePath)
+		const result = {}
+
+		result.time = (Date.now() - totalStartTime) / 1000
+		result.moduleHandle = module.handle
+		result.moduleName = module.name.get()
+		result.file = filePath
+		result.tokens = JSON.stringify(api.tokens)
+		result.enums = JSON.stringify(api.enums)
+		result.functions = JSON.stringify(
+			api.functions.map((f) => {
+				f.args = JSON.stringify(f.args)
+				return f
+			})
+		)
+		result.artifacts =
+			api.artifacts.length > 0 ? JSON.stringify(api.artifacts) : undefined
+
+		// Send result back to main thread
+		Logger.debug(`Finished`, { name: NAME, type: Logger.types.WRAPPER_FILE_PARSE })
+
+		process.exit(0);
+	}
+
+	const requestedModuleHandle = toHandle(moduleParam);
 	let module = undefined;
 	let moduleChilds = undefined;
 	let allChilds = undefined;
@@ -218,7 +261,7 @@ async function main() {
 	}
 
 	Term.main(
-		() => isReady || apisCompleted(),
+		() => isReady && apisCompleted(),
 		() => {
 			Term.setProgressBarVisible(false)
 			Term.render()
@@ -373,7 +416,7 @@ async function main() {
 				}
 
 				updateGMExtensionWrappers(fullApi, extFile)
-				updateGmlScripts(fullApi)
+				updateGmlScript(fullApi, h)
 				const covInfo = generateCoverage(fullApi)
 				fullApi.coverageInfo = covInfo;
 				allApis.push(fullApi);
@@ -384,14 +427,19 @@ async function main() {
 						` - ${Program.colors.get("yellow", fullApi.enums.length)} Enums`,
 						{ name: NAME }
 					)
-					// Functions found during the whole build.
+					// Functions found during the single api build.
 					Logger.info(
 						` - ${Program.colors.get("yellow", fullApi.functions.length)} Functions`,
 						{ name: NAME }
 					)
-					// Wrappers found during the whole build.
+					// Wrappers found during the single api build.
 					Logger.info(
 						` - ${Program.colors.get("orange", fullApi.wrappers.length)} Wrappers`,
+						{ name: NAME }
+					)
+					// Coverage of this single api build.
+					Logger.info(
+						` - ${Program.colors.get("green", `${fullApi.coverageInfo.percent}% Coverage`)}`,
 						{ name: NAME }
 					)
 				}
@@ -453,7 +501,7 @@ async function main() {
 			)
 			if (fullApis.coverageInfo) {
 				Logger.info(
-					`Coverage: ${Program.colors.get("green", `${fullApis.coverageInfo.percent}%`)}`,
+					`Full Coverage: ${Program.colors.get("green", `${fullApis.coverageInfo.percent}%`)}`,
 					{ name: NAME }
 				)
 			}

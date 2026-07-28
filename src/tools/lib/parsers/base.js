@@ -475,7 +475,7 @@ export class BaseTokenizer {
 		const tFns = this.fns.filter((fn) => fn.startsWith("t_"))
 		for (const t_Fn of tFns) {
 			const tok = this[t_Fn].apply(this, [char])
-			if (tok == undefined) {
+			if (tok == undefined || tok == null) {
 				continue
 			}
 			if (tok instanceof this.Token) {
