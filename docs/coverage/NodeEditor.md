@@ -32,8 +32,8 @@ These are the wrappers of functions generated for NodeEditor.
 | `NodeEditor.Group` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L370) | - |
 | `NodeEditor.EndNode` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L386) | - |
 | `NodeEditor.BeginGroupHint` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L396) | - |
-| `NodeEditor.GetGroupMin` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L406) | Supported with suffix (X, Y) |
-| `NodeEditor.GetGroupMax` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L424) | Supported with suffix (X, Y) |
+| `NodeEditor.GetGroupMin` | ✅ | - | Supported with suffix (X, Y) |
+| `NodeEditor.GetGroupMax` | ✅ | - | Supported with suffix (X, Y) |
 | `NodeEditor.GetHintForegroundDrawList` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L442) | - |
 | `NodeEditor.GetHintBackgroundDrawList` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L451) | - |
 | `NodeEditor.EndGroupHint` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L460) | - |
@@ -54,8 +54,8 @@ These are the wrappers of functions generated for NodeEditor.
 | `NodeEditor.EndDelete` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L795) | - |
 | `NodeEditor.SetNodePosition` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L807) | - |
 | `NodeEditor.SetGroupSize` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L823) | - |
-| `NodeEditor.GetNodePosition` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L842) | Supported with suffix (X, Y) |
-| `NodeEditor.GetNodeSize` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L864) | Supported with suffix (Width, Height) |
+| `NodeEditor.GetNodePosition` | ✅ | - | Supported with suffix (X, Y) |
+| `NodeEditor.GetNodeSize` | ✅ | - | Supported with suffix (Width, Height) |
 | `NodeEditor.CenterNodeOnScreen` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L886) | - |
 | `NodeEditor.SetNodeZPosition` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L898) | - |
 | `NodeEditor.GetNodeZPosition` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L913) | - |
@@ -77,8 +77,8 @@ These are the wrappers of functions generated for NodeEditor.
 | `NodeEditor.DeselectLink` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1081) | - |
 | `NodeEditor.DeleteNode` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1092) | - |
 | `NodeEditor.DeleteLink` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1103) | - |
-| `NodeEditor.HasAnyLinks` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1114) | - |
-| `NodeEditor.BreakLinks` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1136) | - |
+| `NodeEditor.HasAnyLinks` | ✅ | - | Supported with suffix (Node, Pin) |
+| `NodeEditor.BreakLinks` | ✅ | - | Supported with suffix (X, Y) |
 | `NodeEditor.NavigateToContent` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1158) | - |
 | `NodeEditor.NavigateToSelection` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1172) | - |
 | `NodeEditor.ShowNodeContextMenu` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1187) | - |
@@ -110,9 +110,9 @@ These are the wrappers of functions generated for NodeEditor.
 | `NodeEditor.GetBackgroundDoubleClickButtonIndex` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1428) | - |
 | `NodeEditor.GetLinkPins` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1438) | - |
 | `NodeEditor.PinHadAnyLinks` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1451) | - |
-| `NodeEditor.GetScreenSize` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1461) | Supported with suffix (X, Y) |
-| `NodeEditor.ScreenToCanvas` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1481) | - |
-| `NodeEditor.CanvasToScreen` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1517) | - |
+| `NodeEditor.GetScreenSize` | ✅ | - | Supported with suffix (X, Y) |
+| `NodeEditor.ScreenToCanvas` | ✅ | - | Supported with suffix (X, Y) |
+| `NodeEditor.CanvasToScreen` | ✅ | - | Supported with suffix (X, Y) |
 | `NodeEditor.GetNodeCount` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1551) | - |
 | `NodeEditor.GetOrderedNodeIds` | ✅ | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1560) | - |
 
@@ -124,7 +124,27 @@ These are non-standard functions made specifically for NodeEditor.
 | Wrapper | Wrapper Location | Note |
 |---------|------------------|------|
 | `NodeEditor.AcceptNewItemWithStyle` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L674) | - |
+| `NodeEditor.BreakLinksNode` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1136) | - |
+| `NodeEditor.BreakLinksPin` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1147) | - |
+| `NodeEditor.CanvasToScreenX` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1517) | - |
+| `NodeEditor.CanvasToScreenY` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1535) | - |
+| `NodeEditor.GetGroupMaxX` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L424) | - |
+| `NodeEditor.GetGroupMaxY` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L433) | - |
+| `NodeEditor.GetGroupMinX` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L406) | - |
+| `NodeEditor.GetGroupMinY` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L415) | - |
+| `NodeEditor.GetNodePositionX` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L842) | - |
+| `NodeEditor.GetNodePositionY` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L853) | - |
+| `NodeEditor.GetNodeSizeX` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L864) | - |
+| `NodeEditor.GetNodeSizeY` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L875) | - |
+| `NodeEditor.GetScreenSizeX` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1461) | - |
+| `NodeEditor.GetScreenSizeY` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1470) | - |
 | `NodeEditor.GetStyle` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L82) | - |
+| `NodeEditor.HasAnyLinksNode` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1114) | - |
+| `NodeEditor.HasAnyLinksPin` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1125) | - |
+| `NodeEditor.PushStyleVarVec2` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L153) | - |
+| `NodeEditor.PushStyleVarVec4` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L173) | - |
 | `NodeEditor.QueryNewLinkWithStyle` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L589) | - |
 | `NodeEditor.QueryNewNodeWithStyle` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L642) | - |
 | `NodeEditor.RejectNewItemWithStyle` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L698) | - |
+| `NodeEditor.ScreenToCanvasX` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1481) | - |
+| `NodeEditor.ScreenToCanvasY` | [node_editor_wrappers_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imext/node_editor/wrappers/node_editor_wrappers_gm.cpp#L1499) | - |

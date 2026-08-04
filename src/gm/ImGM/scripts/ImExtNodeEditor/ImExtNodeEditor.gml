@@ -208,7 +208,7 @@ function ImExtNodeEditor() constructor {
 	}
 
 	/**
-	 * @function BreakLinks
+	 * @function BreakLinksNode
 	 * @context NodeEditor
 	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Breaks all links connected to a node.
@@ -216,22 +216,49 @@ function ImExtNodeEditor() constructor {
 	 * @param {Any} node_id The node identifier.
 	 * @return {Real}
 	 */
-	static BreakLinks = function(node_id) {
+	static BreakLinksNode = function(node_id) {
 		return __imext_node_editor_break_links_node(node_id);
 	}
 
 	/**
-	 * @function CanvasToScreen
+	 * @function BreakLinksPin
 	 * @context NodeEditor
-	 * @desc ImGM wrapper for `NodeEditor`.
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Breaks all links connected to a pin.
+	 *
+	 * @param {Any} pin_id The pin identifier.
+	 * @return {Real}
+	 */
+	static BreakLinksPin = function(pin_id) {
+		return __imext_node_editor_break_links_pin(pin_id);
+	}
+
+	/**
+	 * @function CanvasToScreenX
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Converts a canvas-space X position to screen-space.
 	 *
 	 * @param {Real} _x The X coordinate.
 	 * @param {Real} _y The Y coordinate.
 	 * @return {Real}
 	 */
-	static CanvasToScreen = function(_x, _y) {
-		return __imext_node_editor_canvas_to_screen(_x, _y);
+	static CanvasToScreenX = function(_x, _y) {
+		return __imext_node_editor_canvas_to_screen_x(_x, _y);
+	}
+
+	/**
+	 * @function CanvasToScreenY
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Converts a canvas-space Y position to screen-space.
+	 *
+	 * @param {Real} _x The X coordinate.
+	 * @param {Real} _y The Y coordinate.
+	 * @return {Real}
+	 */
+	static CanvasToScreenY = function(_x, _y) {
+		return __imext_node_editor_canvas_to_screen_y(_x, _y);
 	}
 
 	/**
@@ -586,27 +613,51 @@ function ImExtNodeEditor() constructor {
 	}
 
 	/**
-	 * @function GetGroupMax
+	 * @function GetGroupMaxX
 	 * @context NodeEditor
-	 * @desc ImGM wrapper for `NodeEditor`.
+	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Returns the maximum X group hint bounds.
 	 *
 	 * @return {Real}
 	 */
-	static GetGroupMax = function() {
-		return __imext_node_editor_get_group_max();
+	static GetGroupMaxX = function() {
+		return __imext_node_editor_get_group_max_x();
 	}
 
 	/**
-	 * @function GetGroupMin
+	 * @function GetGroupMaxY
 	 * @context NodeEditor
-	 * @desc ImGM wrapper for `NodeEditor`.
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Returns the maximum Y group hint bounds.
+	 *
+	 * @return {Real}
+	 */
+	static GetGroupMaxY = function() {
+		return __imext_node_editor_get_group_max_y();
+	}
+
+	/**
+	 * @function GetGroupMinX
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Returns the minimum X group hint bounds.
 	 *
 	 * @return {Real}
 	 */
-	static GetGroupMin = function() {
-		return __imext_node_editor_get_group_min();
+	static GetGroupMinX = function() {
+		return __imext_node_editor_get_group_min_x();
+	}
+
+	/**
+	 * @function GetGroupMinY
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Returns the minimum Y group hint bounds.
+	 *
+	 * @return {Real}
+	 */
+	static GetGroupMinY = function() {
+		return __imext_node_editor_get_group_min_y();
 	}
 
 	/**
@@ -712,29 +763,55 @@ function ImExtNodeEditor() constructor {
 	}
 
 	/**
-	 * @function GetNodePosition
+	 * @function GetNodePositionX
 	 * @context NodeEditor
-	 * @desc ImGM wrapper for `NodeEditor`.
+	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Returns the X position of a node.
 	 *
 	 * @param {Any} node_id The node identifier.
 	 * @return {Real}
 	 */
-	static GetNodePosition = function(node_id) {
-		return __imext_node_editor_get_node_position(node_id);
+	static GetNodePositionX = function(node_id) {
+		return __imext_node_editor_get_node_position_x(node_id);
 	}
 
 	/**
-	 * @function GetNodeSize
+	 * @function GetNodePositionY
 	 * @context NodeEditor
-	 * @desc ImGM wrapper for `NodeEditor`.
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Returns the Y position of a node.
+	 *
+	 * @param {Any} node_id The node identifier.
+	 * @return {Real}
+	 */
+	static GetNodePositionY = function(node_id) {
+		return __imext_node_editor_get_node_position_y(node_id);
+	}
+
+	/**
+	 * @function GetNodeSizeX
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Returns the width of a node.
 	 *
 	 * @param {Any} node_id The node identifier.
 	 * @return {Real}
 	 */
-	static GetNodeSize = function(node_id) {
-		return __imext_node_editor_get_node_size(node_id);
+	static GetNodeSizeX = function(node_id) {
+		return __imext_node_editor_get_node_size_x(node_id);
+	}
+
+	/**
+	 * @function GetNodeSizeY
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Returns the height of a node.
+	 *
+	 * @param {Any} node_id The node identifier.
+	 * @return {Real}
+	 */
+	static GetNodeSizeY = function(node_id) {
+		return __imext_node_editor_get_node_size_y(node_id);
 	}
 
 	/**
@@ -767,15 +844,27 @@ function ImExtNodeEditor() constructor {
 	}
 
 	/**
-	 * @function GetScreenSize
+	 * @function GetScreenSizeX
 	 * @context NodeEditor
-	 * @desc ImGM wrapper for `NodeEditor`.
+	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Returns the screen width of the editor canvas.
 	 *
 	 * @return {Real}
 	 */
-	static GetScreenSize = function() {
-		return __imext_node_editor_get_screen_size();
+	static GetScreenSizeX = function() {
+		return __imext_node_editor_get_screen_size_x();
+	}
+
+	/**
+	 * @function GetScreenSizeY
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Returns the screen height of the editor canvas.
+	 *
+	 * @return {Real}
+	 */
+	static GetScreenSizeY = function() {
+		return __imext_node_editor_get_screen_size_y();
 	}
 
 	/**
@@ -854,7 +943,7 @@ function ImExtNodeEditor() constructor {
 	}
 
 	/**
-	 * @function HasAnyLinks
+	 * @function HasAnyLinksNode
 	 * @context NodeEditor
 	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Returns whether a node has any links.
@@ -862,8 +951,21 @@ function ImExtNodeEditor() constructor {
 	 * @param {Any} node_id The node identifier.
 	 * @return {Bool}
 	 */
-	static HasAnyLinks = function(node_id) {
+	static HasAnyLinksNode = function(node_id) {
 		return __imext_node_editor_has_any_links_node(node_id);
+	}
+
+	/**
+	 * @function HasAnyLinksPin
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Returns whether a pin has any links.
+	 *
+	 * @param {Any} pin_id The pin identifier.
+	 * @return {Bool}
+	 */
+	static HasAnyLinksPin = function(pin_id) {
+		return __imext_node_editor_has_any_links_pin(pin_id);
 	}
 
 	/**
@@ -1140,6 +1242,38 @@ function ImExtNodeEditor() constructor {
 	}
 
 	/**
+	 * @function PushStyleVarVec2
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Pushes a 2D style variable value onto the current editor style stack.
+	 *
+	 * @param {Real} var_index The style variable index.
+	 * @param {Real} _x The X component.
+	 * @param {Real} _y The Y component.
+	 * @return {Undefined}
+	 */
+	static PushStyleVarVec2 = function(var_index, _x, _y) {
+		return __imext_node_editor_push_style_var_vec2(var_index, _x, _y);
+	}
+
+	/**
+	 * @function PushStyleVarVec4
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Pushes a 4D style variable value onto the current editor style stack.
+	 *
+	 * @param {Real} var_index The style variable index.
+	 * @param {Real} _x The X component.
+	 * @param {Real} _y The Y component.
+	 * @param {Real} z The Z component.
+	 * @param {Real} w The W component.
+	 * @return {Undefined}
+	 */
+	static PushStyleVarVec4 = function(var_index, _x, _y, z, w) {
+		return __imext_node_editor_push_style_var_vec4(var_index, _x, _y, z, w);
+	}
+
+	/**
 	 * @function QueryDeletedLink
 	 * @context NodeEditor
 	 * @desc ImGM wrapper for `NodeEditor`.
@@ -1288,17 +1422,31 @@ function ImExtNodeEditor() constructor {
 	}
 
 	/**
-	 * @function ScreenToCanvas
+	 * @function ScreenToCanvasX
 	 * @context NodeEditor
-	 * @desc ImGM wrapper for `NodeEditor`.
+	 * @desc ImGM custom wrapper for `NodeEditor`.
 	 * Converts a screen-space X position to canvas-space.
 	 *
 	 * @param {Real} _x The X coordinate.
 	 * @param {Real} _y The Y coordinate.
 	 * @return {Real}
 	 */
-	static ScreenToCanvas = function(_x, _y) {
-		return __imext_node_editor_screen_to_canvas(_x, _y);
+	static ScreenToCanvasX = function(_x, _y) {
+		return __imext_node_editor_screen_to_canvas_x(_x, _y);
+	}
+
+	/**
+	 * @function ScreenToCanvasY
+	 * @context NodeEditor
+	 * @desc ImGM custom wrapper for `NodeEditor`.
+	 * Converts a screen-space Y position to canvas-space.
+	 *
+	 * @param {Real} _x The X coordinate.
+	 * @param {Real} _y The Y coordinate.
+	 * @return {Real}
+	 */
+	static ScreenToCanvasY = function(_x, _y) {
+		return __imext_node_editor_screen_to_canvas_y(_x, _y);
 	}
 
 	/**

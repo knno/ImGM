@@ -299,7 +299,7 @@ export class ApiAnalyzer extends BaseParser {
 
 				if (child.type === TokenType.KEYWORD && child.value === "namespace") {
 					result = this.p_ns_api_funcs(child, children, newNS);
-					children.advance();
+					continue;
 				}
 				else if (child.type === TokenType.IDENTIFIER) {
 					result = this._api_func(child, children, newNS);

@@ -21,6 +21,13 @@ export default {
             "GetNodePosition": XYWrappers,
             "GetNodeSize": WHWrappers,
             "GetScreenSize": XYWrappers,
+            "ScreenToCanvas": XYWrappers,
+            "CanvasToScreen": XYWrappers,
+            "BreakLinks": XYWrappers,
+            "HasAnyLinks": {
+                note: "Supported with suffix (Node, Pin)",
+                supported: true,
+            },
         },
     },
 }

@@ -539,10 +539,25 @@ if (node_editor) {
                 }
                 ImExtNodeEditor.EndCreate();
 
-                /*if (ImExtNodeEditor.BeginDelete()) {
-                    // ...
+                if (ImExtNodeEditor.BeginDelete()) {
+                    var deletedLinkId = -1;
+                    var _tempLinkInfo = {};
+                    var res = ImExtNodeEditor.QueryDeletedLink(_tempLinkInfo);
+                    while (res == true) {
+                        if (ImExtNodeEditor.AcceptDeletedItem(false)) {
+                            deletedLinkId = _tempLinkInfo[$ "link_id"] ?? -1;
+                            var ind = array_find_index(node_editor_links, method({deletedLinkId}, function(item, index) {
+                                return item.id == deletedLinkId
+                            }));
+                            if (ind > -1) {
+                                array_delete(node_editor_links, ind, 1);
+                                break;
+                            }
+                        }
+                        res = ImExtNodeEditor.QueryDeletedLink(_tempLinkInfo);
+                    }
                 }
-                ImExtNodeEditor.EndDelete();*/
+                ImExtNodeEditor.EndDelete();
 
             ImExtNodeEditor.End();
             if (node_editor_first_frame) {
@@ -550,6 +565,11 @@ if (node_editor) {
             }
             ImExtNodeEditor.SetCurrentEditor(pointer_null);
             node_editor_first_frame = false;
+        } else {
+            ImExtNodeEditor.DestroyEditor(node_editor)
+            ImExtNodeEditor.SetCurrentEditor(pointer_null);
+            node_editor = undefined;
+    		ext_node_editor_open = false;
         }
         ImGui.End();
     }

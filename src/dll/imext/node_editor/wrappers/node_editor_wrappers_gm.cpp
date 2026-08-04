@@ -151,7 +151,7 @@ GMFUNC(__imext_node_editor_push_style_var) {
  * @param y The Y component.
  */
 GMFUNC(__imext_node_editor_push_style_var_vec2) {
-	GMOVERRIDE(PushStyleVar)
+	GMOVERRIDE(PushStyleVarVec2)
 	int var_index = static_cast<int>(YYGetReal(arg, 0));
 	float x = static_cast<float>(YYGetReal(arg, 1));
 	float y = static_cast<float>(YYGetReal(arg, 2));
@@ -171,7 +171,7 @@ GMFUNC(__imext_node_editor_push_style_var_vec2) {
  * @param w The W component.
  */
 GMFUNC(__imext_node_editor_push_style_var_vec4) {
-	GMOVERRIDE(PushStyleVar)
+	GMOVERRIDE(PushStyleVarVec4)
 	int var_index = static_cast<int>(YYGetReal(arg, 0));
 	float x = static_cast<float>(YYGetReal(arg, 1));
 	float y = static_cast<float>(YYGetReal(arg, 2));
@@ -403,8 +403,8 @@ GMFUNC(__imext_node_editor_begin_group_hint) {
 /**
  * @desc Returns the minimum X group hint bounds.
  */
-GMFUNC(__imext_node_editor_get_group_min) {
-	GMOVERRIDE(GetGroupMin)
+GMFUNC(__imext_node_editor_get_group_min_x) {
+	GMOVERRIDE(GetGroupMinX)
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetGroupMin().x;
 }
@@ -413,7 +413,7 @@ GMFUNC(__imext_node_editor_get_group_min) {
  * @desc Returns the minimum Y group hint bounds.
  */
 GMFUNC(__imext_node_editor_get_group_min_y) {
-	GMOVERRIDE(GetGroupMin)
+	GMOVERRIDE(GetGroupMinY)
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetGroupMin().y;
 }
@@ -421,8 +421,8 @@ GMFUNC(__imext_node_editor_get_group_min_y) {
 /**
  * @desc Returns the maximum X group hint bounds.
  */
-GMFUNC(__imext_node_editor_get_group_max) {
-	GMOVERRIDE(GetGroupMax)
+GMFUNC(__imext_node_editor_get_group_max_x) {
+	GMOVERRIDE(GetGroupMaxX)
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetGroupMax().x;
 }
@@ -431,7 +431,7 @@ GMFUNC(__imext_node_editor_get_group_max) {
  * @desc Returns the maximum Y group hint bounds.
  */
 GMFUNC(__imext_node_editor_get_group_max_y) {
-	GMOVERRIDE(GetGroupMax)
+	GMOVERRIDE(GetGroupMaxY)
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetGroupMax().y;
 }
@@ -839,8 +839,8 @@ GMFUNC(__imext_node_editor_set_group_size) {
  * @desc Returns the X position of a node.
  * @param node_id The node identifier.
  */
-GMFUNC(__imext_node_editor_get_node_position) {
-	GMOVERRIDE(GetNodePosition)
+GMFUNC(__imext_node_editor_get_node_position_x) {
+	GMOVERRIDE(GetNodePositionX)
 	RValue* node_id = &arg[0];
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetNodePosition(__node_editor_node_id_from_rvalue(node_id)).x;
@@ -851,7 +851,7 @@ GMFUNC(__imext_node_editor_get_node_position) {
  * @param node_id The node identifier.
  */
 GMFUNC(__imext_node_editor_get_node_position_y) {
-	GMOVERRIDE(GetNodePosition)
+	GMOVERRIDE(GetNodePositionY)
 	RValue* node_id = &arg[0];
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetNodePosition(__node_editor_node_id_from_rvalue(node_id)).y;
@@ -861,8 +861,8 @@ GMFUNC(__imext_node_editor_get_node_position_y) {
  * @desc Returns the width of a node.
  * @param node_id The node identifier.
  */
-GMFUNC(__imext_node_editor_get_node_size) {
-	GMOVERRIDE(GetNodeSize)
+GMFUNC(__imext_node_editor_get_node_size_x) {
+	GMOVERRIDE(GetNodeSizeX)
 	RValue* node_id = &arg[0];
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetNodeSize(__node_editor_node_id_from_rvalue(node_id)).x;
@@ -873,7 +873,7 @@ GMFUNC(__imext_node_editor_get_node_size) {
  * @param node_id The node identifier.
  */
 GMFUNC(__imext_node_editor_get_node_size_y) {
-	GMOVERRIDE(GetNodeSize)
+	GMOVERRIDE(GetNodeSizeY)
 	RValue* node_id = &arg[0];
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetNodeSize(__node_editor_node_id_from_rvalue(node_id)).y;
@@ -1112,7 +1112,7 @@ GMFUNC(__imext_node_editor_delete_link) {
  * @param node_id The node identifier.
  */
 GMFUNC(__imext_node_editor_has_any_links_node) {
-	GMOVERRIDE(HasAnyLinks)
+	GMOVERRIDE(HasAnyLinksNode)
 	RValue* node_id = &arg[0];
 	Result.kind = VALUE_BOOL;
 	Result.val = ax::NodeEditor::HasAnyLinks(__node_editor_node_id_from_rvalue(node_id));
@@ -1123,7 +1123,7 @@ GMFUNC(__imext_node_editor_has_any_links_node) {
  * @param pin_id The pin identifier.
  */
 GMFUNC(__imext_node_editor_has_any_links_pin) {
-	GMOVERRIDE(HasAnyLinks)
+	GMOVERRIDE(HasAnyLinksPin)
 	RValue* pin_id = &arg[0];
 	Result.kind = VALUE_BOOL;
 	Result.val = ax::NodeEditor::HasAnyLinks(__node_editor_pin_id_from_rvalue(pin_id));
@@ -1134,7 +1134,7 @@ GMFUNC(__imext_node_editor_has_any_links_pin) {
  * @param node_id The node identifier.
  */
 GMFUNC(__imext_node_editor_break_links_node) {
-	GMOVERRIDE(BreakLinks)
+	GMOVERRIDE(BreakLinksNode)
 	RValue* node_id = &arg[0];
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::BreakLinks(__node_editor_node_id_from_rvalue(node_id));
@@ -1145,7 +1145,7 @@ GMFUNC(__imext_node_editor_break_links_node) {
  * @param pin_id The pin identifier.
  */
 GMFUNC(__imext_node_editor_break_links_pin) {
-	GMOVERRIDE(BreakLinks)
+	GMOVERRIDE(BreakLinksPin)
 	RValue* pin_id = &arg[0];
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::BreakLinks(__node_editor_pin_id_from_rvalue(pin_id));
@@ -1458,8 +1458,8 @@ GMFUNC(__imext_node_editor_pin_had_any_links) {
 /**
  * @desc Returns the screen width of the editor canvas.
  */
-GMFUNC(__imext_node_editor_get_screen_size) {
-	GMOVERRIDE(GetScreenSize)
+GMFUNC(__imext_node_editor_get_screen_size_x) {
+	GMOVERRIDE(GetScreenSizeX)
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetScreenSize().x;
 }
@@ -1468,7 +1468,7 @@ GMFUNC(__imext_node_editor_get_screen_size) {
  * @desc Returns the screen height of the editor canvas.
  */
 GMFUNC(__imext_node_editor_get_screen_size_y) {
-	GMOVERRIDE(GetScreenSize)
+	GMOVERRIDE(GetScreenSizeY)
 	Result.kind = VALUE_REAL;
 	Result.val = ax::NodeEditor::GetScreenSize().y;
 }
@@ -1478,8 +1478,8 @@ GMFUNC(__imext_node_editor_get_screen_size_y) {
  * @param x The X coordinate.
  * @param y The Y coordinate.
  */
-GMFUNC(__imext_node_editor_screen_to_canvas) {
-	GMOVERRIDE(ScreenToCanvas)
+GMFUNC(__imext_node_editor_screen_to_canvas_x) {
+	GMOVERRIDE(ScreenToCanvasX)
 	double x = YYGetReal(arg, 0);
 	double y = YYGetReal(arg, 1);
 	Result.kind = VALUE_REAL;
@@ -1497,7 +1497,7 @@ GMFUNC(__imext_node_editor_screen_to_canvas) {
  * @param y The Y coordinate.
  */
 GMFUNC(__imext_node_editor_screen_to_canvas_y) {
-	GMOVERRIDE(ScreenToCanvas)
+	GMOVERRIDE(ScreenToCanvasY)
 	double x = YYGetReal(arg, 0);
 	double y = YYGetReal(arg, 1);
 	Result.kind = VALUE_REAL;
@@ -1514,8 +1514,8 @@ GMFUNC(__imext_node_editor_screen_to_canvas_y) {
  * @param x The X coordinate.
  * @param y The Y coordinate.
  */
-GMFUNC(__imext_node_editor_canvas_to_screen) {
-	GMOVERRIDE(CanvasToScreen)
+GMFUNC(__imext_node_editor_canvas_to_screen_x) {
+	GMOVERRIDE(CanvasToScreenX)
 	double x = YYGetReal(arg, 0);
 	double y = YYGetReal(arg, 1);
 	Result.kind = VALUE_REAL;
@@ -1533,7 +1533,7 @@ GMFUNC(__imext_node_editor_canvas_to_screen) {
  * @param y The Y coordinate.
  */
 GMFUNC(__imext_node_editor_canvas_to_screen_y) {
-	GMOVERRIDE(CanvasToScreen)
+	GMOVERRIDE(CanvasToScreenY)
 	double x = YYGetReal(arg, 0);
 	double y = YYGetReal(arg, 1);
 	Result.kind = VALUE_REAL;
