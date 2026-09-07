@@ -14,7 +14,7 @@
   "copyToTargets":64,
   "description":"",
   "exportToGame":true,
-  "extensionVersion":"0.0.4",
+  "extensionVersion":"0.0.5",
   "files":[
     {"$GMExtensionFile":"v1","%Name":"","constants":[],"copyToTargets":-1,"filename":"imgm.dll","final":"","functions":[
         {"$GMExtensionFunction":"","%Name":"__imext_node_editor_accept_copy","argCount":0,"args":[],"documentation":"","externalName":"__imext_node_editor_accept_copy","help":"","hidden":true,"kind":1,"name":"__imext_node_editor_accept_copy","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
