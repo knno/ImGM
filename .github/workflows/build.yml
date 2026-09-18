@@ -6,13 +6,13 @@ on:
         inputs:
             runtime:
                 description: "Target runtime"
-                default: "2024.13.1.242"
+                default: "2026.0.0.23"
                 required: false
     workflow_call:
         inputs:
             runtime:
                 description: "Target runtime"
-                default: "2024.13.1.242"
+                default: "2026.0.0.23"
                 required: false
                 type: string
 permissions:
@@ -62,6 +62,10 @@ jobs:
               uses: abel0b/setup-premake@v2.4
               with:
                   version: ${{ env.PREMAKE_VERSION }}
+
+            - name: Setup MSBuild
+              if: runner.os == 'Windows'
+              uses: microsoft/setup-msbuild@v2
             #endregion
 
             #region Setup
@@ -69,6 +73,7 @@ jobs:
               if: runner.os == 'Linux'
               run: |
                   echo "YYP_VERSION=$(grep -oP '(?<=IDEVersion":")(\d+\.\d+\.\d+\.\d+)(?=")' ${{ env.YYP_PATH }})" >> $GITHUB_ENV
+
             - name: Get YYP version from file (Windows)
               if: runner.os == 'Windows'
               run: |
@@ -94,7 +99,6 @@ jobs:
                   path: |
                       ${{ env.YYP_PATH }}
                   key: win32-windows-${{ inputs.runtime }}
-
             #endregion
 
             #region Process
@@ -112,20 +116,20 @@ jobs:
               run: |
                   if ($env:RUNNER_OS -eq "Windows") {
                     premake5 vs2026
-                    cmake-converter.exe -s ./src/dll/dll.sln
                   } else {
                     premake5 gmake2
                   }
 
             - name: Configure CMake
+              if: runner.os != 'Windows'
               run: |
                   cmake -S src/dll -B src/dll/build-debug -D CMAKE_BUILD_TYPE=Debug
                   cmake -S src/dll -B src/dll/build-release -D CMAKE_BUILD_TYPE=Release
 
             - name: Build Debug
               run: |
-                  cmake --build src/dll/build-debug
                   if ($env:RUNNER_OS -eq "Windows") {
+                    msbuild ./src/dll/dll.sln /p:Configuration=Debug /p:Platform=x64
                     $files = @("ImGM.dll", "ImGM.exp", "ImGM.lib", "ImGM.pdb", "ImGM.so", "ImGM.dylib")
                     $base = "${{ env.DLL_PATH }}"
                     foreach ($file in $files) {
@@ -145,6 +149,7 @@ jobs:
                         }
                     }
                   } else {
+                    cmake --build src/dll/build-debug
                     $base = "${{ env.DLL_PATH }}"
                     $files = @("ImGM.so", "ImGM.dylib")
                     foreach ($file in $files) {
@@ -165,12 +170,16 @@ jobs:
                         } else {
                           Write-Host "Skipping file not found: $src"
                         }
-
                     }
                   }
 
             - name: Build Release
-              run: cmake --build src/dll/build-release
+              run: |
+                  if ($env:RUNNER_OS -eq "Windows") {
+                    msbuild ./src/dll/dll.sln /p:Configuration=Release /p:Platform=x64
+                  } else {
+                    cmake --build src/dll/build-release
+                  }
 
             - name: Upload Debug DLLs
               uses: actions/upload-artifact@v4
@@ -178,6 +187,7 @@ jobs:
                   name: ImGM-Debug-${{ matrix.os }}
                   path: ${{ env.DLL_PATH }}/ImGM.debug.*
                   retention-days: 1
+
             - name: Upload Release DLLs
               uses: actions/upload-artifact@v4
               with:
@@ -249,6 +259,7 @@ jobs:
                   local-settings-override-file: ${{ github.workspace }}/local_settings.json
                   runtime-version: ${{ inputs.runtime }}
                   cache: true
+
             - name: Igor Build
               uses: bscotch/igor-build@main
               timeout-minutes: 20
@@ -265,6 +276,7 @@ jobs:
                   path: ${{ steps.igor-build.outputs.out-dir }}
                   retention-days: 1
             #endregion
+
             #region Perform tests
             - name: Test Application
               if: runner.os == 'Windows'
