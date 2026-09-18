@@ -286,7 +286,7 @@ jobs:
               run: |
                   $baseName = "${{ env.PROJECT_NAME }}"
                   Expand-Archive -Path ${{ steps.igor-build.outputs.out-dir }}/$baseName.zip -Destination ${{ steps.igor-build.outputs.out-dir }}
-                  $saveDataDir = Join-Path $env:LOCALAPPDATA $baseName
+                  $saveDataDir = Join-Path $env:APPDATA $baseName
 
                   $executableName = "${{ env.PROJECT_NAME }}"
                   $exePath = Resolve-Path "$executableName.exe"
@@ -301,7 +301,7 @@ jobs:
                   New-Item -Path $logFile -ItemType File -Force
                   $logFile = Resolve-Path $logFile
 
-                  $ktfLog = Join-Path "${{ steps.igor-build.outputs.out-dir }}" "ktf-stats.log"
+                  $ktfLog = Join-Path $saveDataDir "ktf-stats.log"
                   if (Test-Path $ktfLog) {
                       Remove-Item $ktfLog -Force
                   }
