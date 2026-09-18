@@ -31,13 +31,13 @@ jobs:
             - name: Setup Premake
               uses: abel0b/setup-premake@v2.4
               with:
-                  version: "5.0.0-beta2"
+                  version: "5.0.0-beta8"
 
             - name: Run Premake
               run: premake5 gmake2
 
             - name: Configure CMake
-              run: cmake -S src/dll -B build -DCMAKE_BUILD_TYPE=Release
+              run: cmake -S src/dll -B build -D CMAKE_BUILD_TYPE=Release
 
             - name: Build
               run: cmake --build build --config Release

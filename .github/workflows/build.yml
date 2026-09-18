@@ -19,9 +19,9 @@ permissions:
     contents: write
 env:
     PROJECT_NAME: "ImGM"
-    CMAKE_VERSION: "4.1.1"
-    NODE_VERSION: "20"
-    PREMAKE_VERSION: "5.0.0-beta2"
+    CMAKE_VERSION: "4.4.3"
+    NODE_VERSION: "latest"
+    PREMAKE_VERSION: "5.0.0-beta8"
     DLL_PATH: "${{ github.workspace }}/src/gm/ImGM/extensions/ImGM"
     YYP_PATH: "${{ github.workspace }}/src/gm/ImGM/ImGM.yyp"
 
@@ -111,7 +111,7 @@ jobs:
             - name: Run Premake
               run: |
                   if ($env:RUNNER_OS -eq "Windows") {
-                    premake5 vs2022
+                    premake5 vs2026
                     cmake-converter.exe -s ./src/dll/dll.sln
                   } else {
                     premake5 gmake2
@@ -119,8 +119,8 @@ jobs:
 
             - name: Configure CMake
               run: |
-                  cmake -S src/dll -B src/dll/build-debug -DCMAKE_BUILD_TYPE=Debug
-                  cmake -S src/dll -B src/dll/build-release -DCMAKE_BUILD_TYPE=Release
+                  cmake -S src/dll -B src/dll/build-debug -D CMAKE_BUILD_TYPE=Debug
+                  cmake -S src/dll -B src/dll/build-release -D CMAKE_BUILD_TYPE=Release
 
             - name: Build Debug
               run: |

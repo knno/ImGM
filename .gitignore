@@ -10,6 +10,7 @@ src/dll/**/internal/**/*
 src/gm/**/*.zip
 src/gm/ImGM/extensions/ImGM/*.exp
 !src/gm/ImGM/extensions/ImGM/ImGM.dll
+src/gm/ImGM/Build
 
 temp/
 tmp/

@@ -21,13 +21,13 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -41,15 +41,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\gm\ImGM\extensions\ImGM\</OutDir>
-    <IntDir>..\..\..\..\temp\$(ShortProjectName)\$(Platform)\$(Configuration)\Debug\</IntDir>
+    <OutDir>$(ProjectDir)..\gm\ImGM\extensions\ImGM\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\temp\$(ShortProjectName)\$(Platform)\$(Configuration)\Debug\</IntDir>
     <TargetName>ImGM</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\gm\ImGM\extensions\ImGM\</OutDir>
-    <IntDir>..\..\..\..\temp\$(ShortProjectName)\$(Platform)\$(Configuration)\Release\</IntDir>
+    <OutDir>$(ProjectDir)..\gm\ImGM\extensions\ImGM\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\temp\$(ShortProjectName)\$(Platform)\$(Configuration)\Release\</IntDir>
     <TargetName>ImGM</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
@@ -69,6 +69,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>..\gm\ImGM\extensions\ImGM\ImGM.lib</ImportLibrary>
     </Link>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -90,6 +92,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>..\gm\ImGM\extensions\ImGM\ImGM.lib</ImportLibrary>
     </Link>
+    <ProjectReference>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />

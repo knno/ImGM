@@ -12,7 +12,7 @@ This guide will walk you through setting up ImGM locally on your machine so that
 
 This guide has been tested using:
 
-- Visual Studio 2022
+- Visual Studio 2026
 - NodeJS v24.5.0
 - npm v11.5.2
 - Premake 5.0.0-beta2
@@ -92,7 +92,7 @@ To keep Visual Studio up to date with any new files that have been added, we'll 
 If you don't have Premake previously installed on your machine then place `premake5.exe` into the root of the repo and execute this command:
 
 ```batch
-.\premake5.exe vs2022
+.\premake5.exe vs2026
 ```
 
 If Premake has already been installed and is in the PATH environment variable then you may execute the Bash command below.
@@ -100,7 +100,7 @@ If Premake has already been installed and is in the PATH environment variable th
 #### Using Bash
 
 ```bash
-premake5 vs2022
+premake5 vs2026
 ```
 
 ### 6. Build using Visual Studio

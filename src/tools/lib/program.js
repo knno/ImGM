@@ -82,6 +82,8 @@ export class ANSIColors {
 				underline: this._c.replace(`(c)`, 4),
 				white: this.getRGB(255, 255, 255),
 				gray: this.getRGB(128, 128, 128),
+				lightgray: this.getRGB(192, 192, 192),
+				darkgray: this.getRGB(64, 64, 64),
 				red: useNamesRGB ? this.getRGB(195, 45, 45) : this.get256(31),
 				darkred: useNamesRGB
 					? this.getRGB(125, 25, 0)

@@ -106,7 +106,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
 
-set(PROJECT_NAME ImGMDll)
+set(PROJECT_NAME ImGM)
 
 ################################################################################
 # Source groups
@@ -148,7 +148,7 @@ set(ImGui__Internal
 )
 source_group("ImGui\\Internal" FILES ${ImGui__Internal})
 
-set(ImGui__wrappers
+set(ImGui__Wrappers
     "imgui/wrappers/imgui_api_gm.cpp"
     "imgui/wrappers/imgui_color_gm.cpp"
     "imgui/wrappers/imgui_combo_gm.cpp"
@@ -157,12 +157,14 @@ set(ImGui__wrappers
     "imgui/wrappers/imgui_drawlist_gm.cpp"
     "imgui/wrappers/imgui_ext_memeditor_gm.cpp"
     "imgui/wrappers/imgui_fonts_gm.cpp"
+    "imgui/wrappers/imgui_gm_fontconfig.h"
     "imgui/wrappers/imgui_gm_selectionstorage.h"
     "imgui/wrappers/imgui_gm_windowclass.h"
     "imgui/wrappers/imgui_input_gm.cpp"
     "imgui/wrappers/imgui_input_widgets_gm.cpp"
     "imgui/wrappers/imgui_layout_gm.cpp"
     "imgui/wrappers/imgui_listbox_gm.cpp"
+    "imgui/wrappers/imgui_main_gm.cpp"
     "imgui/wrappers/imgui_memory_editor.h"
     "imgui/wrappers/imgui_menu_gm.cpp"
     "imgui/wrappers/imgui_payload_gm.cpp"
@@ -179,14 +181,54 @@ set(ImGui__wrappers
     "imgui/wrappers/imgui_widgets_gm.cpp"
     "imgui/wrappers/imgui_window_gm.cpp"
 )
-source_group("ImGui\\wrappers" FILES ${ImGui__wrappers})
+source_group("ImGui\\Wrappers" FILES ${ImGui__Wrappers})
+
+set(NodeEditor__Internal
+    "imext/node_editor/internal/crude_json.cpp"
+    "imext/node_editor/internal/crude_json.h"
+    "imext/node_editor/internal/imgui_bezier_math.h"
+    "imext/node_editor/internal/imgui_bezier_math.inl"
+    "imext/node_editor/internal/imgui_canvas.cpp"
+    "imext/node_editor/internal/imgui_canvas.h"
+    "imext/node_editor/internal/imgui_extra_math.h"
+    "imext/node_editor/internal/imgui_extra_math.inl"
+    "imext/node_editor/internal/imgui_node_editor.cpp"
+    "imext/node_editor/internal/imgui_node_editor.h"
+    "imext/node_editor/internal/imgui_node_editor_api.cpp"
+    "imext/node_editor/internal/imgui_node_editor_internal.h"
+    "imext/node_editor/internal/imgui_node_editor_internal.inl"
+)
+source_group("NodeEditor\\Internal" FILES ${NodeEditor__Internal})
+
+set(NodeEditor__Wrappers
+    "imext/node_editor/wrappers/node_editor_wrappers_gm.cpp"
+)
+source_group("NodeEditor\\Wrappers" FILES ${NodeEditor__Wrappers})
+
+set(TextEditor__Internal
+    "imext/text_editor/internal/imext_text_editor.h"
+    "imext/text_editor/internal/imext_text_editor_api.h"
+    "imext/text_editor/internal/imgui_text_editor.cpp"
+    "imext/text_editor/internal/imgui_text_editor.h"
+    "imext/text_editor/internal/imgui_text_editor_utils.cpp"
+)
+source_group("TextEditor\\Internal" FILES ${TextEditor__Internal})
+
+set(TextEditor__Wrappers
+    "imext/text_editor/wrappers/text_editor_wrappers_gm.cpp"
+)
+source_group("TextEditor\\Wrappers" FILES ${TextEditor__Wrappers})
 
 set(ALL_FILES
     ${no_group_source_files}
     ${Config}
     ${ImGui}
     ${ImGui__Internal}
-    ${ImGui__wrappers}
+    ${ImGui__Wrappers}
+    ${NodeEditor__Internal}
+    ${NodeEditor__Wrappers}
+    ${TextEditor__Internal}
+    ${TextEditor__Wrappers}
 )
 
 ################################################################################
@@ -229,7 +271,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/.;"
     "${CMAKE_CURRENT_SOURCE_DIR}/internal;"
     "${CMAKE_CURRENT_SOURCE_DIR}/imgui;"
-    "${CMAKE_CURRENT_SOURCE_DIR}/imgui/internal"
+    "${CMAKE_CURRENT_SOURCE_DIR}/imgui/internal;"
+    "${CMAKE_CURRENT_SOURCE_DIR}/imext/node_editor;"
+    "${CMAKE_CURRENT_SOURCE_DIR}/imext/node_editor/internal;"
+    "${CMAKE_CURRENT_SOURCE_DIR}/imext/text_editor;"
+    "${CMAKE_CURRENT_SOURCE_DIR}/imext/text_editor/internal"
 )
 
 ################################################################################

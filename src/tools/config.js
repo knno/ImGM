@@ -7,8 +7,8 @@ import { assignObjectRecursive } from "./lib/utils/data.js"
 import Import from "./lib/utils/import.js"
 
 const gmConfig = {
-	defaultRuntime: "runtime-2024.14.0.251",
-	defaultProgram: "GameMakerStudio2",
+	defaultRuntime: "runtime-2026.0.0.23",
+	defaultProgram: "GameMakerStudio2-LTS2026",
 }
 
 let Config = {

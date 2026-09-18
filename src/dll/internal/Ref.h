@@ -5,6 +5,7 @@
 
 #include "YYStd.h"
 #include <string.h>
+#include <atomic>
 
 
 #define YYC_DELETE(a) delete a
@@ -53,7 +54,7 @@ template <> struct _RefFactory< void* >
 template <typename T > struct _RefThing
 {
 	T		m_thing;
-	int		m_refCount;
+	std::atomic<int> m_refCount;
 	int		m_size;
 
 	_RefThing( T _thing )
@@ -73,28 +74,35 @@ template <typename T > struct _RefThing
 		inc();
 	} // end _RefThing
 
+	_RefThing( const _RefThing<T>& _other )
+	{
+		// preserves the old implicit memberwise-copy behaviour (still just a raw m_thing copy,
+		// not a real duplicate/inc of the source) now that std::atomic makes that copy no longer implicit
+		m_thing = _other.m_thing;
+		m_refCount.store( _other.m_refCount.load( std::memory_order_relaxed ), std::memory_order_relaxed );
+		m_size = _other.m_size;
+	} // end _RefThing (copy)
+
 	~_RefThing()
 	{
 		dec();
 	} // end ~_RefThing
 
 	void inc( void ) {
-		++m_refCount;
+		// relaxed: caller already holds a valid reference, so there's nothing else to synchronize-with here
+		m_refCount.fetch_add(1, std::memory_order_relaxed);
 	} // end Inc
 
 	void dec( void ) {
-		YYCEXTERN void LOCK_RVALUE_MUTEX();
-		YYCEXTERN void UNLOCK_RVALUE_MUTEX();
-		LOCK_RVALUE_MUTEX();
-		--m_refCount;
-		if (m_refCount == 0) {
+		// acq_rel: release pairs with other threads' decrements so the one that observes the count
+		// reach zero has a synchronized view of all writes made through other references before they let go
+		if (m_refCount.fetch_sub(1, std::memory_order_acq_rel) == 1) {
 			// use the factory to clean it up and give us a default thing to use
 			m_thing = (m_size >= 0) ? _RefFactory<T>::Destroy(m_thing) : NULL;
 			m_size = 0;
 
 			YYC_DELETE(this);
 		} // end if
-		UNLOCK_RVALUE_MUTEX();
 	} // end Dec
 
 	T get( void ) const { return m_thing; }
@@ -115,7 +123,7 @@ template <typename T> struct RefThing
 		m_pThing = new _RefThing<T>( _thing );
 	} // end RefThing
 
-	RefThing( const _RefThing<T>& _other )
+	RefThing( const _RefThing<T>& _other ) 
 	{
 		m_pThing = _other.m_pThing;
 		m_pThing->Inc();
@@ -135,8 +143,8 @@ template <typename T> struct RefThing
 		m_pThing = NULL;
 	} // end dec
 
-	T get( void ) const {
-		return (m_pThing != NULL) ? m_pThing->m_thing : NULL;
+	T get( void ) const { 
+		return (m_pThing != NULL) ? m_pThing->m_thing : NULL; 
 	} // end get
 };
 
