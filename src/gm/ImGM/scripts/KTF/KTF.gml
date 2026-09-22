@@ -119,7 +119,17 @@ function __KTF() constructor {
             show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
             show_debug_message($"{__KTFManager.__console_tag} Unhandled exception " );
             show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
+			show_debug_message($"{__KTFManager.__console_tag} in script " + ex.script + " at line " + ex.line+":");
+			show_debug_message($"{__KTFManager.__console_tag} " + ex.message);
+			show_debug_message($"{__KTFManager.__console_tag} ");
+            show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
             show_debug_message($"{__KTFManager.__console_tag} " + ex.longMessage);
+            show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
+			show_debug_message($"{__KTFManager.__console_tag} Stacktrace:");
+			for (var _i=0; _i<array_length(ex.stacktrace); _i++) {
+			    show_debug_message($"{__KTFManager.__console_tag}   - " + ex.stacktrace[_i]);
+			}
+            show_debug_message($"{__KTFManager.__console_tag} ");
 
             var _original_meth = __KTF.__exc_orig_fn
             if (is_method(_original_meth)){
@@ -208,6 +218,21 @@ function __KTFManager() constructor {
         }
         __KTF.__out_json.stats.completed_at = date_datetime_string(date_current_datetime());
         __KTF.UpdateOutJson();
+		if (err != undefined) {
+			show_debug_message("Warning: Error(s) occured during tests:");
+			if is_string(err) {
+				show_debug_message(err);
+			} else if is_struct(err) {
+				var _c = struct_names_count(err);
+				var _ns = struct_get_names(err);
+				for (var _i=0; _i<_c; _i++)
+				{
+					show_debug_message($"--- {_ns[_i]} error ---");
+					show_debug_message($"{err[$ _ns[_i]]}");
+				}
+				show_debug_message($"A total of ${_c} error(s)");
+			}
+		}
         show_debug_message($"{__KTFManager.__console_tag} {__KTF.__out_json.success}/{__KTF.__out_json.count} Tests passed" + (exitCode == 0 ? " ✔️" : " ✖️"));
         game_end(exitCode);
     }

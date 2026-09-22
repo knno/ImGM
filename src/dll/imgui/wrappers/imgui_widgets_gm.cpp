@@ -86,25 +86,27 @@ GMFUNC(__imgui_image_button) {
 }
 
 GMFUNC(__imgui_surface) {
-	double surface = YYGetReal(arg, 0);
-	double color = YYGetReal(arg, 1);
-	GMDEFAULT(c_white);
-	float alpha = YYGetReal(arg, 2);
-	GMDEFAULT(1);
-	double width = YYGetReal(arg, 3);
-	GMDEFAULT(surface_get_width(#arg0));
-	double height = YYGetReal(arg, 4);
-	GMDEFAULT(surface_get_height(#arg0));
-	double* uv = YYGetArray<double>(arg, 5, 8);
-	GMHIDDEN();
-	GMPREPEND("var _tex = surface_get_texture(#arg0); if (!(ImGui.__GFlags & ImGuiGFlags.RENDERER_GM)) {texture_set_stage(0, _tex);};");
-	GMPASSTHROUGH(texture_get_uvs(_tex));
+    double surface = YYGetReal(arg, 0);
+    double color = YYGetReal(arg, 1);
+    GMDEFAULT(c_white);
+    float alpha = YYGetReal(arg, 2);
+    GMDEFAULT(1);
+    double width = YYGetReal(arg, 3);
+    GMDEFAULT(surface_get_width(#arg0));
+    double height = YYGetReal(arg, 4);
+    GMDEFAULT(surface_get_height(#arg0));
+	GMPREPEND("var _tex = surface_get_texture(#arg0); if (!(ImGui.__GFlags & ImGuiGFlags.RENDERER_GM)) texture_set_stage(0, _tex);")
 	GMOVERRIDE(Surface);
+    ImGui::ImageWithBg(
+        (ImTextureID)GetTexture(surface, 0, TextureType_Surface),
+        ImVec2(width, height),
+        ImVec2(0.0f, 0.0f),
+        ImVec2(1.0f, 1.0f),
+        GMCOLOR_TO(0, 0.0),
+        GMCOLOR_TO(color, alpha)
+    );
 
-	ImGui::ImageWithBg((ImTextureID)GetTexture(surface, 0, TextureType_Surface), ImVec2(width * uv[6], height * uv[7]), ImVec2(uv[0], uv[1]), ImVec2(uv[2], uv[3]), GMCOLOR_TO(0, 0.0), GMCOLOR_TO(color, alpha));
-	// ImGui::Image((ImTextureID)GetTexture(surface, 0, TextureType_Surface), ImVec2(width * uv[6], height * uv[7]), ImVec2(uv[0], uv[1]), ImVec2(uv[2], uv[3]), GMCOLOR_TO(color, alpha));
-	Result.kind = VALUE_UNDEFINED;
-	delete[]uv;
+    Result.kind = VALUE_UNDEFINED;
 }
 
 GMFUNC(__imgui_checkbox) {

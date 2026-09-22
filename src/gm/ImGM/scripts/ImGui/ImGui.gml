@@ -5309,8 +5309,8 @@ function ImGui() constructor {
 	 * @return {Undefined}
 	 */
 	static Surface = function(surface, color=c_white, alpha=1, width=surface_get_width(surface), height=surface_get_height(surface)) {
-		var _tex = surface_get_texture(surface); if (!(ImGui.__GFlags & ImGuiGFlags.RENDERER_GM)) {texture_set_stage(0, _tex);};
-		return __imgui_surface(surface, color, alpha, width, height, texture_get_uvs(_tex));
+		var _tex = surface_get_texture(surface); if (!(ImGui.__GFlags & ImGuiGFlags.RENDERER_GM)) texture_set_stage(0, _tex);
+		return __imgui_surface(surface, color, alpha, width, height);
 	}
 
 	/**
