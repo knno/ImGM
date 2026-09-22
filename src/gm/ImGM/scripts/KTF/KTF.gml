@@ -119,16 +119,18 @@ function __KTF() constructor {
             show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
             show_debug_message($"{__KTFManager.__console_tag} Unhandled exception " );
             show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
-			show_debug_message($"{__KTFManager.__console_tag} in script " + ex.script + " at line " + ex.line+":");
-			show_debug_message($"{__KTFManager.__console_tag} " + ex.message);
+			show_debug_message($"{__KTFManager.__console_tag} in script " + string(ex[$ "script"]) + " at line " + string(ex[$ "line"]) + ":");
+			show_debug_message($"{__KTFManager.__console_tag} " + ex[$ "message"]);
 			show_debug_message($"{__KTFManager.__console_tag} ");
             show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
-            show_debug_message($"{__KTFManager.__console_tag} " + ex.longMessage);
+            show_debug_message($"{__KTFManager.__console_tag} " + ex[$ "longMessage"]);
             show_debug_message($"{__KTFManager.__console_tag} --------------------------------------------------------------");
 			show_debug_message($"{__KTFManager.__console_tag} Stacktrace:");
-			for (var _i=0; _i<array_length(ex.stacktrace); _i++) {
-			    show_debug_message($"{__KTFManager.__console_tag}   - " + ex.stacktrace[_i]);
-			}
+			if (variable_struct_exists(ex, "stacktrace")) {
+                for (var _i=0; _i<array_length(ex.stacktrace); _i++) {
+                    show_debug_message($"{__KTFManager.__console_tag}   - " + string(ex.stacktrace[_i]));
+                }
+            }
             show_debug_message($"{__KTFManager.__console_tag} ");
 
             var _original_meth = __KTF.__exc_orig_fn
@@ -198,9 +200,12 @@ function __KTFManager() constructor {
         var fs = {};
         var founds = __GetKTFData();
         var scr;
-        for (var i=0; i<array_length(founds); i++) {
-            fs[$ founds[i].name] = new __KTFTest(
-                founds[i].name, founds[i][$ "fixtures"], founds[i].func, founds[i][$ "step_func"]
+        for (var i=0; i<array_length(founds); i+=1;) {
+			stf = founds[i];
+			stf.fixtures = variable_struct_exists(stf, "fixtures") ? stf.fixtures : undefined;
+            stf.step_func = variable_struct_exists(stf, "step_func") ? stf.step_func : undefined;
+			fs[$ stf.name] = new __KTFTest(
+                stf.name, stf.fixtures, stf.func, stf.step_func
             );
         }
         __KTF.__out_json.count = array_length(founds);
