@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.0.6 (2026-10-09)
+
+**Notable Changes**:
+
+- Added `ImFileDialog` extension with a simple example.
+- Fixed `ImGuiExtMethodCall` initialize bug.
+- Fixed Cpp lexer/parser parseGroups to consider preprocessor directives.
+- Fixed Cpp lexer/parser when tokenizing strings like "\\".
+- Fixed KTF and CI stuffs.
+- Updated ImGui and extensions to latest version.
+
+**Features**:
+
 ## 0.0.5 (2026-09-07)
 
 **Notable Changes**:
@@ -7,12 +20,12 @@
 - Added `ImGuiTextEditor` extension with a simple example.
 - Added `ImGuiNodeEditor` extension with a simple example.
 
+**Features**:
+
 **Bug Fixes**:
 
 - circular import issues
 - calculating coverage
-
-**Features**:
 
 ## 0.0.4 (2025-12-09)
 
