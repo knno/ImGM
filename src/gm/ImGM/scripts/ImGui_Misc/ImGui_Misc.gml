@@ -406,6 +406,19 @@ enum ImGuiTextureType {
 }
 
 /**
+ * @enum ImGuiDrawFlags
+ *
+ */
+enum ImDrawListFlags {
+    None = ImDrawFlags.None,
+    AntiAliasedFill = ImDrawFlags.AAFill,
+    AntiAliasedLines = ImDrawFlags.AALines,
+    AntiAliasedLinesUseTex = ImDrawFlags.AALines,
+    AllowVtxOffset = ImDrawFlags.UseVtxOffset,
+    TextNoPixelSnap = ImDrawFlags.TextNoPixelSnap,
+}
+
+/**
  * @enum ImGuiKey
  * @context ImGM
  * @desc ImGuiKey with some modifications from imgui.h

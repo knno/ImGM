@@ -74,24 +74,6 @@ GMFUNC(__imgui_show_debug_log_window) {
 	Result.val = open;
 }
 
-GMFUNC(__imgui_show_stack_tool_window) {
-	GMOVERRIDE(ShowIDStackToolWindow);
-
-	bool open = YYGetBool(arg, 0);
-	GMDEFAULT(undefined);
-
-	bool* p_open = &open;
-	if (!open) {
-		if ((&arg[0])->kind == VALUE_UNDEFINED) {
-			p_open = nullptr;
-		}
-	}
-
-	ImGui::ShowStackToolWindow(p_open);
-	Result.kind = VALUE_BOOL;
-	Result.val = open;
-}
-
 GMFUNC(__imgui_show_about_window) {
 	bool open = YYGetBool(arg, 0);
 	GMDEFAULT(undefined);

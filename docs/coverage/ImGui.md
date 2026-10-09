@@ -193,7 +193,6 @@ These are the wrappers of functions generated for ImGui.
 | `ImGui.ColorPicker3` | ✅ | [imgui_color_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_color_gm.cpp#L18) | - |
 | `ImGui.ColorPicker4` | ✅ | [imgui_color_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_color_gm.cpp#L60) | - |
 | `ImGui.ColorButton` | ✅ | [imgui_color_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_color_gm.cpp#L90) | - |
-| `ImGui.SetColorEditOptions` | ✅ | [imgui_color_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_color_gm.cpp#L106) | - |
 | `ImGui.TreeNode` | ✅ | [imgui_tree_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_tree_gm.cpp#L3) | - |
 | `ImGui.TreeNodeV` | ❌ | - | - |
 | `ImGui.TreeNodeEx` | ✅ | [imgui_tree_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_tree_gm.cpp#L10) | - |
@@ -204,6 +203,7 @@ These are the wrappers of functions generated for ImGui.
 | `ImGui.CollapsingHeader` | ✅ | [imgui_tree_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_tree_gm.cpp#L45) | - |
 | `ImGui.SetNextItemOpen` | ✅ | [imgui_tree_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_tree_gm.cpp#L36) | - |
 | `ImGui.SetNextItemStorageID` | ❌ | - | - |
+| `ImGui.TreeNodeGetOpen` | ❌ | - | - |
 | `ImGui.Selectable` | ✅ | [imgui_selectable_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_selectable_gm.cpp#L4) | - |
 | `ImGui.BeginMultiSelect` | ✅ | [imgui_selectable_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_selectable_gm.cpp#L45) | - |
 | `ImGui.EndMultiSelect` | ✅ | [imgui_selectable_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_selectable_gm.cpp#L77) | - |
@@ -317,6 +317,8 @@ These are the wrappers of functions generated for ImGui.
 | `ImGui.GetItemRectMin` | ✅ | - | Supported with suffix (X, Y) |
 | `ImGui.GetItemRectMax` | ✅ | - | Supported with suffix (X, Y) |
 | `ImGui.GetItemRectSize` | ✅ | - | Supported with suffix (Width, Height) |
+| `ImGui.GetItemFlags` | ❌ | - | - |
+| `ImGui.GetItemClickedCountWithSingleClickDelay` | ❌ | - | - |
 | `ImGui.GetMainViewport` | ✅ | [imgui_api_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_api_gm.cpp#L519) | - |
 | `ImGui.GetBackgroundDrawList` | ✅ | [imgui_drawlist_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drawlist_gm.cpp#L4) | - |
 | `ImGui.GetForegroundDrawList` | ✅ | [imgui_drawlist_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_drawlist_gm.cpp#L18) | - |
@@ -380,11 +382,11 @@ These are the wrappers of functions generated for ImGui.
 | `ImGui.DestroyPlatformWindows` | ✅ | - | Supported internally |
 | `ImGui.FindViewportByID` | ✅ | [imgui_docking_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_docking_gm.cpp#L29) | - |
 | `ImGui.FindViewportByPlatformHandle` | ✅ | [imgui_docking_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_docking_gm.cpp#L38) | - |
+| `ImGui.SetColorEditOptions` | ✅ | [imgui_color_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_color_gm.cpp#L106) | - |
 | `ImGui.SetWindowFontScale` | ✅ | [imgui_window_gm.cpp](https://github.com/knno/ImGM/blob/main/src/dll/imgui/wrappers/imgui_window_gm.cpp#L127) | - |
 | `ImGui.GetContentRegionMax` | ✅ | - | Supported with suffix (X, Y) |
 | `ImGui.GetWindowContentRegionMin` | ✅ | - | Supported with suffix (X, Y) |
 | `ImGui.GetWindowContentRegionMax` | ✅ | - | Supported with suffix (X, Y) |
-| `ImGui.SetItemAllowOverlap` | ❌ | - | - |
 
 
 ## Custom Wrappers

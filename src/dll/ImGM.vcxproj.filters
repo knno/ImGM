@@ -120,9 +120,6 @@
     <ClInclude Include="imext\file_dialog\internal\libs\stb\stb_image.h">
       <Filter>FileDialog\Internal</Filter>
     </ClInclude>
-    <ClInclude Include="imext\file_dialog\wrappers\im_file_dialog.h">
-      <Filter>FileDialog\Wrappers</Filter>
-    </ClInclude>
     <ClInclude Include="imext\node_editor\internal\crude_json.h">
       <Filter>NodeEditor\Internal</Filter>
     </ClInclude>

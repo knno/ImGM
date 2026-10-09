@@ -18,6 +18,7 @@ export default {
     apiIgnore: {
         enums: [
             "ImGuiKey",
+            "ImDrawListFlags_",
         ],
     },
 

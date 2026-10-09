@@ -374,7 +374,7 @@ namespace ifd {
       float radius = i & 1 ? innerRadius : outerRadius;
       window->DrawList->PathLineTo(ImVec2(center.x + radius * sin(i * angle), center.y - radius * cos(i * angle)));
     }
-    window->DrawList->PathStroke(ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]), true, 2.0f);
+    window->DrawList->PathStroke(ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[ImGuiCol_Text]), ImDrawFlags_None, 2.0f);
 
     return ret;
   }
@@ -480,20 +480,23 @@ namespace ifd {
     quickAccess->Read = true;
     m_treeCache.push_back(quickAccess);
 
+    if (ngs::fs::environment_get_variable("IMGUI_CONFIG_ZOOM").empty())
+      ngs::fs::environment_set_variable("IMGUI_CONFIG_ZOOM", "filedialogs-zoom.txt");
     #ifdef _WIN32
     // Quick Access
     ghc::filesystem::path homePath = ngs::fs::environment_get_variable("USERPROFILE");
+    if (ngs::fs::environment_get_variable("IMGUI_CONFIG_HOME").empty())
+      ngs::fs::environment_set_variable("IMGUI_CONFIG_HOME", homePath.string());
     if (ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER").empty())
       ngs::fs::environment_set_variable("IMGUI_CONFIG_FOLDER", "filedialogs");
-    if (!ngs::fs::directory_exists(homePath.string() + "\\.config\\" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER")))
-      ngs::fs::directory_create(homePath.string() + "\\.config\\" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER"));
-    int attr = GetFileAttributesW(ghc::filesystem::path(homePath.string() + "\\.config\\").wstring().c_str());
-    if ((attr & FILE_ATTRIBUTE_HIDDEN) == 0)
-      SetFileAttributesW(ghc::filesystem::path(homePath.string() + "\\.config\\").wstring().c_str(), attr | FILE_ATTRIBUTE_HIDDEN);
-    if (ngs::fs::environment_get_variable("IMGUI_CONFIG_FILE").empty())
-      ngs::fs::environment_set_variable("IMGUI_CONFIG_FILE", "filedialogs.txt");
-    if (!ngs::fs::file_exists(homePath.string() + "\\.config\\" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER") + "\\" +
-      ngs::fs::environment_get_variable("IMGUI_CONFIG_FILE"))) {
+    ghc::filesystem::path configPath = ngs::fs::environment_expand_variables("${IMGUI_CONFIG_HOME}\\.config\\${IMGUI_CONFIG_FOLDER}");
+    if (!ngs::fs::directory_exists(configPath.string()))
+      ngs::fs::directory_create(configPath.string());
+    int attr = GetFileAttributesW(configPath.wstring().c_str());
+    if ((attr & FILE_ATTRIBUTE_HIDDEN) == 0) SetFileAttributesW(configPath.wstring().c_str(), attr | FILE_ATTRIBUTE_HIDDEN);
+    if (ngs::fs::environment_get_variable("IMGUI_CONFIG_FAVS").empty())
+      ngs::fs::environment_set_variable("IMGUI_CONFIG_FAVS", "filedialogs-favs.txt");
+    if (!ngs::fs::file_exists(configPath.string() + "\\${IMGUI_CONFIG_FAVS}")) {
       std::vector<std::string> favorites;
       favorites.push_back(homePath.string() + "\\");
       favorites.push_back(ngs::fs::directory_get_desktop_path());
@@ -502,8 +505,7 @@ namespace ifd {
       favorites.push_back(ngs::fs::directory_get_music_path());
       favorites.push_back(ngs::fs::directory_get_pictures_path());
       favorites.push_back(ngs::fs::directory_get_videos_path());
-      int desc = ngs::fs::file_text_open_write(homePath.string() + "\\.config\\" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER") + "\\" +
-        ngs::fs::environment_get_variable("IMGUI_CONFIG_FILE"));
+      int desc = ngs::fs::file_text_open_write(configPath.string() + "\\${IMGUI_CONFIG_FAVS}");
       if (desc != -1) {
         for (std::size_t i = 0; i < favorites.size(); i++) {
           ngs::fs::file_text_write_string(desc, favorites[i]);
@@ -512,13 +514,23 @@ namespace ifd {
         ngs::fs::file_text_close(desc);
       }
     }
-    std::string conf = homePath.string() + "\\.config\\" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER") + "\\" +
-      ngs::fs::environment_get_variable("IMGUI_CONFIG_FILE");
+    std::string conf = configPath.string() + "\\${IMGUI_CONFIG_FAVS}";
     if (ngs::fs::file_exists(conf)) {
       int fd = ngs::fs::file_text_open_read(conf);
       if (fd != -1) {
         while (!ngs::fs::file_text_eof(fd)) {
           FileDialog::AddFavorite(ngs::fs::file_text_read_string(fd));
+          ngs::fs::file_text_readln(fd);
+        }
+        ngs::fs::file_text_close(fd);
+      }
+    }
+    std::string zoom = configPath.string() + "\\${IMGUI_CONFIG_ZOOM}";
+    if (ngs::fs::file_exists(zoom)) {
+      int fd = ngs::fs::file_text_open_read(zoom);
+      if (fd != -1) {
+        if (!ngs::fs::file_text_eof(fd)) {
+          m_zoom = strtof(ngs::fs::file_text_read_string(fd).c_str(), nullptr);
           ngs::fs::file_text_readln(fd);
         }
         ngs::fs::file_text_close(fd);
@@ -536,14 +548,16 @@ namespace ifd {
     #else
     // Quick Access
     ghc::filesystem::path homePath = ngs::fs::environment_get_variable("HOME");
+    if (ngs::fs::environment_get_variable("IMGUI_CONFIG_HOME").empty())
+      ngs::fs::environment_set_variable("IMGUI_CONFIG_HOME", homePath.string());
     if (ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER").empty())
       ngs::fs::environment_set_variable("IMGUI_CONFIG_FOLDER", "filedialogs");
-    if (!ngs::fs::directory_exists(homePath.string() + "/.config/" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER")))
-      ngs::fs::directory_create(homePath.string() + "/.config/" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER"));
-    if (ngs::fs::environment_get_variable("IMGUI_CONFIG_FILE").empty())
-      ngs::fs::environment_set_variable("IMGUI_CONFIG_FILE", "filedialogs.txt");
-    if (!ngs::fs::file_exists(homePath.string() + "/.config/" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER") + "/" +
-      ngs::fs::environment_get_variable("IMGUI_CONFIG_FILE"))) {
+    ghc::filesystem::path configPath = ngs::fs::environment_expand_variables("${IMGUI_CONFIG_HOME}/.config/${IMGUI_CONFIG_FOLDER}");
+    if (!ngs::fs::directory_exists(configPath.string()))
+      ngs::fs::directory_create(configPath.string());
+    if (ngs::fs::environment_get_variable("IMGUI_CONFIG_FAVS").empty())
+      ngs::fs::environment_set_variable("IMGUI_CONFIG_FAVS", "filedialogs-favs.txt");
+    if (!ngs::fs::file_exists(configPath.string() + "/${IMGUI_CONFIG_FAVS}")) {
       std::vector<std::string> favorites;
       favorites.push_back(homePath.string() + "/");
       favorites.push_back(ngs::fs::directory_get_desktop_path());
@@ -552,8 +566,7 @@ namespace ifd {
       favorites.push_back(ngs::fs::directory_get_music_path());
       favorites.push_back(ngs::fs::directory_get_pictures_path());
       favorites.push_back(ngs::fs::directory_get_videos_path());
-      int desc = ngs::fs::file_text_open_write(homePath.string() + "/.config/" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER") + "/" +
-        ngs::fs::environment_get_variable("IMGUI_CONFIG_FILE"));
+      int desc = ngs::fs::file_text_open_write(configPath.string() + "/${IMGUI_CONFIG_FAVS}");
       if (desc != -1) {
         for (std::size_t i = 0; i < favorites.size(); i++) {
           ngs::fs::file_text_write_string(desc, favorites[i]);
@@ -562,13 +575,23 @@ namespace ifd {
         ngs::fs::file_text_close(desc);
       }
     }
-    std::string conf = homePath.string() + "/.config/" + ngs::fs::environment_get_variable("IMGUI_CONFIG_FOLDER") + "/" +
-      ngs::fs::environment_get_variable("IMGUI_CONFIG_FILE");
+    std::string conf = configPath.string() + "/${IMGUI_CONFIG_FAVS}";
     if (ngs::fs::file_exists(conf)) {
       int fd = ngs::fs::file_text_open_read(conf);
       if (fd != -1) {
         while (!ngs::fs::file_text_eof(fd)) {
           FileDialog::AddFavorite(ngs::fs::file_text_read_string(fd));
+          ngs::fs::file_text_readln(fd);
+        }
+        ngs::fs::file_text_close(fd);
+      }
+    }
+    std::string zoom = configPath.string() + "/${IMGUI_CONFIG_ZOOM}";
+    if (ngs::fs::file_exists(zoom)) {
+      int fd = ngs::fs::file_text_open_read(zoom);
+      if (fd != -1) {
+        if (!ngs::fs::file_text_eof(fd)) {
+          m_zoom = strtof(ngs::fs::file_text_read_string(fd).c_str(), nullptr);
           ngs::fs::file_text_readln(fd);
         }
         ngs::fs::file_text_close(fd);
@@ -580,12 +603,7 @@ namespace ifd {
     thisPC->Read = true;
     for (const auto& entry : ghc::filesystem::directory_iterator("/", ec)) {
       const std::string& filename = entry.path().filename().string();
-      #if !defined(_WIN32)
       const bool& is_hidden = ((!filename.empty()) ? (filename[0] == '.') : true);
-      #else
-      const bool& is_hidden = ((GetFileAttributesW(entry.path().wstring().c_str()) & FILE_ATTRIBUTE_HIDDEN) ||
-        (GetFileAttributesW(entry.path().wstring().c_str()) & FILE_ATTRIBUTE_SYSTEM) || ((!filename.empty()) ? (filename[0] == '.') : true));
-      #endif
       if (is_hidden) { continue; }
       if (ghc::filesystem::is_directory(entry, ec))
         thisPC->Children.push_back(new FileTreeNode(entry.path().string()));
@@ -690,9 +708,9 @@ namespace ifd {
   void FileDialog::Close() {
     std::error_code ec;
     #if defined(_WIN32)
-    int fd = ngs::fs::file_text_open_write("${USERPROFILE}\\.config\\${IMGUI_CONFIG_FOLDER}\\${IMGUI_CONFIG_FILE}");
+    int fd = ngs::fs::file_text_open_write("${IMGUI_CONFIG_HOME}\\.config\\${IMGUI_CONFIG_FOLDER}\\${IMGUI_CONFIG_FAVS}");
     #else
-    int fd = ngs::fs::file_text_open_write("${HOME}/.config/${IMGUI_CONFIG_FOLDER}/${IMGUI_CONFIG_FILE}");
+    int fd = ngs::fs::file_text_open_write("${IMGUI_CONFIG_HOME}/.config/${IMGUI_CONFIG_FOLDER}/${IMGUI_CONFIG_FAVS}");
     #endif
     if (fd != -1) {
       for (auto& p : m_treeCache) {
@@ -705,6 +723,15 @@ namespace ifd {
           }
         }
       }
+      ngs::fs::file_text_close(fd);
+    }
+    #if defined(_WIN32)
+    fd = ngs::fs::file_text_open_write("${IMGUI_CONFIG_HOME}\\.config\\${IMGUI_CONFIG_FOLDER}\\${IMGUI_CONFIG_ZOOM}");
+    #else
+    fd = ngs::fs::file_text_open_write("${IMGUI_CONFIG_HOME}/.config/${IMGUI_CONFIG_FOLDER}/${IMGUI_CONFIG_ZOOM}");
+    #endif
+    if (fd != -1) {
+      ngs::fs::file_text_write_string(fd, std::to_string(m_zoom));
       ngs::fs::file_text_close(fd);
     }
 

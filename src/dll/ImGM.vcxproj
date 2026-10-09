@@ -120,7 +120,6 @@
     <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgrenderstate.h" />
     <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgtextelement.h" />
     <ClInclude Include="imext\file_dialog\internal\libs\stb\stb_image.h" />
-    <ClInclude Include="imext\file_dialog\wrappers\im_file_dialog.h" />
     <ClInclude Include="imext\node_editor\internal\crude_json.h" />
     <ClInclude Include="imext\node_editor\internal\imgui_bezier_math.h" />
     <ClInclude Include="imext\node_editor\internal\imgui_bezier_math.inl" />

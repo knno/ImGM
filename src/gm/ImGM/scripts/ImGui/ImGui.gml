@@ -3378,7 +3378,7 @@ function ImGui() constructor {
 	 * @function IsKeyPressed
 	 * @context ImGui
 	 * @desc ImGM wrapper for `ImGui`.
-	 * was key pressed (went from !Down to Down)? if repeat=true, uses io.KeyRepeatDelay / KeyRepeatRate
+	 * was key pressed (went from !Down to Down)? Repeat rate uses io.KeyRepeatDelay / KeyRepeatRate.
 	 *
 	 * @param {ImGuiKey} key
 	 * @param {Bool} [_repeat=undefined]
@@ -4298,7 +4298,7 @@ function ImGui() constructor {
 	 * @function SetColorEditOptions
 	 * @context ImGui
 	 * @desc ImGM wrapper for `ImGui`.
-	 * initialize current options (generally on application startup) if you want to select a default format, picker type, etc. User will be able to change many settings, unless you pass the _NoOptions flag to your calls.
+	 * set current options for if you want to select a default format, picker type, etc. User will be able to change those settings, unless you pass the _NoOptions flag to your calls.
 	 *
 	 * @param {Enum.ImGuiCol} [flags=ImGuiColorEditFlags.None]
 	 * @return {Undefined}
@@ -4433,7 +4433,7 @@ function ImGui() constructor {
 	 * @function SetItemKeyOwner
 	 * @context ImGui
 	 * @desc ImGM wrapper for `ImGui`.
-	 * Set key owner to last item ID if it is hovered or active. Equivalent to 'if (IsItemHovered() || IsItemActive()) { SetKeyOwner(key, GetItemID());'.
+	 * Set key owner to last item ID if it is hovered or active. Return true when ownership has been set. Roughly equivalent to 'if (TestKeyOwner(key, GetItemID()) && (IsItemHovered() || IsItemActive())) { SetKeyOwner(key, GetItemID());'.
 	 *
 	 * @param {ImGuiKey} key
 	 * @param {ImGuiInputFlags} [flags=undefined]
@@ -4498,7 +4498,7 @@ function ImGui() constructor {
 	 * @function SetNextItemAllowOverlap
 	 * @context ImGui
 	 * @desc ImGM wrapper for `ImGui`.
-	 * allow next item to be overlapped by a subsequent item. Useful with invisible buttons, selectable, treenode covering an area where subsequent items may need to be added. Note that both Selectable() and TreeNode() have dedicated flags doing this.
+	 * allow next item to be overlapped by a subsequent item. Typically useful with InvisibleButton(), Selectable(), TreeNode() covering an area where subsequent items may need to be added. Note that both Selectable() and TreeNode() have dedicated flags doing this.
 	 *
 	 * @return {Undefined}
 	 */
@@ -5455,7 +5455,7 @@ function ImGui() constructor {
 	 * @function TableNextRow
 	 * @context ImGui
 	 * @desc ImGM wrapper for `ImGui`.
-	 * append into the first cell of a new row.
+	 * append into the first cell of a new row. 'min_row_height' include the minimum top and bottom padding aka CellPadding.y * 2.0f.
 	 *
 	 * @param {Enum.ImGuiTableRowFlags} [row_flags=ImGuiTableRowFlags.None]
 	 * @param {Real} [min_row_height=0]
@@ -5603,7 +5603,7 @@ function ImGui() constructor {
 	 * @function TextUnformatted
 	 * @context ImGui
 	 * @desc ImGM wrapper for `ImGui`.
-	 * raw text without formatting. Roughly equivalent to Text("%s", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for long chunks of text.
+	 * raw text without formatting. Practically equivalent to 'Text("%s", text)' but doesn't require null terminated string if 'text_end' is specified.
 	 *
 	 * @param {String} text
 	 * @return {Undefined}
@@ -5836,8 +5836,6 @@ function ImGui() constructor {
 		Popup = 1 << 26,
 		Modal = 1 << 27,
 		ChildMenu = 1 << 28,
-		NavFlattened = 1 << 29,
-		AlwaysUseWindowPadding = 1 << 30,
 	}
 
 	/**
@@ -5856,7 +5854,6 @@ function ImGui() constructor {
 		AlwaysAutoResize = 1 << 6,
 		FrameStyle = 1 << 7,
 		NavFlattened = 1 << 8,
-		Border = ImGuiChildFlags.Borders,
 	}
 
 	/**
@@ -5872,6 +5869,11 @@ function ImGui() constructor {
 		ButtonRepeat = 1 << 3,
 		AutoClosePopups = 1 << 4,
 		AllowDuplicateId = 1 << 5,
+		Disabled = 1 << 6,
+		LiveEditOnInputText = 1 << 7,
+		LiveEditOnInputScalar = 1 << 8,
+		LiveEditOnInput = ImGuiItemFlags.LiveEditOnInputText | ImGuiItemFlags.LiveEditOnInputScalar,
+		MixedValue = 1 << 9,
 	}
 
 	/**
@@ -5937,8 +5939,6 @@ function ImGui() constructor {
 		DrawLinesFull = 1 << 19,
 		DrawLinesToNodes = 1 << 20,
 		NavLeftJumpsBackHere = ImGuiTreeNodeFlags.NavLeftJumpsToParent,
-		SpanTextWidth = ImGuiTreeNodeFlags.SpanLabelWidth,
-		AllowItemOverlap = ImGuiTreeNodeFlags.AllowOverlap,
 	}
 
 	/**
@@ -5948,17 +5948,18 @@ function ImGui() constructor {
 	 */
 	enum ImGuiPopupFlags {
 		None = 0,
-		MouseButtonLeft = 0,
-		MouseButtonRight = 1,
-		MouseButtonMiddle = 2,
-		MouseButtonMask_ = 0x1F,
-		MouseButtonDefault_ = 1,
+		MouseButtonLeft = 1 << 2,
+		MouseButtonRight = 2 << 2,
+		MouseButtonMiddle = 3 << 2,
 		NoReopen = 1 << 5,
 		NoOpenOverExistingPopup = 1 << 7,
 		NoOpenOverItems = 1 << 8,
 		AnyPopupId = 1 << 10,
 		AnyPopupLevel = 1 << 11,
 		AnyPopup = ImGuiPopupFlags.AnyPopupId | ImGuiPopupFlags.AnyPopupLevel,
+		MouseButtonShift_ = 2,
+		MouseButtonMask_ = 0x0C,
+		InvalidMask_ = 0x03,
 	}
 
 	/**
@@ -5976,7 +5977,6 @@ function ImGui() constructor {
 		Highlight = 1 << 5,
 		SelectOnNav = 1 << 6,
 		DontClosePopups = ImGuiSelectableFlags.NoAutoClosePopups,
-		AllowItemOverlap = ImGuiSelectableFlags.AllowOverlap,
 	}
 
 	/**
@@ -6117,8 +6117,8 @@ function ImGui() constructor {
 		AcceptBeforeDelivery = 1 << 10,
 		AcceptNoDrawDefaultRect = 1 << 11,
 		AcceptNoPreviewTooltip = 1 << 12,
+		AcceptDrawAsHovered = 1 << 13,
 		AcceptPeekOnly = ImGuiDragDropFlags.AcceptBeforeDelivery | ImGuiDragDropFlags.AcceptNoDrawDefaultRect,
-		SourceAutoExpirePayload = ImGuiDragDropFlags.PayloadAutoExpire,
 	}
 
 	/**
@@ -6218,9 +6218,10 @@ function ImGui() constructor {
 		HasSetMousePos = 1 << 2,
 		RendererHasVtxOffset = 1 << 3,
 		RendererHasTextures = 1 << 4,
-		PlatformHasViewports = 1 << 10,
-		HasMouseHoveredViewport = 1 << 11,
-		RendererHasViewports = 1 << 12,
+		RendererHasViewports = 1 << 10,
+		PlatformHasViewports = 1 << 11,
+		HasMouseHoveredViewport = 1 << 12,
+		HasParentViewport = 1 << 13,
 	}
 
 	/**
@@ -6248,6 +6249,7 @@ function ImGui() constructor {
 		ScrollbarGrabHovered,
 		ScrollbarGrabActive,
 		CheckMark,
+		CheckboxSelectedBg,
 		SliderGrab,
 		SliderGrabActive,
 		Button,
@@ -6285,6 +6287,8 @@ function ImGui() constructor {
 		TextSelectedBg,
 		TreeLines,
 		DragDropTarget,
+		DragDropTargetBg,
+		UnsavedMarker,
 		NavCursor,
 		NavWindowingHighlight,
 		NavWindowingDimBg,
@@ -6325,6 +6329,7 @@ function ImGui() constructor {
 		ScrollbarPadding,
 		GrabMinSize,
 		GrabRounding,
+		ImageRounding,
 		ImageBorderSize,
 		TabRounding,
 		TabBorderSize,
@@ -6336,8 +6341,12 @@ function ImGui() constructor {
 		TableAngledHeadersTextAlign,
 		TreeLinesSize,
 		TreeLinesRounding,
+		MenuItemRounding,
+		SelectableRounding,
+		DragDropTargetRounding,
 		ButtonTextAlign,
 		SelectableTextAlign,
+		SeparatorSize,
 		SeparatorTextBorderSize,
 		SeparatorTextAlign,
 		SeparatorTextPadding,
@@ -6356,6 +6365,7 @@ function ImGui() constructor {
 		MouseButtonMiddle = 1 << 2,
 		MouseButtonMask_ = ImGuiButtonFlags.MouseButtonLeft | ImGuiButtonFlags.MouseButtonRight | ImGuiButtonFlags.MouseButtonMiddle,
 		EnableNav = 1 << 3,
+		AllowOverlap = 1 << 12,
 	}
 
 	/**
@@ -6375,10 +6385,11 @@ function ImGui() constructor {
 		NoSidePreview = 1 << 8,
 		NoDragDrop = 1 << 9,
 		NoBorder = 1 << 10,
-		AlphaOpaque = 1 << 11,
-		AlphaNoBg = 1 << 12,
-		AlphaPreviewHalf = 1 << 13,
-		AlphaBar = 1 << 16,
+		NoColorMarkers = 1 << 11,
+		AlphaOpaque = 1 << 12,
+		AlphaNoBg = 1 << 13,
+		AlphaPreviewHalf = 1 << 14,
+		AlphaBar = 1 << 18,
 		HDR = 1 << 19,
 		DisplayRGB = 1 << 20,
 		DisplayHSV = 1 << 21,
@@ -6387,8 +6398,9 @@ function ImGui() constructor {
 		Float = 1 << 24,
 		PickerHueBar = 1 << 25,
 		PickerHueWheel = 1 << 26,
-		InputRGB = 1 << 27,
-		InputHSV = 1 << 28,
+		PickerNoRotate = 1 << 27,
+		InputRGB = 1 << 28,
+		InputHSV = 1 << 29,
 		DefaultOptions_ = ImGuiColorEditFlags.Uint8 | ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.InputRGB | ImGuiColorEditFlags.PickerHueBar,
 		AlphaMask_ = ImGuiColorEditFlags.NoAlpha | ImGuiColorEditFlags.AlphaOpaque | ImGuiColorEditFlags.AlphaNoBg | ImGuiColorEditFlags.AlphaPreviewHalf,
 		DisplayMask_ = ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.DisplayHSV | ImGuiColorEditFlags.DisplayHex,
@@ -6412,6 +6424,7 @@ function ImGui() constructor {
 		ClampOnInput = 1 << 9,
 		ClampZeroRange = 1 << 10,
 		NoSpeedTweaks = 1 << 11,
+		ColorMarkers = 1 << 12,
 		AlwaysClamp = ImGuiSliderFlags.ClampOnInput | ImGuiSliderFlags.ClampZeroRange,
 		InvalidMask_ = 0x7000000F,
 	}
@@ -6605,9 +6618,14 @@ function ImGui() constructor {
 		ClearOnClickVoid = 1 << 10,
 		ScopeWindow = 1 << 11,
 		ScopeRect = 1 << 12,
-		SelectOnClick = 1 << 13,
-		SelectOnClickRelease = 1 << 14,
+		SelectOnAuto = 1 << 13,
+		SelectOnClickAlways = 1 << 14,
+		SelectOnClickRelease = 1 << 15,
 		NavWrapX = 1 << 16,
+		NoSelectOnRightClick = 1 << 17,
+		SelectOnMask_ = ImGuiMultiSelectFlags.SelectOnAuto | ImGuiMultiSelectFlags.SelectOnClickAlways | ImGuiMultiSelectFlags.SelectOnClickRelease,
+		CheckboxMode_ = 1 << 20,
+		SelectOnClick = ImGuiMultiSelectFlags.SelectOnAuto,
 	}
 
 	/**
@@ -6628,32 +6646,46 @@ function ImGui() constructor {
 	 */
 	enum ImDrawFlags {
 		None = 0,
-		Closed = 1 << 0,
-		RoundCornersTopLeft = 1 << 4,
-		RoundCornersTopRight = 1 << 5,
-		RoundCornersBottomLeft = 1 << 6,
-		RoundCornersBottomRight = 1 << 7,
-		RoundCornersNone = 1 << 8,
-		RoundCornersTop = ImDrawFlags.RoundCornersTopLeft | ImDrawFlags.RoundCornersTopRight,
-		RoundCornersBottom = ImDrawFlags.RoundCornersBottomLeft | ImDrawFlags.RoundCornersBottomRight,
-		RoundCornersLeft = ImDrawFlags.RoundCornersBottomLeft | ImDrawFlags.RoundCornersTopLeft,
-		RoundCornersRight = ImDrawFlags.RoundCornersBottomRight | ImDrawFlags.RoundCornersTopRight,
-		RoundCornersAll = ImDrawFlags.RoundCornersTopLeft | ImDrawFlags.RoundCornersTopRight | ImDrawFlags.RoundCornersBottomLeft | ImDrawFlags.RoundCornersBottomRight,
-		RoundCornersDefault_ = ImDrawFlags.RoundCornersAll,
-		RoundCornersMask_ = ImDrawFlags.RoundCornersAll | ImDrawFlags.RoundCornersNone,
-	}
-
-	/**
-	 * @enum ImDrawListFlags
-	 * @desc Flags for ImDrawList instance. Those are set automatically by ImGui:: functions from ImGuiIO settings, and generally not manipulated directly.
-	 *
-	 */
-	enum ImDrawListFlags {
-		None = 0,
-		AntiAliasedLines = 1 << 0,
-		AntiAliasedLinesUseTex = 1 << 1,
-		AntiAliasedFill = 1 << 2,
-		AllowVtxOffset = 1 << 3,
+		RoundTopLeft = 1 << 4,
+		RoundTopRight = 1 << 5,
+		RoundBottomLeft = 1 << 6,
+		RoundBottomRight = 1 << 7,
+		RoundNone = 1 << 8,
+		RoundAll = ImDrawFlags.RoundTopLeft | ImDrawFlags.RoundTopRight | ImDrawFlags.RoundBottomLeft | ImDrawFlags.RoundBottomRight,
+		RoundTop = ImDrawFlags.RoundTopLeft | ImDrawFlags.RoundTopRight,
+		RoundBottom = ImDrawFlags.RoundBottomLeft | ImDrawFlags.RoundBottomRight,
+		RoundLeft = ImDrawFlags.RoundBottomLeft | ImDrawFlags.RoundTopLeft,
+		RoundRight = ImDrawFlags.RoundBottomRight | ImDrawFlags.RoundTopRight,
+		Closed = 1 << 9,
+		JoinMiter = 1 << 10,
+		CapSquare = 1 << 11,
+		AAFill = 1 << 12,
+		AALines = 1 << 13,
+		AALineEnds = 1 << 14,
+		StrokeInside = 1 << 17,
+		StrokeCenter = 2 << 17,
+		StrokeCenterBiased = 3 << 17,
+		StrokeOutside = 4 << 17,
+		StrokeLegacy = 7 << 17,
+		TextNoPixelSnap = 1 << 20,
+		UseTexForRoundCorners = 1 << 21,
+		UseVtxOffset = 1 << 22,
+		AllowTexForRoundCorners_ = 1 << 23,
+		RoundMask_ = ImDrawFlags.RoundAll | ImDrawFlags.RoundNone,
+		AllowInPushScope_ = ImDrawFlags.AAFill | ImDrawFlags.AALines | ImDrawFlags.AALineEnds | ImDrawFlags.StrokeLegacy | ImDrawFlags.TextNoPixelSnap | ImDrawFlags.UseTexForRoundCorners | ImDrawFlags.UseVtxOffset | ImDrawFlags.RoundMask_,
+		AllowInFrameScope_ = ImDrawFlags.AllowInPushScope_ | ImDrawFlags.AllowTexForRoundCorners_,
+		StrokeMask_ = 0x07 << 17,
+		InvalidMask_ = 0x7FFFFFF0,
+		RoundCornersTopLeft = ImDrawFlags.RoundTopLeft,
+		RoundCornersTopRight = ImDrawFlags.RoundTopRight,
+		RoundCornersBottomLeft = ImDrawFlags.RoundBottomLeft,
+		RoundCornersBottomRight = ImDrawFlags.RoundBottomRight,
+		RoundCornersNone = ImDrawFlags.RoundNone,
+		RoundCornersAll = ImDrawFlags.RoundAll,
+		RoundCornersTop = ImDrawFlags.RoundTop,
+		RoundCornersBottom = ImDrawFlags.RoundBottom,
+		RoundCornersLeft = ImDrawFlags.RoundLeft,
+		RoundCornersRight = ImDrawFlags.RoundRight,
 	}
 
 	/**
@@ -6689,6 +6721,7 @@ function ImGui() constructor {
 		NoPowerOfTwoHeight = 1 << 0,
 		NoMouseCursors = 1 << 1,
 		NoBakedLines = 1 << 2,
+		NoBakedRoundCorners = 1 << 3,
 	}
 
 	/**
@@ -6701,6 +6734,7 @@ function ImGui() constructor {
 		NoLoadError = 1 << 1,
 		NoLoadGlyphs = 1 << 2,
 		LockBakedSizes = 1 << 3,
+		ImplicitRefSize = 1 << 4,
 	}
 
 	/**

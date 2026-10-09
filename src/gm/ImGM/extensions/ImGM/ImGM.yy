@@ -653,7 +653,7 @@
     {
       "$GMExtensionOption":"",
       "%Name":"ImExt.TextEditor.Enabled",
-      "defaultValue":"False",
+      "defaultValue":"True",
       "description":"",
       "displayName":"",
       "exportToINI":false,
@@ -669,7 +669,7 @@
     {
       "$GMExtensionOption":"",
       "%Name":"ImExt.FileDialog.Enabled",
-      "defaultValue":"False",
+      "defaultValue":"True",
       "description":"",
       "displayName":"",
       "exportToINI":false,
@@ -685,7 +685,7 @@
     {
       "$GMExtensionOption":"",
       "%Name":"ImExt.NodeEditor.Enabled",
-      "defaultValue":"False",
+      "defaultValue":"True",
       "description":"",
       "displayName":"",
       "exportToINI":false,

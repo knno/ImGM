@@ -26,8 +26,6 @@
 
 // NOTE: Modified for ImGM
 
-# ifndef __IMGUI_FILE_DIALOG_H__
-# define __IMGUI_FILE_DIALOG_H__
 #pragma once
 #include <ctime>
 #include <stack>
@@ -56,10 +54,6 @@ extern void* g_fileDialogQuickAccessTexture;
 
 #define IFD_DIALOG_WIDTH     (int)((!ngs::fs::environment_get_variable("IMGUI_DIALOG_WIDTH" ).empty()) ? strtoul(ngs::fs::environment_get_variable("IMGUI_DIALOG_WIDTH" ).c_str(), nullptr, 10) : 720)
 #define IFD_DIALOG_HEIGHT    (int)((!ngs::fs::environment_get_variable("IMGUI_DIALOG_HEIGHT").empty()) ? strtoul(ngs::fs::environment_get_variable("IMGUI_DIALOG_HEIGHT").c_str(), nullptr, 10) : 424)
-
-#ifndef ImTextureID
-typedef unsigned long long ImTextureID;
-#endif
 
 namespace ifd {
   class FileDialog {
@@ -265,5 +259,3 @@ namespace ifd {
     return (const char *)&file_icon[0];
   }
 }
-
-#endif
