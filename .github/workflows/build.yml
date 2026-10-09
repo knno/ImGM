@@ -107,10 +107,11 @@ jobs:
                   echo "IGOR_USER_DIR=${{ steps.igor-0.outputs.user-dir }}" >> $GITHUB_ENV
                   echo "GM_RUNTIME=${{ steps.igor-0.outputs.runtime-dir }}" >> $GITHUB_ENV
 
-            - name: ImGM Run modules:copy
-              run: npm run modules:copy -- --imgui --ext all
-              env:
-                  GM_RUNTIME: ${{ steps.igor-0.outputs.runtime-dir }}
+            # Copied module files are managed in Git.
+            # - name: ImGM Run modules:copy
+            #   run: npm run modules:copy -- --imgui --ext all
+            #   env:
+            #       GM_RUNTIME: ${{ steps.igor-0.outputs.runtime-dir }}
 
             - name: Run Premake
               run: |
