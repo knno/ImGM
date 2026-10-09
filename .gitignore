@@ -3,8 +3,8 @@
 __local*/
 *.local.*
 
-src/dll/**/internal/**/*
-!src/dll/internal/*.h
+# src/dll/**/internal/**/*
+# !src/dll/internal/*.h
 *.vs
 
 src/gm/**/*.zip

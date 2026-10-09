@@ -2,6 +2,10 @@
 /// Step Event
 ///
 
+if keyboard_check_direct(vk_lcontrol) and keyboard_check_pressed(ord("R")) {
+	game_restart();
+}
+
 /// Handle global shortcuts
 if (global.use_imgui_input) {
     if ImGui.IsKeyDown(ImGuiKey.ImGuiMod_Ctrl) {

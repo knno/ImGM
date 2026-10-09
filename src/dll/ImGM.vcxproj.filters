@@ -4,6 +4,21 @@
     <Filter Include="Config">
       <UniqueIdentifier>{5B583FAC-47FA-6982-30B5-7DD61CF6F0D2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FileDialog">
+      <UniqueIdentifier>{55915DC8-4149-9F15-AA50-787196273A06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileDialog\Internal">
+      <UniqueIdentifier>{21E7D1BF-8D48-AFCD-16B6-F57F8216E68C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileDialog\Wrappers">
+      <UniqueIdentifier>{384BC8B3-A4AC-A5C1-2D1A-EC73997ADC80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImExt">
+      <UniqueIdentifier>{ACF7640D-180C-8DBE-E18D-301E4D6189EF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImExt\Other">
+      <UniqueIdentifier>{DD719C24-4927-151A-D21B-0FF13ED00B1E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{C0FF640D-2C14-8DBE-F595-301E616989EF}</UniqueIdentifier>
     </Filter>
@@ -35,6 +50,78 @@
   <ItemGroup>
     <ClInclude Include="config.h">
       <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\ImFileDialog.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\ImFileDialogMacros.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\include\lunasvg.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\include\plutovg.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-math.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-raster.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-stroker.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-types.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-private.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-stb-image-write.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-stb-image.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-stb-truetype.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-utils.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\graphics.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgelement.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svggeometryelement.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svglayoutstate.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgpaintelement.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgparserutils.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgproperty.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgrenderstate.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgtextelement.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\internal\libs\stb\stb_image.h">
+      <Filter>FileDialog\Internal</Filter>
+    </ClInclude>
+    <ClInclude Include="imext\file_dialog\wrappers\im_file_dialog.h">
+      <Filter>FileDialog\Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="imext\node_editor\internal\crude_json.h">
       <Filter>NodeEditor\Internal</Filter>
@@ -117,6 +204,81 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="imext\file_dialog\internal\ImFileDialog.cpp">
+      <Filter>FileDialog\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\apifilesystem\filesystem.cpp">
+      <Filter>FileDialog\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\examples\smiley.c">
+      <Filter>FileDialog\Internal</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-blend.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-canvas.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-font.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-math.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-raster.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-stroker.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-matrix.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-paint.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-path.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-rasterize.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-surface.c">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\graphics.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\lunasvg.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgelement.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svggeometryelement.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svglayoutstate.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgpaintelement.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgparser.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgproperty.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgrenderstate.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgtextelement.cpp">
+      <Filter>ImExt\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="imext\file_dialog\wrappers\im_file_dialog_wrappers_gm.cpp">
+      <Filter>FileDialog\Wrappers</Filter>
+    </ClCompile>
     <ClCompile Include="imext\node_editor\internal\crude_json.cpp">
       <Filter>NodeEditor\Internal</Filter>
     </ClCompile>

@@ -48,6 +48,12 @@ function buildExtIncludeDirs(baseDir, enabledExts)
             print("Adding include dirs for: " .. extName)
             table.insert(incs, ext)
             table.insert(incs, ext .. "/internal")
+
+            -- file_dialog includeDirs
+            if extName == "file_dialog" then
+                table.insert(incs, ext .. "/internal/libs/lunasvg/include")
+                table.insert(incs, ext .. "/internal/libs/lunasvg/plutovg/include")
+            end
         else
             -- skipped extName
         end
@@ -68,6 +74,11 @@ function buildExtFiles(baseDir, enabledExts)
             table.insert(filesList, ext .. "/**/*.h")
             table.insert(filesList, ext .. "/**/*.cpp")
             table.insert(filesList, ext .. "/**/*.inl")
+
+            -- file_dialog files
+            if extName == "file_dialog" then
+                table.insert(filesList, ext .. "/internal/libs/**/*.c")
+            end
         else
             -- skipped extName
         end
@@ -135,7 +146,7 @@ workspace "dll"
 project(projectName)
     kind "SharedLib"
     language "C++"
-    cppdialect "C++14"
+    cppdialect "C++17"
     targetdir(gmProjectExtDir)
     defines { "GDKEXTENSION_EXPORTS", "__YYDEFINE_EXTENSION_FUNCTIONS__" }
 
@@ -160,6 +171,18 @@ project(projectName)
         dllDir .. "imgui/internal/im*.h",
         dllDir .. "imgui/internal/im*.cpp",
 		table.unpack(extFiles),
+    }
+
+    removefiles {
+        "**/svg2png.c",
+        "**/svg2png.cpp",
+        "**/example/**/*.c",
+        "**/example/**/*.cpp"
+    }
+
+    defines {
+        "PLUTOVG_BUILD_STATIC",
+        "LUNASVG_BUILD_STATIC"
     }
 
     excludes {
@@ -187,6 +210,10 @@ project(projectName)
 			dllDir .. "imgui/wrappers/*.*",
 			dllDir .. "imgui/wrappers/**/*.*",
 		},
+        ["ImExt/Other"] = {
+            dllDir .. "imext/file_dialog/internal/libs/lunasvg/source/**.cpp",
+            dllDir .. "imext/file_dialog/internal/libs/lunasvg/plutovg/source/**.c",
+        }
 	}
 	processImext(dllDir .. "imext")
 	vpaths(_vpaths)

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ImExtFileDialog",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ImExtFileDialog",
+  "parent":{
+    "name":"ImExt",
+    "path":"folders/ImGM/Scripts/ImExt.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

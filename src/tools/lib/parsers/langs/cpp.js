@@ -608,17 +608,25 @@ export class CppLexer extends BaseTokenizer {
 	t_stringDQ(char) {
 		if (char == '"') {
 			const _line = this._line
-			while (
-				(this.peek() !== '"' || this.peek(-1) === "\\") &&
-				!this.isEnd()
-			) {
+			let isEscaped = false
+			while (!this.isEnd()) {
+				const current = this.peek()
+				if (current === '"' && !isEscaped) {
+					break
+				}
+
 				if (
 					typeof this.opts.lineOnLFstringDQ != "undefined" &&
 					this.opts.lineOnLFstringDQ
 				) {
-					if (this.peek() === "\n") {
+					if (current === "\n") {
 						this._line++
 					}
+				}
+				if (current === "\\" && !isEscaped) {
+					isEscaped = true
+				} else {
+					isEscaped = false
 				}
 				this.advance()
 			}
@@ -739,7 +747,34 @@ export class CppParser extends BaseParser {
 					const next = this.advance()
 					let changes = {}
 					if (next) {
-						switch (next.type) {
+						// Preprocessor handling
+						let strVal = (next.value && typeof next.value === 'string') ? next.value.trim() : ""
+						let isPpDirective = false
+						if (next.type === this.TokenType.PREPROCESSOR || (strVal.startsWith('#') && next.type !== this.TokenType.STRING_DQ)) {
+							isPpDirective = true
+							this._ppStack = this._ppStack || []
+
+							if (strVal.startsWith('#if')) {
+								this._ppStack.push(false)
+							} else if (strVal.startsWith('#else') || strVal.startsWith('#elif')) {
+								if (this._ppStack.length > 0) {
+									this._ppStack[this._ppStack.length - 1] = true
+								}
+							} else if (strVal.startsWith('#endif')) {
+								if (this._ppStack.length > 0) {
+									this._ppStack.pop()
+								}
+							}
+						}
+						const isIgnoringStructure = this._ppStack && this._ppStack.length > 0 && this._ppStack[this._ppStack.length - 1]
+						let effectiveType = next.type
+						if (isIgnoringStructure && !isPpDirective) {
+							if ([this.TokenType.LPAREN, this.TokenType.LBRACE, this.TokenType.LBRACKET,
+								 this.TokenType.RPAREN, this.TokenType.RBRACE, this.TokenType.RBRACKET].includes(next.type)) {
+								effectiveType = "IGNORED_STRUCTURAL_TOKEN"
+							}
+						}
+						switch (effectiveType) {
 							case this.TokenType.RPAREN:
 								if (children.length == 1) {
 									const chFirst = children[0]

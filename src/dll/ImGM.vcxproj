@@ -57,11 +57,11 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;DEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\node_editor;imext\node_editor\internal;imext\text_editor;imext\text_editor\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;PLUTOVG_BUILD_STATIC;LUNASVG_BUILD_STATIC;DEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\file_dialog;imext\file_dialog\internal;imext\file_dialog\internal\libs\lunasvg\include;imext\file_dialog\internal\libs\lunasvg\plutovg\include;imext\node_editor;imext\node_editor\internal;imext\text_editor;imext\text_editor\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
@@ -76,14 +76,14 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;NDEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\node_editor;imext\node_editor\internal;imext\text_editor;imext\text_editor\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;PLUTOVG_BUILD_STATIC;LUNASVG_BUILD_STATIC;NDEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\file_dialog;imext\file_dialog\internal;imext\file_dialog\internal\libs\lunasvg\include;imext\file_dialog\internal\libs\lunasvg\plutovg\include;imext\node_editor;imext\node_editor\internal;imext\text_editor;imext\text_editor\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
@@ -97,6 +97,30 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
+    <ClInclude Include="imext\file_dialog\internal\ImFileDialog.h" />
+    <ClInclude Include="imext\file_dialog\internal\ImFileDialogMacros.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\include\lunasvg.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\include\plutovg.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-math.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-raster.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-stroker.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-types.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-private.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-stb-image-write.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-stb-image.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-stb-truetype.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-utils.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\graphics.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgelement.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svggeometryelement.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svglayoutstate.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgpaintelement.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgparserutils.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgproperty.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgrenderstate.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\lunasvg\source\svgtextelement.h" />
+    <ClInclude Include="imext\file_dialog\internal\libs\stb\stb_image.h" />
+    <ClInclude Include="imext\file_dialog\wrappers\im_file_dialog.h" />
     <ClInclude Include="imext\node_editor\internal\crude_json.h" />
     <ClInclude Include="imext\node_editor\internal\imgui_bezier_math.h" />
     <ClInclude Include="imext\node_editor\internal\imgui_bezier_math.inl" />
@@ -126,6 +150,31 @@
     <ClInclude Include="internal\gm.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="imext\file_dialog\internal\ImFileDialog.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\apifilesystem\filesystem.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\examples\smiley.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-blend.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-canvas.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-font.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-math.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-raster.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-ft-stroker.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-matrix.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-paint.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-path.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-rasterize.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\plutovg\source\plutovg-surface.c" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\graphics.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\lunasvg.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgelement.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svggeometryelement.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svglayoutstate.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgpaintelement.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgparser.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgproperty.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgrenderstate.cpp" />
+    <ClCompile Include="imext\file_dialog\internal\libs\lunasvg\source\svgtextelement.cpp" />
+    <ClCompile Include="imext\file_dialog\wrappers\im_file_dialog_wrappers_gm.cpp" />
     <ClCompile Include="imext\node_editor\internal\crude_json.cpp" />
     <ClCompile Include="imext\node_editor\internal\imgui_canvas.cpp" />
     <ClCompile Include="imext\node_editor\internal\imgui_node_editor.cpp" />

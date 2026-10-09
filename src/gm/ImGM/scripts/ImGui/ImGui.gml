@@ -6,6 +6,7 @@ function ImGui() constructor {
     static Ext = {
         NodeEditor: static_get((new ImExtNodeEditor())),
 		TextEditor: ImExtTextEditor,
+		FileDialog: static_get((new ImExtFileDialog())),
     }
     #endregion
 

@@ -1716,11 +1716,11 @@ function ImExtNodeEditor() constructor {
     }
 
     /// autocalls
-	__ImGui_Initialize = method(self, function(state) {
+	static __ImGui_Initialize = method(self, function(state) {
 		return Initialize();
 	})
 
-    __ImGui_NewFrame = method(self, function(state) {
+    static __ImGui_NewFrame = method(self, function(state) {
         return __NewFrame(state); // self
     })
 

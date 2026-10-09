@@ -470,8 +470,26 @@ show_debug_message(/* Hmmm... */ "OOF!");
                         node_editor = undefined;
                     }
                 }
-
             }
+
+			if (extension_get_option_value("ImGM", "ImExt.FileDialog.Enabled")) {
+			    if (ImGui.Button("FileDialog")) {
+			        ext_file_dialog_open = !ext_file_dialog_open;
+
+			        if (ext_file_dialog_open) {
+			            // Flag to render the demo window
+			            file_dialog = true;
+
+			            // Initialize result variables so they are fresh when reopening the demo
+			            file_dialog_single_result = "";
+			            file_dialog_multi_results = [];
+			            file_dialog_save_result = "";
+			        } else {
+			            file_dialog = undefined;
+						ImExtFileDialog.Close();
+			        }
+			    }
+			}
 
             ImGui.TreePop();
 		}
@@ -519,7 +537,7 @@ if (node_editor) {
                         ImGui.Text("Out ->");
                     ImExtNodeEditor.EndPin();
                 ImExtNodeEditor.EndNode();
-            
+
                 // Links
                 var link;
                 for (var i=0; i<array_length(node_editor_links); i++) {
@@ -638,6 +656,102 @@ if (text_editor) {
     		text_editor = undefined;
     		ext_text_editor_open = false;
 	    }
+        ImGui.End();
+    }
+}
+
+if (file_dialog) {
+    ImGui.SetNextWindowSize(600, 400, ImGuiCond.Appearing);
+    var ret = ImGui.Begin("FileDialog Demo", ext_file_dialog_open, undefined, ImGuiReturnMask.Both);
+    if (ret & ImGuiReturnMask.Return) {
+        if (ret & ImGuiReturnMask.Pointer) {
+            ImGui.Text("A minimal ImFileDialog example.");
+            ImGui.Separator();
+
+            // 1) Trigger single file selection
+            if (ImGui.Button("Open Single File")) {
+                ImExtFileDialog.Open("OpenDialogKey", "Select an Image", "Image files (*.png;*.jpg){.png,.jpg},All files (*.*){.*}", false, "");
+            }
+
+            // 2) Trigger multiple file selection
+            if (ImGui.Button("Open Multiple Files")) {
+                ImExtFileDialog.Open("MultiOpenKey", "Select Multiple Images", "Image files (*.png;*.jpg){.png,.jpg}", true, "");
+            }
+
+            // 3) Trigger file save
+            if (ImGui.Button("Save File")) {
+                ImExtFileDialog.Save("SaveDialogKey", "Save Project", "Project files (*.gmx;*.yyp){.gmx,.yyp}", "", "NewProject.yyp");
+            }
+
+            ImGui.Separator();
+            ImGui.Text("Results:");
+
+            // Poll and display single file result
+            if (ImExtFileDialog.IsDone("OpenDialogKey")) {
+                if (ImExtFileDialog.HasResult()) {
+                    file_dialog_single_result = ImExtFileDialog.GetResult();
+                }
+                ImExtFileDialog.Close();
+            }
+            if (file_dialog_single_result != "") {
+                ImGui.Text("Single File Picked: " + file_dialog_single_result);
+            }
+
+            // Poll and display multi-file results
+            if (ImExtFileDialog.IsDone("MultiOpenKey")) {
+                if (ImExtFileDialog.HasResult()) {
+                    file_dialog_multi_results = [];
+                    var count = ImExtFileDialog.GetResultCount();
+                    for (var i = 0; i < count; i++) {
+                        array_push(file_dialog_multi_results, ImExtFileDialog.GetResultIndex(i));
+                    }
+                }
+                ImExtFileDialog.Close();
+            }
+            if (array_length(file_dialog_multi_results) > 0) {
+                ImGui.Text("Multiple Files Picked:");
+                for (var i = 0; i < array_length(file_dialog_multi_results); i++) {
+                    ImGui.BulletText(file_dialog_multi_results[i]);
+                }
+            }
+
+            // Poll and display save file result
+            if (ImExtFileDialog.IsDone("SaveDialogKey")) {
+                if (ImExtFileDialog.HasResult()) {
+                    file_dialog_save_result = ImExtFileDialog.GetResult();
+                }
+                ImExtFileDialog.Close();
+            }
+            if (file_dialog_save_result != "") {
+                ImGui.Text("Save Path: " + file_dialog_save_result);
+            }
+
+        } else {
+            file_dialog = undefined;
+            ext_file_dialog_open = false;
+        }
+
+        ImGui.Separator();
+        if (ImGui.CollapsingHeader("Favorites List")) {
+            ImExtFileDialog.GetFavorites(file_dialog_favorites);
+            if (array_length(file_dialog_favorites) == 0) {
+                ImGui.TextDisabled("No favorites currently saved.");
+            } else {
+                for (var i = 0; i < array_length(file_dialog_favorites); i++) {
+                    ImGui.BulletText(file_dialog_favorites[i]);
+
+                    // Add a handy remove button next to each
+                    ImGui.SameLine(ImGui.GetWindowWidth() - 100);
+                    if (ImGui.Button("Remove##" + string(i))) {
+                        ImExtFileDialog.RemoveFavorite(file_dialog_favorites[i]);
+                    }
+                }
+            }
+            // Test adding a dummy favorite
+            if (ImGui.Button("Add Dummy Favorite")) {
+                ImExtFileDialog.AddFavorite("C:");
+            }
+        }
         ImGui.End();
     }
 }

@@ -1,0 +1,27 @@
+// This file is the same as "ImFileDialog.h" but rewritten for easier parsing.
+// This file is not compiled or included in the compilation of the DLL.
+// enums and functions
+
+//------------------------------------------------------------------------------
+#ifndef IMGUI_API
+#define IMGUI_API
+#endif
+
+//------------------------------------------------------------------------------
+namespace FileDialog {
+    IMGUI_API void Open(const char* key, const char* title, const char* filter, bool isMultiselect, const char* startingDir);
+    IMGUI_API void Save(const char* key, const char* title, const char* filter, const char* startingDir, const char* startingFile);
+    IMGUI_API bool IsDone(const char* key);
+    IMGUI_API void Close();
+    IMGUI_API bool HasResult();
+    IMGUI_API const char* GetResult();
+    IMGUI_API int GetResultCount();
+    IMGUI_API const char* GetResultIndex(int index);
+    IMGUI_API void SetZoom(float z);
+    IMGUI_API inline float GetZoom();
+    IMGUI_API void RemoveFavorite(std::string path);
+    IMGUI_API void AddFavorite(std::string path);
+    IMGUI_API inline const std::vector<std::string>& GetFavorites() { return m_favorites; }
+}
+
+//------------------------------------------------------------------------------

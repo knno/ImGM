@@ -11,13 +11,13 @@ demo_open = true;
 	demo_extensions = true;
 		ext_text_editor_open = false;
         ext_node_editor_open = false;
+		ext_file_dialog_open = false;
 
 // MultiSelect
 multi_select_selection_size = 40;
 multi_select_selection = new ImGuiSelectionBasicStorage();
 
 text_editor = undefined;
-
 text_editor_langs = ["C++", "HLSL", "GLSL", "Lua", "GML"];
 text_editor_langs_array = [ImTextEditorLanguage.CPlusPlus, ImTextEditorLanguage.HLSL, ImTextEditorLanguage.GLSL, ImTextEditorLanguage.Lua, ImTextEditorLanguage.GML];
 text_editor_palettes = ["Dark", "Light", "RetroBlue", "GameMaker"]
@@ -35,6 +35,13 @@ node_editor_nodeB_Id = node_editor_uniqueId++;
 node_editor_nodeB_inputPinId = node_editor_uniqueId++;
 node_editor_nodeB_outputPinId = node_editor_uniqueId++;
 node_editor_links = [{id: node_editor_uniqueId++, in: node_editor_nodeB_inputPinId, out: node_editor_nodeA_outputPinId}];
+
+file_dialog = undefined;
+file_dialog_first_frame = true;
+file_dialog_save_result = "";
+file_dialog_multi_results = [];
+file_dialog_single_result = "";
+file_dialog_favorites = [];
 
 randomize();
 

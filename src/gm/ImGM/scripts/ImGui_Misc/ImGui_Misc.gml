@@ -31,9 +31,9 @@ function ImGuiExtMethodCall(method_name=undefined, ext_name=undefined, _args=und
 
         if (if_inited) {
             _cond = false;
-            _ext_s = static_get(_ext);
+            _ext_s = _ext; // static_get(_ext);
             if (_ext_s[$ "__initialized"] != undefined) {
-                if (_ext_s.__initialized) {
+                if (_ext_s.__initialized || method_name == "__ImGui_Initialize") {
                     _cond = true;
                 }
             }

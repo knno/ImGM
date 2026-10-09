@@ -144,7 +144,7 @@ Any at rate, this step sits between steps 4 and 5. After updating the GameMaker 
 #### Using Powershell
 
 ```batch
-set GM_RUNTIME=runtime-2024.14.0.251
+set GM_RUNTIME=runtime-2026.0.0.23
 
 npm run modules:copy -- --gm
 ```
@@ -152,5 +152,5 @@ npm run modules:copy -- --gm
 #### Using Bash
 
 ```bash
-GM_RUNTIME=runtime-2024.14.0.251 imgm modules:copy --gm
+GM_RUNTIME=runtime-2026.0.0.23 imgm modules:copy --gm
 ```

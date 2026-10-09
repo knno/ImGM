@@ -477,7 +477,7 @@ function ImExtTextEditor(_title, initialText="", languageID=0) constructor {
 	SetLanguage(languageID);
 
     /// autocalls
-    __ImGui_Shutdown = method(self, function(state) {
+    static __ImGui_Shutdown = method(self, function(state) {
 		return __imext_text_editor_cleanup();
     })
 

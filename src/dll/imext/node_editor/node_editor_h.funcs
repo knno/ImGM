@@ -62,7 +62,6 @@ enum ImExtNodeEditorStyleColor
     ImExtNodeEditorStyleColor_FlowMarker,
     ImExtNodeEditorStyleColor_GroupBg,
     ImExtNodeEditorStyleColor_GroupBorder,
-
     ImExtNodeEditorStyleColor_Count
 };
 
@@ -95,10 +94,8 @@ enum ImExtNodeEditorStyleVar
     ImExtNodeEditorStyleVar_SnapLinkToPinDir,
     ImExtNodeEditorStyleVar_HoveredNodeBorderOffset,
     ImExtNodeEditorStyleVar_SelectedNodeBorderOffset,
-
     ImExtNodeEditorStyleVar_Count
 };
-
 
 //------------------------------------------------------------------------------
 namespace NodeEditor {
