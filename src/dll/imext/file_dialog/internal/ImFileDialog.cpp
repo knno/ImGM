@@ -764,7 +764,7 @@ namespace ifd {
       path.pop_back();
     }
 
-    auto itr = std::find(m_favorites.begin(), m_favorites.end(), m_currentDirectory.string());
+    auto itr = std::find(m_favorites.begin(), m_favorites.end(), path);
 
     if (itr != m_favorites.end())
       m_favorites.erase(itr);
