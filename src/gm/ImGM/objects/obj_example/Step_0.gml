@@ -670,17 +670,17 @@ if (file_dialog) {
 
             // 1) Trigger single file selection
             if (ImGui.Button("Open Single File")) {
-                ImExtFileDialog.Open("OpenDialogKey", "Select an Image", "Image files (*.png;*.jpg){.png,.jpg},All files (*.*){.*}", false, "");
+                ImExtFileDialog.Open("OpenDialogKey", "Select an Image", "Image files (*.png;*.jpg){.png,.jpg},.*", false, "");
             }
 
             // 2) Trigger multiple file selection
             if (ImGui.Button("Open Multiple Files")) {
-                ImExtFileDialog.Open("MultiOpenKey", "Select Multiple Images", "Image files (*.png;*.jpg){.png,.jpg}", true, "");
+                ImExtFileDialog.Open("MultiOpenKey", "Select Multiple Images", "Image files (*.png;*.jpg){.png,.jpg},.*", true, "");
             }
 
             // 3) Trigger file save
             if (ImGui.Button("Save File")) {
-                ImExtFileDialog.Save("SaveDialogKey", "Save Project", "Project files (*.gmx;*.yyp){.gmx,.yyp}", "", "NewProject.yyp");
+                ImExtFileDialog.Save("SaveDialogKey", "Save Project", "Project files (*.gmx;*.yyp){.gmx,.yyp},.*", "", "NewProject.yyp");
             }
 
             ImGui.Separator();
@@ -747,9 +747,14 @@ if (file_dialog) {
                     }
                 }
             }
-            // Test adding a dummy favorite
-            if (ImGui.Button("Add Dummy Favorite")) {
-                ImExtFileDialog.AddFavorite("C:");
+            // Test adding favorites
+            if (ImGui.Button("Add Favorites")) {
+				var _uname = environment_get_variable("USERNAME");
+                ImExtFileDialog.AddFavorite("C:\\Users\\" + _uname + "\\Desktop");
+                ImExtFileDialog.AddFavorite("C:\\Users\\" + _uname + "\\Downloads");
+                ImExtFileDialog.AddFavorite("C:\\Users\\" + _uname + "\\Pictures");
+                ImExtFileDialog.AddFavorite("C:\\Users\\" + _uname + "\\Music");
+                ImExtFileDialog.AddFavorite(game_save_id);
             }
         }
         ImGui.End();
