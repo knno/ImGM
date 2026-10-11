@@ -6,10 +6,20 @@
 // - For wrapper generator to automatically manage extensions (clean up, write GML wrappers, etc.)
 //
 #pragma once
+#define IMGM_NO_WARNINGS
 
 // #region ext
 #define IMEXT_TEXT_EDITOR
 #define IMEXT_NODE_EDITOR
 #define IMEXT_FILE_DIALOG
+
+// #endregion
+
+// #region internal
+
+#ifdef IMGM_NO_WARNINGS
+#pragma warning(disable: 4244)
+#pragma warning(disable: 4267)
+#endif
 
 // #endregion

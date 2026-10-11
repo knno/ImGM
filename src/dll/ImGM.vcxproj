@@ -59,6 +59,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;PLUTOVG_BUILD_STATIC;LUNASVG_BUILD_STATIC;DEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\file_dialog;imext\file_dialog\internal;imext\file_dialog\internal\libs\lunasvg\include;imext\file_dialog\internal\libs\lunasvg\plutovg\include;imext\node_editor;imext\node_editor\internal;imext\text_editor;imext\text_editor\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>config.h</ForcedIncludeFiles>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -78,6 +79,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GDKEXTENSION_EXPORTS;__YYDEFINE_EXTENSION_FUNCTIONS__;PLUTOVG_BUILD_STATIC;LUNASVG_BUILD_STATIC;NDEBUG;OS_Windows;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;internal;imgui;imgui\internal;imext\file_dialog;imext\file_dialog\internal;imext\file_dialog\internal\libs\lunasvg\include;imext\file_dialog\internal\libs\lunasvg\plutovg\include;imext\node_editor;imext\node_editor\internal;imext\text_editor;imext\text_editor\internal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>config.h</ForcedIncludeFiles>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

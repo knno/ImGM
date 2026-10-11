@@ -157,9 +157,11 @@ project(projectName)
         dllDir .. "imgui/internal",
 		table.unpack(extIncDirs),
     }
+    forceincludes {
+        dllDir .. "config.h"
+    }
 
     files {
-        dllDir .. "config.h",
         dllDir .. "internal/gm.h",
         dllDir .. "*.h",
         dllDir .. "*.cpp",
